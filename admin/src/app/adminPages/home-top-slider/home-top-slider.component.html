@@ -1,0 +1,108 @@
+<section>
+    <div class="container">
+        <div class="card mb-4 rounded-1 shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 align-self-center text-center text-md-start mb-3 mb-md-0">
+                        <h3 class="mb-0 fw-bold themColor">Home Top Slider</h3>
+                    </div>
+                    <div class="col-md-6 text-center text-sm-end">
+                        <button type="button" class="btn btn-primary themeButton btn-lg rounded-1" (click)="openAddModal(addSlideModal)">
+                            <i class="fa-solid fa-plus"></i> Add New Slide
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isLoading" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-3 g-4" *ngIf="!isLoading && sliders.length > 0">
+            <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12" *ngFor="let slide of sliders">
+                <div class="card h-100 shadow-sm">
+                    <img [src]="slide.slider_image ? imgBaseURL + slide.slider_image : defaultImage" (error)="onImageError($event)" class="card-img-top object-fit-fill" alt="Slider Image" />
+                    <div class="card-body">
+                        <h5 class="card-title mb-0">{{ slide.name }}</h5>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-primary btn-sm rounded-1" (click)="onEdit(slide.id, addSlideModal)">
+                            Edit <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-danger btn-sm rounded-1" (click)="openDeleteModal(deleteModal, slide.id)">
+                            Delete <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isLoading && sliders.length === 0" class="text-center text-muted">
+            No slider data found.
+        </div>
+    </div>
+</section>
+
+<!-- addSlideModal -->
+
+<ng-template #addSlideModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title fw-bold">Add New Slide</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <form [formGroup]="addSlideForm" (ngSubmit)="submitSlide(modal)">
+        <div class="modal-body">
+            <div class="mb-3">
+                <label for="name" class="form-label fw-medium">Slide Title</label>
+                <input id="name" type="text" class="form-control rounded-1 shadow-none" formControlName="name" placeholder="Enter slide title" />
+            </div>
+
+            <div class="mb-3">
+                <label for="slider_image" class="form-label fw-medium">Upload Image</label>
+                <input id="slider_image" type="file" accept="image/*" class="form-control rounded-1 shadow-none" (change)="onFileChange($event)" />
+            </div>
+
+            <div class="text-center" *ngIf="previewImage">
+                <img [src]="previewImage" class="img-thumbnail" style="max-height: 200px;" />
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-success rounded-1" [disabled]="isSubmitting">
+                <i class="fa fa-check"></i> Create Slide
+            </button>
+        </div>
+    </form>
+</ng-template>
+
+<!-- Confirmation Modal -->
+<ng-template #deleteModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+        Are you sure you want to delete this slide?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">No</button>
+        <button type="button" class="btn btn-danger" (click)="deleteSlide(modal)">Yes, Delete</button>
+    </div>
+</ng-template>
+
+<!-- Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1200" *ngIf="toastMessage">
+    <div class="toast align-items-center text-white" [ngClass]="toastType === 'success' ? 'bg-success' : 'bg-danger'"
+        role="alert" aria-live="assertive" aria-atomic="true" [class.show]="toastVisible">
+        <div class="d-flex">
+            <div class="toast-body">
+                {{ toastMessage }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastVisible = false"
+                aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+

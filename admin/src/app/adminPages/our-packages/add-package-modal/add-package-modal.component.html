@@ -1,0 +1,89 @@
+<!-- Toast Notification -->
+<div *ngIf="showToast" class="toast show position-fixed top-0 end-0 m-3" [ngClass]="toastClass" role="alert">
+    <div class="d-flex">
+        <div class="toast-body">
+            {{ toastMessage }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
+    </div>
+</div>
+
+<!-- Modal Body -->
+<div class="modal-header">
+    <h5 class="modal-title">
+        {{ mode === 'edit' ? 'Edit Package' : 'Add New Package' }}
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modalRef.dismiss()"></button>
+</div>
+
+<form [formGroup]="packageForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+    <div class="modal-body">
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Package Name</label>
+                <select class="form-select shadow-none rounded-1" id="name" formControlName="name">
+                    <option value="" disabled>Select a package name</option>
+                    <option *ngFor="let name of packageNames" [value]="name">{{ name }}</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control rounded-1 shadow-none" formControlName="title" placeholder="Enter package title">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Package Price (₹)</label>
+                <input type="number" class="form-control rounded-1 shadow-none" formControlName="price" placeholder="Enter price">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Package Image</label>
+                <input type="file" class="form-control rounded-1 shadow-none" accept="image/*" (change)="onFileChange($event)">
+                <!-- Image Preview -->
+                <div class="mb-3" *ngIf="imagePreview">
+                    <img [src]="imagePreview" class="img-thumbnail" alt="Preview" style="max-height: 200px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea rows="3" class="form-control rounded-1 shadow-none" formControlName="description" placeholder="Write something..."></textarea>
+        </div>
+
+        <!-- Hotel 1 -->
+        <div class="mb-3 row">
+            <div class="col-md-6">
+                <label class="form-label">Hotel 1</label>
+                <input type="text" class="form-control rounded-1 shadow-none" formControlName="hotel1" placeholder="Hotel 1 name">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Hotel 1 Price (₹)</label>
+                <input type="number" class="form-control rounded-1 shadow-none" formControlName="hotel1_price" placeholder="Price">
+            </div>
+        </div>
+
+        <!-- Hotel 2 -->
+        <div class="mb-3 row">
+            <div class="col-md-6">
+                <label class="form-label">Hotel 2</label>
+                <input type="text" class="form-control rounded-1 shadow-none" formControlName="hotel2" placeholder="Hotel 2 name">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Hotel 2 Price (₹)</label>
+                <input type="number" class="form-control rounded-1 shadow-none" formControlName="hotel2_price" placeholder="Price">
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-1" (click)="modalRef.dismiss()">Cancel</button>
+        <button type="submit" class="btn btn-primary rounded-1" [disabled]="isSubmitting">
+            {{ mode === 'edit' ? 'Update' : 'Create' }}
+        </button>
+    </div>
+</form>

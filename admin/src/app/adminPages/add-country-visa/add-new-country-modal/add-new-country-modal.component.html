@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Edit Visa' : 'Add New Visa' }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<form [formGroup]="visaForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label class="form-label">Country</label>
+            <input type="text" class="form-control rounded-1 shadow-none" formControlName="country" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Processing Time</label>
+            <input type="text" class="form-control rounded-1 shadow-none" formControlName="processing_time" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Starting From Price</label>
+            <input type="text" class="form-control rounded-1 shadow-none" formControlName="starting_from_price" />
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary rounded-1" (click)="activeModal.dismiss()">Cancel</button>
+        <button type="submit" class="btn btn-primary rounded-1" [disabled]="visaForm.invalid">
+            {{ isEditMode ? 'Update' : 'Add' }}
+        </button>
+    </div>
+</form>

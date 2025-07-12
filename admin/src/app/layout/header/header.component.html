@@ -1,0 +1,21 @@
+<header class="d-flex justify-content-between align-items-center p-2 border-bottom bg-light shadow-sm">
+    <button class="btn btn-outline-primary rounded-1" (click)="toggleSidebar.emit()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- header.component.html -->
+    <p class="mb-0 fw-bold d-none d-md-block">
+        {{ currentDateTime }}
+    </p>
+
+    <div class="d-sm-none">
+        <img src="assets/images/logo.png" width="100" alt="User Avatar">
+    </div>
+
+    <a routerLink="/login" (click)="onLogout()" class="d-flex align-items-center justify-content-center logout" placement="start" ngbTooltip="Logout">
+        <!-- <span class="me-2">Logout</span>
+        <i class="fas fa-sign-out-alt"></i> -->
+        <img src="assets/images/switch.png" width="40" alt="">
+    </a>
+
+</header>

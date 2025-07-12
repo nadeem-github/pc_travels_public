@@ -1,0 +1,24 @@
+.description {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; // show only 4 lines
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all 0.3s ease-in-out;
+
+    &.expanded {
+        -webkit-line-clamp: unset;
+        overflow: visible;
+        transition: all 0.3s ease-in-out;
+    }
+}
+
+.read-more-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.875rem;
+}
+
+.sliderImages{
+    height: 200px;
+}

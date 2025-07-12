@@ -1,0 +1,14 @@
+<!-- admin-layout.component.html -->
+<div class="admin-layout d-flex">
+    <app-side-bar [isOpen]="sidebarOpen"></app-side-bar>
+
+    <div class="main-content flex-grow-1 d-flex flex-column">
+        <app-header (toggleSidebar)="toggleSidebar()"></app-header>
+
+        <div class="content-area flex-grow-1 p-3">
+            <router-outlet></router-outlet>
+        </div>
+
+        <app-footer></app-footer>
+    </div>
+</div>

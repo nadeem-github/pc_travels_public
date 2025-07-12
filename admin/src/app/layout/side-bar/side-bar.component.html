@@ -1,0 +1,94 @@
+<div class="sidebar position-relative" [class.closed]="!isOpen">
+    <!-- Logo Section -->
+    <div class="logo d-flex align-items-center justify-content-center">
+        <img *ngIf="isOpen " src="assets/images/logoWhite.png" alt="Logo" class="openImg" />
+        <img *ngIf="!isOpen" src="assets/images/logoWhiteFavicon.png" alt="Logo" class="closeImg" />
+    </div>
+
+    <!-- Menu Section -->
+    <div class="borderDiv mx-auto"></div>
+    <ul class="menu mt-3 overflow-x-hidden overflow-y-auto">
+        <li>
+            <a routerLink="/dashboard" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-tachometer-alt" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Dashboard</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/topSlider" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-sliders-h" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Home Top Slider</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/blockHome" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-th-large" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Block Home</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/availableBlock" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-th-list" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Block Available</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/addCountryVisa" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fa-brands fa-cc-visa" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Add Country Visa</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/aboutUs" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-info-circle" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">About Us</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/parallaxHome" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-image" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Parallax Home</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/ourPackages" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-box-open" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Our Packages</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/transportation" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-bus" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Transportation</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/workVisa" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fas fa-passport" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Work Visa</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/usersEmail" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fa-solid fa-envelope-open-text" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Users Email</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/addAgent" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fa-solid fa-user-plus" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Add Your Agent</span>
+            </a>
+        </li>
+        <li>
+            <a routerLink="/addHotels" routerLinkActive="active" (click)="scrollToTop()" [ngClass]="{'closedIcon justify-content-center': !isOpen}">
+                <i class="fa-solid fa-hotel" [ngClass]="{'me-0': !isOpen}"></i>
+                <span *ngIf="isOpen">Add Hotels</span>
+            </a>
+        </li>
+    </ul>
+    <!-- <button routerLink="/login" (click)="onLogout()" class="btn btn-outline-danger d-flex align-items-center rounded-0 justify-content-center position-absolute bottom-0 end-0 start-0 border-0 mb-0 fw-bold py-3">
+        <span *ngIf="isOpen" class="me-2">Logout</span>
+        <i class="fas fa-sign-out-alt"></i>
+    </button> -->
+</div>

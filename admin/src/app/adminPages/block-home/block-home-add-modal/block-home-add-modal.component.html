@@ -1,0 +1,56 @@
+<div class="modal-header">
+    <h5 class="modal-title fw-bold">
+        {{ editMode ? 'Edit Block Content' : 'Add New Block Content' }}
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<form [formGroup]="blockHomeForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label for="title" class="form-label fw-semibold">Title</label>
+            <input class="form-control rounded-1 shadow-none" id="title" formControlName="title" placeholder="Enter title">
+        </div>
+        
+        <div class="mb-3">
+            <label for="description" class="form-label fw-semibold">Description</label>
+            <textarea class="form-control rounded-1 shadow-none" id="description" formControlName="description" rows="6" placeholder="Enter description"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="block_home_image" class="form-label fw-semibold">Block Image</label>
+            <input type="file" class="form-control rounded-1 shadow-none" id="block_home_image" (change)="onFileChange($event)" accept="image/*" />
+        </div>
+
+        <div *ngIf="previewImageUrl" class="text-center mb-3">
+            <img [src]="previewImageUrl" class="img-thumbnail" style="max-height: 200px;" />
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success rounded-1">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+            Save
+        </button>
+        <button type="button" class="btn btn-secondary rounded-1" (click)="activeModal.dismiss()">Cancel</button>
+    </div>
+</form>
+
+<!-- Toast -->
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 1055;" *ngIf="toastMessage">
+    <div class="toast show text-white bg-{{ toastType }} border-0">
+        <div class="d-flex">
+            <div class="toast-body">{{ toastMessage }}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastMessage = null"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Loader (Optional Overlay) -->
+<div *ngIf="isLoading"
+    class="position-absolute top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex align-items-center justify-content-center"
+    style="z-index: 1056;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>

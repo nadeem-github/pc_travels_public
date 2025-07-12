@@ -1,0 +1,71 @@
+<div class="modal-header">
+    <h5 class="modal-title fw-bold">
+        {{ mode === 'add' ? 'Add New Package Details' : 'Edit Package Details' }}
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="close()"></button>
+</div>
+
+<form [formGroup]="packageForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Title</label>
+                <input formControlName="title" class="form-control shadow-none rounded-1" placeholder="Enter title" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Price (INR)</label>
+                <input formControlName="price" type="text" class="form-control shadow-none rounded-1" placeholder="Enter price" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Days</label>
+                <input formControlName="days" type="text" class="form-control shadow-none rounded-1" placeholder="Enter days" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Departure Date</label>
+                <input formControlName="departure_date" type="date" class="form-control shadow-none rounded-1" />
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Departure Location</label>
+                <input formControlName="departure_location" class="form-control shadow-none rounded-1" placeholder="e.g. Mumbai 17:40 Jeddah 20:30" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Arrival Date</label>
+                <input formControlName="arrival_date" type="date" class="form-control shadow-none rounded-1" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Arrival Location</label>
+                <input formControlName="arrival_location" class="form-control shadow-none rounded-1" placeholder="e.g. Jeddah 21:30 Mumbai 05:10" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Airline</label>
+                <input formControlName="airline" class="form-control shadow-none rounded-1" placeholder="e.g. Direct Flight" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Makkah Hotel Distance</label>
+                <input formControlName="hotel_distance_1" class="form-control shadow-none rounded-1" placeholder="e.g. 1800 Meter" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Madinah Hotel Distance</label>
+                <input formControlName="hotel_distance_2" class="form-control shadow-none rounded-1" placeholder="e.g. 600 Meter" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Other Hotel Distance</label>
+                <input formControlName="hotel_distance_3" class="form-control shadow-none rounded-1" placeholder="e.g. 1000 Meter" />
+            </div>
+            <div class="col-md-12">
+                <label class="form-label">Description</label>
+                <textarea formControlName="description" rows="4" class="form-control shadow-none rounded-1" placeholder="Enter description"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-1" (click)="close()">Cancel</button>
+        <button type="submit" class="btn btn-primary rounded-1" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">
+                {{ mode === 'add' ? 'Create' : 'Update' }}
+            </span>
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm"></span>
+        </button>
+    </div>
+</form>

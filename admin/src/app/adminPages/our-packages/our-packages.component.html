@@ -1,0 +1,113 @@
+<section>
+    <div class="container">
+        <div class="card mb-4 rounded-1 shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-6 col-md-12 align-self-center text-center text-lg-start mb-3 mb-lg-0">
+                        <h3 class="mb-0 fw-bold themColor">Our Packages</h3>
+                    </div>
+                    <div class="col-xl-3 col-md-6 text-center text-sm-end mb-3 mb-sm-0">
+                        <button type="button" class="btn btn-info btn-lg rounded-1" [routerLink]="'/packageDetails'">
+                            <i class="fa-solid fa-plus"></i> Add Package Details
+                        </button>
+                    </div>
+                    <div class="col-xl-3 col-md-6 text-center text-sm-end">
+                        <button type="button" class="btn btn-primary themeButton btn-lg rounded-1" (click)="openAddModal()">
+                            <i class="fa-solid fa-plus"></i> Add New Package
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div *ngIf="isLoading" class="text-center my-4">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <div *ngIf="!isLoading && errorMessage" class="alert alert-danger">
+            {{ errorMessage }}
+        </div>
+
+        <div *ngIf="!isLoading && packages.length === 0" class="alert alert-info">
+            No packages found.
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4" *ngFor="let pack of packages">
+                <div class="card h-100 position-relative shadow-sm">
+                    <img [src]="imgBaseURL + pack.package_image || 'assets/images/defualtSlide.png'"
+                        class="card-img-top" alt="{{ pack.name }}" style="height: 200px; object-fit: cover;" />
+                    <p class="packageLable badge text-bg-primary position-absolute rounded-1 mb-0">{{ pack.name }}</p>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-2">{{ pack.title }}</h5>
+                        <p class="mb-2">
+                            <strong class="me-1">Package Price:</strong>
+                            {{ pack.price }}
+                        </p>
+                        <div *ngIf="pack.hotel1" class="alert alert-primary rounded-1 p-2 mb-2" role="alert">
+                            {{ pack.hotel1 }} 
+                            <!-- <span class="alert-link">(₹{{ pack.hotel1_price }})</span> -->
+                        </div>
+                        <div *ngIf="pack.hotel2" class="alert alert-primary rounded-1 p-2" role="alert">
+                            {{ pack.hotel2 }} 
+                            <!-- <span class="alert-link">(₹{{ pack.hotel2_price }})</span> -->
+                        </div>
+
+                        <p class="card-text description mb-0" [class.expanded]="isExpanded(pack.id)">
+                            {{ pack.description }}
+                        </p>
+                        
+                        <a class="read-more-link text-primary fw-bold" (click)="toggleReadMore(pack.id)" style="cursor: pointer;">
+                            {{ isExpanded(pack.id) ? 'Read Less' : 'Read More' }}
+                        </a>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-primary btn-sm rounded-1" (click)="editPackage(pack.id)">
+                            Edit <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-danger btn-sm rounded-1"
+                            (click)="openDeleteModal(pack.id, pack.name)">
+                            Delete <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<ng-template #confirmDeleteModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title text-danger">Confirm Delete</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+        Are you sure you want to delete <strong>{{ deleteName }}</strong> package?
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-1" (click)="modal.dismiss()">Cancel</button>
+        <button type="button" class="btn btn-danger rounded-1" (click)="confirmDelete(modal)">
+            Delete
+        </button>
+    </div>
+</ng-template>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1200;">
+    <ngb-toast *ngIf="showToast" [class.bg-success]="toastType === 'success'" [class.bg-danger]="toastType === 'danger'"
+        [header]="toastType === 'success' ? 'Success' : 'Error'" [autohide]="true" [delay]="3000"
+        (hidden)="showToast = false" class="text-white">
+        {{ toastMessage }}
+    </ngb-toast>
+</div>
+
+<div *ngIf="showToast" class="toast show position-fixed top-0 end-0 m-3" [ngClass]="toastClass" role="alert">
+    <div class="d-flex">
+        <div class="toast-body">
+            {{ toastMessage }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
+    </div>
+</div>

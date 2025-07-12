@@ -1,0 +1,95 @@
+<section>
+    <div class="container">
+        <div class="card mb-4 rounded-1 shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 align-self-center text-center text-md-start mb-3 mb-md-0">
+                        <h3 class="mb-0 fw-bold themColor">Add Agent</h3>
+                    </div>
+                    <div class="col-md-6 text-center text-sm-end">
+                        <button type="button" class="btn btn-primary themeButton btn-lg rounded-1" (click)="openAddModal()">
+                            <i class="fa-solid fa-plus"></i> Add New Agent
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isLoading" class="text-center my-4">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <div *ngIf="!isLoading && errorMessage" class="alert alert-danger text-center">
+            {{ errorMessage }}
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4" *ngFor="let pack of packages">
+                <div class="card shadow-sm rounded-4 h-100 position-relative">
+                    <div class="card-body">
+                        <div class="text-center mb-2">
+                            <img [src]="imgBaseURL + pack.agent_photo || 'assets/images/user.png'" class="rounded-2 img-thumbnail shadow-sm agentPhoto mb-2" alt="Agent Photo" />
+                            <!-- <img src="assets/images/user.png" class="agentPhoto mb-2" alt="Agent Photo" /> -->
+                            <h6 class="card-title fw-bold mb-1">{{ pack.agent_name }}</h6>
+                            <p class="text-muted mb-0">{{ pack.agent_area }}</p>
+                        </div>
+                        <p class="mb-1 text-muted">
+                            <i class="fa-solid fa-phone me-1"></i>
+                            {{ pack.agent_number }}
+                        </p>
+                        <p class="mb-1 text-muted">
+                            <i class="fa-solid fa-envelope me-1"></i>
+                            {{ pack.agent_email }}
+                        </p>
+                        <p class="mb-1 text-muted">
+                            <i class="fa-solid fa-location-dot me-1"></i>
+                            {{ pack.agent_address }}
+                        </p>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-between">
+                        <button class="btn btn-primary btn-sm rounded-1" (click)="editPackage(pack.id)">
+                            Edit <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-danger btn-sm rounded-1"
+                            (click)="openDeleteModal(pack.id, pack.agent_name)">
+                            Delete <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<ng-template #confirmDeleteModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title text-danger">Confirm Delete</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+        Are you sure you want to delete <strong>{{ deleteName }}</strong>?
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button class="btn btn-danger" (click)="confirmDelete(modal)">Yes, Delete</button>
+    </div>
+</ng-template>
+
+
+<ngb-toast *ngIf="showToast" [class]="toastClass" [autohide]="true" [delay]="3000" (hidden)="showToast = false"
+    class="position-fixed bottom-0 end-0 m-3 text-white">
+    {{ toastMessage }}
+</ngb-toast>
+
+
+<!-- <div *ngIf="showToast" class="toast show position-fixed top-0 end-0 m-3" [ngClass]="toastClass" role="alert">
+    <div class="d-flex">
+        <div class="toast-body">
+            {{ toastMessage }}
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showToast = false"></button>
+    </div>
+</div> -->

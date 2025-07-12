@@ -1,0 +1,244 @@
+<section>
+    <div class="container">
+        <div class="card mb-4 rounded-1 shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 align-self-center text-center text-md-start mb-3 mb-md-0">
+                        <h3 class="mb-0 fw-bold themColor">Available Block</h3>
+                    </div>
+                    <div class="col-md-6 text-center text-sm-end">
+                        <button type="button" class="btn btn-primary themeButton btn-lg rounded-1"
+                            (click)="openAddModal()">
+                            <i class="fa-solid fa-plus"></i> Add New Available Block
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="isLoading" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4 col-md-12 mb-4" *ngFor="let block of blockList">
+                <div class="card flight-card shadow-sm h-100">
+                    <div class="card-body">
+                        <!-- Airline Logo & Names -->
+                        <div class="d-flex mb-2">
+                            <div>
+                                <div *ngFor="let airline of [block.airline_image_1, block.airline_image_2, block.airline_image_3, block.airline_image_4]">
+                                    <img [src]="imgBaseURL + airline" *ngIf="airline" class="airline-logo me-3 mb-2" alt="Airline Logo" />
+                                </div>
+                            </div>
+                            <!-- <img [src]="imgBaseURL + block.airline_image_1" class="airline-logo me-3" alt="Airline Logo" /> -->
+                            <div>
+                                <p *ngFor="let airline of [block.airline_1, block.airline_2, block.airline_3, block.airline_4]" 
+                                    [ngClass]="{'d-none': !airline}" class="fw-bold text-dark airlineName d-flex align-items-center mb-2">
+                                    {{ airline }}
+                                </p>
+                            </div>
+                        </div>
+    
+                        <!-- Segment 1 (Always Show) -->
+                        <div class="segment-box p-3 rounded">
+                            <h6 class="fw-bold text-secondary mb-2">
+                                <i class="fas fa-plane-up me-2 text-primary"></i> Flight Segment 1
+                            </h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-calendar-alt me-1 text-primary"></i> Date:
+                                </div>
+                                <div class="fw-semibold small">
+                                    {{ block.from_date_1 | date: 'dd-MM-yyyy' }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane me-1 text-success"></i> Flight Number:
+                                </div>
+                                <div class="fw-semibold text-dark small">
+                                    {{ block.flight_number_1 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-departure me-1 text-info"></i> From:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.departure_1 }} - {{ block.departure_time_1 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-arrival me-1 text-danger"></i> To:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.destination_1 }} - {{ block.destination_time_1 }}
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Segment 2 (Only if data exists) -->
+                        <div class="segment-box p-3 rounded"
+                            *ngIf="block.flight_number_2 || block.departure_2 || block.destination_2">
+                            <h6 class="fw-bold text-secondary mb-2">
+                                <i class="fas fa-plane-up me-2 text-primary"></i> Flight Segment 2
+                            </h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-calendar-alt me-1 text-primary"></i> Date:
+                                </div>
+                                <div class="fw-semibold small">
+                                    {{ block.from_date_2 | date: 'dd-MM-yyyy' }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane me-1 text-success"></i> Flight Number:
+                                </div>
+                                <div class="fw-semibold text-dark small">
+                                    {{ block.flight_number_2 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-departure me-1 text-info"></i> From:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.departure_2 }} - {{ block.departure_time_2 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-arrival me-1 text-danger"></i> To:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.destination_2 }} - {{ block.destination_time_2 }}
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Segment 3 (Only if data exists) -->
+                        <div class="segment-box p-3 rounded"
+                            *ngIf="block.flight_number_3 || block.departure_3 || block.destination_3">
+                            <h6 class="fw-bold text-secondary mb-2">
+                                <i class="fas fa-plane-up me-2 text-primary"></i> Flight Segment 3
+                            </h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-calendar-alt me-1 text-primary"></i> Date:
+                                </div>
+                                <div class="fw-semibold small">
+                                    {{ block.from_date_3 | date: 'dd-MM-yyyy' }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane me-1 text-success"></i> Flight Number:
+                                </div>
+                                <div class="fw-semibold text-dark small">
+                                    {{ block.flight_number_3 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-departure me-1 text-info"></i> From:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.departure_3 }} - {{ block.departure_time_3 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-arrival me-1 text-danger"></i> To:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.destination_3 }} - {{ block.destination_time_3 }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Segment 4 (Only if data exists) -->
+                        <div class="segment-box p-3 rounded"
+                            *ngIf="block.flight_number_4 || block.departure_4 || block.destination_4">
+                            <h6 class="fw-bold text-secondary mb-2">
+                                <i class="fas fa-plane-up me-2 text-primary"></i> Flight Segment 4
+                            </h6>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-calendar-alt me-1 text-primary"></i> Date:
+                                </div>
+                                <div class="fw-semibold small">
+                                    {{ block.from_date_4 | date: 'dd-MM-yyyy' }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane me-1 text-success"></i> Flight Number:
+                                </div>
+                                <div class="fw-semibold text-dark small">
+                                    {{ block.flight_number_4 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-departure me-1 text-info"></i> From:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.departure_4 }} - {{ block.departure_time_4 }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="text-muted small me-1">
+                                    <i class="fas fa-plane-arrival me-1 text-danger"></i> To:
+                                </div>
+                                <div class="small text-muted">
+                                    {{ block.destination_4 }} - {{ block.destination_time_4 }}
+                                </div>
+                            </div>
+                        </div>
+    
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <button class="btn btn-primary btn-sm" (click)="openEditModal(block)">
+                            <i class="fa-solid fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm" (click)="openDeleteModal(block)">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isLoading && blockList.length === 0" class="alert alert-info text-center">
+            No Blocks Available.
+        </div>
+    </div>
+</section>
+
+<!-- Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;" *ngIf="toastMessage">
+    <div class="toast show text-white bg-{{ toastType }} border-0">
+        <div class="d-flex">
+            <div class="toast-body">{{ toastMessage }}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastMessage = null"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<ng-template #deleteModal let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Confirm Deletion</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want to delete this available block?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete(modal)">Yes, Delete</button>
+    </div>
+</ng-template>

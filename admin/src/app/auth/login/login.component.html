@@ -1,0 +1,45 @@
+<div class="login-wrapper d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-5 col-sm-12 mx-auto">
+                <div class="text-center mb-4">
+                    <img src="assets/images/logoWhite.png" width="250" alt="Logo" />
+                </div>
+                <div class="login-box bg-white p-4 shadow rounded">
+                    <h2 class="text-center mb-4">Admin Login</h2>
+
+                    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" id="username" formControlName="username" class="form-control rounded-1 shadow-none" placeholder="Enter username" [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" />
+                        </div>
+
+                        <div class="mb-4 position-relative">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group flex-nowrap">
+                                <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" class="form-control rounded-start-1 shadow-none"
+                                    placeholder="Enter password"
+                                    [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
+                                <span class="input-group-text rounded-end-1" id="addon-wrapping">
+                                    <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" (click)="togglePassword()"></i>
+                                </span>
+                            </div>
+                            <div class="invalid-feedback" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+                                Password is required
+                            </div>                            
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-1 mt-2" [disabled]="loading || loginForm.invalid">
+                            {{ loading ? 'Logging in...' : 'Login' }}
+                        </button>
+                    </form>
+                    <!-- ng-bootstrap Toast -->
+                    <ngb-toast *ngIf="showToast" class="bg-danger text-white position-fixed bottom-0 end-0 m-3 shadow" [autohide]="false"
+                        [delay]="4000" (hidden)="showToast = false">
+                        {{ toastMessage }}
+                    </ngb-toast>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

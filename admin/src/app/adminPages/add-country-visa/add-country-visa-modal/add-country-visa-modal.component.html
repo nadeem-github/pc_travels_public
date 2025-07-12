@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ isEditMode ? 'Edit Visa' : 'Add New Visa' }} {{ country }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+
+<form [formGroup]="visaForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6 mb-3" *ngFor="let field of visaFields">
+                <label class="form-label text-capitalize">{{ field.replace('_', ' ') }}</label>
+                <input type="text" class="form-control rounded-1 shadow-none" [formControlName]="field" [readonly]="field === 'country' && !isEditMode" />
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary rounded-1"
+            (click)="activeModal.dismiss()">Cancel</button>
+        <button type="submit" class="btn btn-primary rounded-1" [disabled]="visaForm.invalid">
+            {{ isEditMode ? 'Update' : 'Add' }}
+        </button>
+    </div>
+</form>
