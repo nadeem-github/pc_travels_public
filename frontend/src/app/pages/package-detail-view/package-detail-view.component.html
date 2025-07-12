@@ -1,0 +1,268 @@
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center fw-bold">
+            Package Details
+        </h2>
+        <h5 class="text-center fw-bold text-muted mb-4">Itinerary</h5>
+        <!-- Loader -->
+        <div *ngIf="isLoading" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="row" *ngIf="!isLoading && packageList.length > 0">
+            <!-- Packages Grid -->
+            <div class="col-lg-4 mb-4" *ngFor="let pkg of packageList">
+                <div class="pricing-box rounded-5 position-relative pt-5 pb-3 px-4 border bg-light h-100">
+                    <img src="assets/images/airplane.png" width="80" alt="Icon Airplane"
+                        class="position-absolute top-0 end-0 mt-3 me-3 opacity-50">
+                    <h4 class="fw-bold colorTheme">{{ pkg.title }}</h4>
+                    <div class="pricing-plan d-flex align-items-center my-4">
+                        <h4 class="colorTheme fw-bold">
+                            <span class="plan pe-2">INR {{ pkg.price }}/-</span>
+                        </h4>
+                        <p class="text-muted mb-0">For {{ pkg.days }} Days</p>
+                    </div>
+                    <div class="lh-lg mb-4">
+                        <p class="mb-2">
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            <b>Departure Date</b> - <span>{{ pkg.departure_date | date: 'd MMM y' }}</span>
+                        </p>
+                        <p class="mb-2">
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            {{ pkg.departure_location }}
+                        </p>
+                        <p class="mb-2">
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            <b>Arrival Date</b> - <span>{{ pkg.arrival_date | date: 'd MMM y' }}</span>
+                        </p>
+                        <p class="mb-2">
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            {{ pkg.arrival_location }}
+                        </p>
+                        <p class="mb-2">
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            <b>Airline –</b> {{ pkg.airline }}
+                        </p>
+                        <p class="mb-2" *ngIf="pkg.hotel_distance_1">
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            <b>Makkah Hotel Distance</b> - {{ pkg.hotel_distance_1 }}
+                        </p>
+                        <p class="mb-2" *ngIf="pkg.hotel_distance_2">
+                            <i class="fa-solid fa-circle-check text-success me-2"></i>
+                            <b>Madinah Hotel Distance</b> - {{ pkg.hotel_distance_2 }}
+                        </p>
+                    </div>
+
+                    <div *ngIf="pkg.description">
+                        <h6 class="mb-2 fw-bold text-muted">Description</h6>
+                        <p class="text-muted mb-0">
+                            {{ pkg.description }}
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!-- No Data Found -->
+        <div *ngIf="!isLoading && packageList.length === 0" class="text-center text-muted my-5">
+            No package details found.
+        </div>
+
+        
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-4">Package Includes</h2>
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-7 g-4 justify-content-center mb-5">
+            <div class="col" *ngFor="let item of packageDetails">
+                <div class="card h-100 text-center shadow-sm">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div
+                            class="rounded-circle border shadow-sm d-flex align-items-center justify-content-center iconDiv mb-3">
+                            <i class="fas {{item.icon}} fa-2x colorTheme"></i>
+                        </div>
+                        <h6 class="card-title fw-semibold">{{item.title}}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <h4 class="text-center fw-bold mb-4">Documents Required</h4>
+        
+        <div class="row row-cols-2 row-cols-md-4 row-cols-lg-7 g-4 justify-content-center mb-5">
+            <div class="col" *ngFor="let item of documentsRequired">
+                <div class="card h-100 text-center shadow-sm border-0">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <div
+                            class="rounded-2 border shadow-sm d-flex align-items-center justify-content-center iconDiv mb-3">
+                            <i class="fas {{item.icon}} fa-2x colorTheme"></i>
+                        </div>
+                        <h6 class="card-title fw-semibold">{{item.title}}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="card shadow-sm mb-5 border-0">
+            <div class="card-header bg-light border-bottom-0">
+                <h5 class="fw-bold mb-0">Conditions of booking</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">
+                    PC Travels is a Travel & Tour operators only, we do not control any Airline, Nor do we control any
+                    Government, Hotel, Transport, or any other service mentioned in the brochure / pamphlet, as they are
+                    Independently operating agencies. But we take care in selecting the necessary ingredients required
+                    for
+                    conducting the Tour keeping in mind your benefit & comfort. And just because we select them &
+                    inspect them
+                    we cannot be responsible for any Delay or Improper services provided by these Independent agencies.
+                    Also in
+                    case of Injury, Death or Loss / Damage which is caused by the act or default of the management or
+                    employees
+                    of any Hotelier, Airlines, Coach Operator Company who are independent contractors arising outside
+                    our normal
+                    selection and inspection process. We are not responsible for the delayed / deficient services if any
+                    granted
+                    by them or / any act or actions of co-travelers which may result in availing the following and / or
+                    other
+                    services on the Tour.
+                </p>
+            </div>
+            <div class="card-footer bg-light border-top-0">
+                <h5 class="fw-bold mb-0"> Conditions of travel</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">
+                    The Tour Participant will have to strictly follow the Tour program and return to India as per the
+                    validity of the Tour. Strict Action will be taken against any person overstaying his VISA and not
+                    returning to India as per the tour program.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <h4 class="text-center fw-bold mb-4">Important Terms & Conditions:</h4>
+        <ngb-accordion #acc="ngbAccordion" activeIds="panel-0">
+            <ngb-panel id="panel-0">
+                <ng-template ngbPanelTitle>
+                    <span class="fw-bold">LAUNDRY</span>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                    <ol class="lh-lg">
+                        <li>Laundry service will be provided 2 times in Makka and 2 times in Madina.</li>
+                        <li>We will not be responsible for Damage and Lost clothes.</li>
+                        <li>Please do not give your very Expensive and New Clothes for Laundry.</li>
+                        <li>Please inform your guest not to give their Undergarments, Curtains, Bedsheets and Pillow
+                            covers of hotel In laundry.</li>
+                        <li>No Laundry will be provided 3 Days Before Eid and 3 Days After Eid.</li>
+                    </ol>
+                </ng-template>
+            </ngb-panel>
+            <ngb-panel id="panel-1">
+                <ng-template ngbPanelTitle>
+                    <span class="fw-bold">ZIYARATS</span>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                    <ol class="lh-lg">
+                        <li>Makka Ziyarats and Madina Ziyarats will be provided in Sharing Bus.</li>
+                        <li>Timings for Ziarats will be informed to guests 24 hrs prior and if Guests are not present on
+                            mentioned timings Guest will have to manage their own Ziarats.</li>
+                    </ol>
+                </ng-template>
+            </ngb-panel>
+            <ngb-panel id="panel-2">
+                <ng-template ngbPanelTitle>
+                    <span class="fw-bold">ZAMZAM</span>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                    <ol class="lh-lg">
+                        <li>ZAMZAM Cans are provided as a Complimentary Return Gift to the Guest on their Return from
+                            Saudi Airport.</li>
+                        <li>Providing Zamzam Stock on airport is responsibility of Saudi government and we cannot be
+                            held responsible if there is shortage of zamzam on airport or zamzam counters are closed on
+                            airport.</li>
+                        <li>We cannot be held responsible if Zamzam Counters are closed on Airport or if Zamzam is Not
+                            Available.</li>
+                        <li>All Guests are supposed to arrange for their own Zamzam stock if they wanna be double sure.
+                        </li>
+                    </ol>
+                </ng-template>
+            </ngb-panel>
+            <ngb-panel id="panel-3">
+                <ng-template ngbPanelTitle>
+                    <span class="fw-bold">OTHER TRAVEL CONDITIONS</span>
+                </ng-template>
+                <ng-template ngbPanelContent>
+                    <ol class="lh-lg">
+                        <li>Any increase in Air Ticket or Saudi Riyal will have to be paid before departure.</li>
+                        <li><b>Satisfaction of the pilgrim is our prime consideration</b> any claim or complaint by the
+                            client must be intimated to PC Travels in proper format. In the very unlikely event of there
+                            being something not to your satisfaction on the pilgrimage that is directly under our
+                            control, it should be reported immediately so that there is an opportunity to correct /
+                            rectify the same. The Tour Operator shall not accept liability in respect of claims which
+                            are not reported to us immediately.</li>
+                        <li><b>Room Allotment</b> as per our arrangement, No Choice of room will be entertained.</li>
+                        <li>Personal food demands will not be entertained. Special food for Infants, Old Age people or
+                            Medical patients will have to be arranged by Guest himself.</li>
+                        <li class="fw-bold">Friends and Relatives of Guests are not allowed to Eat or Stay in our
+                            Hotels. Especially Iqaama Holders will not be allowed within our Hotel Premises.</li>
+                        <li>Excess baggage fees to be paid by Pilgrim.</li>
+                        <li><b>PC Travels accepts no responsibility</b> for Luggage Losses, Money Loss, Injuries,
+                            Damages, Accidents and Additional Expenses due to any reason for example delay of flights,
+                            Misconnection, Sickness, Bad Weather, Strike, War, Transport breakdown or the closure of
+                            Airport. You are sole responsible for your luggage and belongings be it at Airport or Hotel
+                            premises.</li>
+                        <li><b>PC Travels will not be responsible if the pilgrim misses his flight</b> due to any reason
+                            and in such case the passenger will have to bear the cost of rescheduling in case the ticket
+                            can be rescheduled or else if the ticket is Non Refundable no refund will be made at all. If
+                            during the period of rescheduling the Umrah Visa Expires New Visa fees has to be paid by
+                            Pilgrim.</li>
+                        <li><b>Laundry services:</b> PC Travels shall not be responsible for any Loss, Delay, and Fading
+                            of color, Stains of any type or Shrinking of clothes by the Laundry service provider.
+                            Laundry is Complimentary service.</li>
+                        <li><b>Due to unavoidable circumstances</b> changes and alterations in the package have to be
+                            made regarding Hotel, Bus, Staying period or change of flight. PC Travels Reserves the Right
+                            to make alterations which pilgrim has to accept and for which no refund shall be made nor
+                            any claim shall be entertained.</li>
+                        <li><b>After entering into Saudi Arabia</b> no pilgrim of PC Travels shall be allowed to give up
+                            his/her companionship with his/her group. He/she will have to travel with the group and will
+                            not be allowed under any circumstances to leave the group. Nobody will be allowed to Travel
+                            outside the tour plan without permission</li>
+                        <li><b>Partly utilized services are also considered as fully utilized.</b> In such circumstances
+                            no refund shall be applicable.</li>
+                        <li>For all claims, disputes of whatever nature relating to the tours Marketed / Coordinated by
+                            PC Travels the Courts in Mumbai shall alone have jurisdiction.</li>
+                        <li><b>Handicap passengers are requested to carry their own Wheelchair.</b> Special requests
+                            (Pregnant or Handicapped) if any please inform us before departure without fail.</li>
+                        <li>All payments should be cleared Two Weeks before departure. Visa stamping is subject to
+                            approval by Saudi Embassy. PC Travels will not be responsible for any Delay, Rejection or
+                            Mistake by Saudi Embassy.</li>
+                        <li>Visa stamping fees is Non Refundable.</li>
+                        <li><b>Any person using Foul language or Bad Words or trying to create nuisance and fight in the
+                                group will</b> be immediately removed from the group and will be left on his own.</li>
+                        <li>Zamzam, Laundry and Saudi Sim Card are complimentary services.</li>
+                        <li>Under unforeseen circumstances Hotel Names mentioned on Brochures can change and Similar
+                            Hotels may be provided to the Guests.</li>
+                        <li>Terms & Conditions / Package prices / Airfare are subject to change without any prior
+                            notice.</li>
+                    </ol>
+                </ng-template>
+            </ngb-panel>
+        </ngb-accordion>
+    </div>
+</section>

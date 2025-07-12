@@ -1,0 +1,132 @@
+section {
+    border-top: solid 4px #174a7f;
+    border-bottom: solid 4px #174a7f;
+    margin: 0;
+    padding: 0;
+}
+
+.accordion {
+    width: 100%;
+    height: 70vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.35);
+
+    ul {
+        display: flex;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        height: 100%;
+        width: 100%;
+
+        li {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            transition: flex 0.5s ease;
+            border-left: 1px solid #888;
+            box-shadow: 0 0 25px 10px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+
+            &:hover {
+                flex: 8;
+            }
+
+            img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                pointer-events: none;
+                user-select: none;
+                z-index: 0;
+                position: relative;
+            }
+
+            .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                background: rgba(23, 74, 127, 0.5); // blue overlay
+                transition: opacity 0.3s ease;
+                z-index: 1;
+                pointer-events: none;
+            }
+
+            &:hover .overlay {
+                opacity: 0;
+            }
+
+            .image_title {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                padding: 10px 20px;
+                box-sizing: border-box;
+                z-index: 2;
+                color: white;
+            }
+        }
+
+        // Shrink other items when hovering on UL
+        &:hover li {
+            flex: 0.5;
+        }
+
+        // Expand hovered item
+        li:hover {
+            flex: 8;
+        }
+    }
+
+    // Mobile responsive
+    @media (max-width: 768px) {
+        ul {
+            flex-direction: column;
+
+            li {
+                width: 100%;
+                height: 10vh;
+
+                &:hover {
+                    height: 80vh;
+                }
+
+                .image_title {
+                    font-size: 1rem;
+                }
+            }
+
+            &:hover li {
+                height: 5vh;
+            }
+        }
+    }
+}
+
+.slideImgResponsive{
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+    position: relative;
+}
+
+.carousel-caption{
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}

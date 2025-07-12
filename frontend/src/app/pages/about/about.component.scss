@@ -1,0 +1,23 @@
+.workDesk {
+    height: 50vh;
+
+    @media (max-width: 500px) {
+        height: 30vh;
+    }
+}
+
+.workDesk2 {
+    height: 40vh;
+
+    @media (max-width: 500px) {
+        height: 30vh;
+    }
+}
+
+.workDesk3 {
+    height: 40vh;
+
+    @media (max-width: 500px) {
+        height: 30vh;
+    }
+}

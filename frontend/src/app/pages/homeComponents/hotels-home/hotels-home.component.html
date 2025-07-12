@@ -1,0 +1,45 @@
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="fw-bold mb-5 text-center">Our Selected Hotels</h2>
+        <!-- Loader -->
+        <div *ngIf="loading" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
+
+        <ng-container *ngIf="!loading">
+            <div class="row">
+                <div class="col-md-3 mb-4" *ngFor="let hotel of hotelList | slice:0:4;">
+                    <div class="card shadow-sm h-100 position-relative overflow-auto">
+
+                        <!-- ng-bootstrap image carousel -->
+                        <ngb-carousel *ngIf="getHotelImages(hotel).length > 0" [interval]="3000" [wrap]="true"
+                            [showNavigationIndicators]="false" [pauseOnHover]="true">
+                            <ng-template ngbSlide *ngFor="let image of getHotelImages(hotel)">
+                                <img [src]="image" class="d-block w-100 sliderImages" alt="{{ hotel.name }}" />
+                            </ng-template>
+                        </ngb-carousel>
+
+                        <div class="card-body">
+                            <h5 class="card-title">{{ hotel.name }}</h5>
+                            <p class="fw-semibold">Rupees {{ hotel.price }}</p>
+
+                            <p class="card-text description mb-0" [class.expanded]="isExpanded(hotel.id)">
+                                {{ hotel.description }}
+                            </p>
+
+                            <a class="read-more-link text-primary fw-bold" (click)="toggleReadMore(hotel.id)"
+                                style="cursor: pointer;">
+                                {{ isExpanded(hotel.id) ? 'Read Less' : 'Read More' }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="text-center py-2 py-sm-4">
+            <button class="btn btn-primary themeButton rounded-1 shadow py-sm-3 px-sm-4" (click)="scrollToTop();" [routerLink]="'/hotels'">
+                Click here to view all Hotels
+            </button>
+        </div>
+    </div>
+</section>

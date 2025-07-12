@@ -1,0 +1,82 @@
+<section class="py-3 border-bottom mainBG top-bar-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+                <div class=" d-flex align-items-center justify-content-center justify-content-md-start">
+                    <a href="tel:+91 98269 53206" class="text-white d-flex align-items-center text-decoration-none callTop">
+                        <i class="fa-solid fa-phone me-2 text-white"></i>
+                        <span class="fw-semibold text-white">+91 98269 53206</span>
+                    </a>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class=" d-flex align-items-center justify-content-center justify-content-md-end">
+                    <a href="https://www.facebook.com/pctravlesonline" target="_blank" class="text-white me-3 me-sm-2 me-sm-4 social-icon" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://wa.me/919826953206" target="_blank" class="text-white me-3 me-sm-2 me-sm-4 social-icon" title="Whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="text-white me-3 me-sm-2 me-sm-4 social-icon" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://t.me/pc_travels" target="_blank" class="text-white me-3 me-sm-2 me-sm-4 social-icon" title="Telegram">
+                        <i class="fa-brands fa-telegram"></i>
+                    </a>
+                    <a href="mailto:pctravelsonline@gmail.com" class="text-white me-3 me-sm-2 me-sm-4 social-icon" title="Email">
+                        <i class="fa-solid fa-envelope"></i>
+                    </a>
+                    <!-- <button class="btn btn-light ms-2 rounded-1 shadow-sm">Contact Us</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="sticky-top shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary py-2">
+        <div class="container">
+            <a class="navbar-brand" [routerLink]="'home'" (click)="isMenuCollapsed = true; scrollToTop();">
+                <img src="assets/images/logo.png" class="img-fluid" width="150" alt="">
+            </a>
+            <button class="navbar-toggler rounded-1 shadow-sm" type="button" (click)="isMenuCollapsed = !isMenuCollapsed">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div [ngbCollapse]="isMenuCollapsed" class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link py-2 p-sm-3 fw-semibold" [routerLink]="'home'" (click)="isMenuCollapsed = true; scrollToTop();">Home</a>
+                    </li>
+                    <li class="nav-item servicesDropdown" [class.open]="isMobileMenuOpen">
+                        <a class="nav-link py-2 p-sm-3 fw-semibold cPointer" (click)="toggleMobileDropdown()">
+                            Services <i class="fa-solid fa-chevron-down ms-1"></i>
+                        </a>
+                        <ul class="servicesDropdownMenu">
+                            <li>
+                                <a class="dropdown-item" [routerLink]="'services'"
+                                    (click)="isMenuCollapsed = true; scrollToTop(); isMobileMenuOpen = false">
+                                    Packages <i class="fa-solid fa-angle-right"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" [routerLink]="'visa'"
+                                    (click)="isMenuCollapsed = true; scrollToTop(); isMobileMenuOpen = false">
+                                    Visa <i class="fa-solid fa-angle-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link py-2 p-sm-3 fw-semibold" [routerLink]="'visa'" (click)="isMenuCollapsed = true; scrollToTop();">Visa</a>
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link py-2 p-sm-3 fw-semibold" [routerLink]="'about'" (click)="isMenuCollapsed = true; scrollToTop();">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-2 p-sm-3 fw-semibold" [routerLink]="'contact'" (click)="isMenuCollapsed = true; scrollToTop();">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</section>

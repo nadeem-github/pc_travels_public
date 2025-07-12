@@ -1,0 +1,69 @@
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="fw-bold mb-5 text-center">Umrah Packages</h2>
+        <div class="row">
+            <div class="col-md-3 mb-4" *ngFor="let pack of packages">
+                <div class="card h-100 position-relative shadow">
+                    <img [src]="imgBaseURL + pack.package_image || 'assets/images/defualtSlide.png'"
+                        class="card-img-top" alt="{{ pack.name }}" style="height: 200px; object-fit: cover;" />
+                    <p class="packageLable badge text-bg-primary position-absolute rounded-1 mb-0">{{ pack.name }}</p>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-2">{{ pack.title }}</h5>
+                        <p class="mb-2">
+                            <strong class="me-1">Package Price:</strong>
+                            {{ pack.price }}
+                        </p>
+                        <div *ngIf="pack.hotel1" class="alert alert-primary rounded-1 p-2 mb-2" role="alert">
+                            {{ pack.hotel1 }} 
+                            <!-- <span class="alert-link">{{ pack.hotel1_price }}</span> -->
+                        </div>
+                        <div *ngIf="pack.hotel2" class="alert alert-primary rounded-1 p-2" role="alert">
+                            {{ pack.hotel2 }} 
+                            <!-- <span class="alert-link">{{ pack.hotel2_price }}</span> -->
+                        </div>
+
+                        <p class="card-text description mb-0" [class.expanded]="isExpanded(pack.id)">
+                            {{ pack.description }}
+                        </p>
+
+                        <a class="read-more-link text-primary fw-bold" (click)="toggleReadMore(pack.id)"
+                            style="cursor: pointer;">
+                            {{ isExpanded(pack.id) ? 'Read Less' : 'Read More' }}
+                        </a>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between py-3">
+                        <a href="https://wa.me/919826953206" target="_blank" class="btn btn-primary btn-sm rounded-1 w-50 themeButton shadow me-3">
+                            Book Now
+                        </a>
+                    
+                        <button type="button" class="btn btn-info btn-sm rounded-1 w-50 shadow" [routerLink]="'/packageDetails'" (click)="scrollToTop();">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 position-relative shadow">
+                    <img src="assets/images/customTours.jpg" class="card-img-top" alt="Customize Image" style="height: 200px; object-fit: cover;" />
+                    <p class="packageLable badge text-bg-primary position-absolute rounded-1 mb-0">Customize Packages</p>
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-2">Customize Packages <br> (as per your requirement)</h5>
+                        <p class="card-text mb-0" style="font-size: 15px;">
+                            Plan your pilgrimage your way with our customizable tour packages. Choose your preferred travel dates, hotels, transport options, and even add more holy sites to your itinerary. We design flexible and personalized travel plans that match your needs, budget, and spiritual goals. Just let us know your preferences, and we’ll take care of the rest.
+                        </p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between py-3">
+                        <a href="https://wa.me/919826953206" target="_blank" class="btn btn-primary btn-sm rounded-1 w-100 themeButton shadow">
+                            Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-2 py-sm-4">
+            <button class="btn btn-primary themeButton rounded-1 shadow py-sm-3 px-sm-4" (click)="scrollToTop();" [routerLink]="'/services'">
+                Click here to view all packages
+            </button>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,40 @@
+.single_address {
+    i {
+        background: var(--primary-color);
+        color: #ffffff;
+        border-radius: 30px;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        -webkit-box-shadow: 0 5px 30px 0 rgba(0, 0, 0, 0.1);
+        box-shadow: 0 5px 30px 0 rgba(0, 0, 0, 0.1);
+        -webkit-transition: all 0.3s ease 0s;
+        -o-transition: all 0.3s ease 0s;
+        transition: all 0.3s ease 0s;
+    }
+}
+
+.single_address h4 {
+    font-size: 18px;
+    margin-bottom: 0px;
+    overflow: hidden;
+    font-weight: 600;
+}
+
+.single_address p {
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.getInTouch{
+    width: 30%;
+    height: 5px;
+    background-color: var(--primary-color);
+    margin: 0 auto 20px auto;
+    border-radius: 5px;}
+
+.agentPhoto{
+    width: 120px;
+    height: 120px;
+}

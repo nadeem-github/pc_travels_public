@@ -1,0 +1,127 @@
+<section class="py-5 bg-primary-subtle">
+    <div class="container">
+        <!-- Header -->
+        <div class="text-center mb-4 mb-sm-5">
+            <h2 class="fw-bold colorTheme">Visa Services</h2>
+            <p>We offer a wide range of visa services to help you travel hassle-free.</p>
+        </div>
+
+        <!-- Country Dropdown (Reactive Form with Search) -->
+        <form [formGroup]="visaForm">
+            <div class="row mb-4">
+                <div class="col-md-6 offset-md-3">
+                    <div class="input-group shadow-sm mb-3">
+                        <span class="input-group-text" id="basic-addon1">
+                            <img src="assets/images/search.png" width="40" alt="">
+                        </span>
+                        <input type="text" class="form-control form-control-lg rounded-start-0 rounded-end-1 shadow-none" id="countrySelect"
+                            formControlName="country" [ngbTypeahead]="search" [resultFormatter]="formatter" [inputFormatter]="formatter"
+                            placeholder="Search or Select Country" [focusFirst]="false" [editable]="false">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Visa Info Display -->
+        <ng-container *ngIf="visaData">
+            <div class="row mb-2">
+                <!-- Basic Visa Info -->
+                <div class="col-md-4">
+                    <h4 class="colorTheme">Basic Visa Info</h4>
+                    <h3 class="mb-4">
+                        <strong>Country:</strong> {{ visaData.country }} Visa
+                    </h3>
+                    <div class="row">
+                        <div class="col-md-6 col-6">
+                            <p class="mb-1 text-muted">Processing Time:</p>
+                            <p class="fw-bold">{{ visaData.processing_time }} days</p>
+                        </div>
+                        <div class="col-md-6 col-6">
+                            <p class="mb-1 text-muted">Starting From:</p>
+                            <p class="fw-bold">₹{{ visaData.starting_from_price }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Visa Types -->
+                <div class="col-md-4 mb-4" *ngFor="let type of visaTypes">
+                    <div class="card rounded-1 shadow-sm h-100">
+                        <div class="card-header">
+                            <h5 class="colorTheme fw-semibold mb-0">{{ type.visa_type }} Visa</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="visaDetails">
+                                <div class="visaType">
+                                    <div class="d-block d-sm-flex flex-column flex-md-row justify-content-between mb-3">
+                                        <p class="mb-0 text-muted">Processing Time:</p>
+                                        <p class="fw-bold mb-0">{{ type.processing_time }} days</p>
+                                    </div>
+                                    <div class="d-block d-sm-flex flex-column flex-md-row justify-content-between mb-3">
+                                        <p class="mb-0 text-muted">Stay Period:</p>
+                                        <p class="fw-bold mb-0">{{ type.stay_period }} days</p>
+                                    </div>
+                                </div>
+                                <div class="visaType">
+                                    <div class="d-block d-sm-flex flex-column flex-md-row justify-content-between mb-3">
+                                        <p class="mb-0 text-muted">Validity:</p>
+                                        <p class="fw-bold mb-0">{{ type.validity }} days</p>
+                                    </div>
+                                    <div class="d-block d-sm-flex flex-column flex-md-row justify-content-between mb-3">
+                                        <p class="mb-0 text-muted">Entry:</p>
+                                        <p class="fw-bold mb-0">{{ type.entry }}</p>
+                                    </div>
+                                </div>
+                                <div class="visaType">
+                                    <div class="d-block d-sm-flex flex-column flex-md-row justify-content-between">
+                                        <p class="mb-0 text-muted">Fees:</p>
+                                        <p class="fw-bold mb-0">₹{{ type.fees }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visa Documents -->
+                <div class="col-md-12" *ngIf="visaDocument">
+                    <h4 class="colorTheme">Required Documents for {{ visaData.country }} visa</h4>
+                    <div ngbAccordion class="rounded-1 shadow-sm">
+                        <div ngbAccordionItem [collapsed]="false">
+                            <h2 ngbAccordionHeader class="bgTheme rounded-top-1">
+                                <button ngbAccordionButton *ngIf="visaDocument?.visa_document" ngbAccordionButton class="bg-transparent text-white w-100 text-start rounded-2 border-0 shadow-none">
+                                    <strong>
+                                        {{ visaDocument.visa_document }} - {{ visaData.country }}
+                                    </strong>
+                                </button>
+                            </h2>
+                            <div ngbAccordionCollapse>
+                                <div ngbAccordionBody>
+                                    <ng-template>
+                                        <div *ngIf="documentList.length > 0">
+                                            <ol>
+                                                <li class="pb-2 border-bottom mb-2" *ngFor="let doc of documentList">
+                                                    {{ doc }}
+                                                </li>
+                                            </ol>
+                                        </div>
+                                        <div class="mt-3" *ngIf="visaDocument?.notes || visaDocument?.description">
+                                            <p *ngIf="visaDocument?.notes">
+                                                <strong>Notes:</strong> {{ visaDocument.notes }}
+                                            </p>
+                                            <p *ngIf="visaDocument?.description">
+                                                <strong>Description:</strong>
+                                                {{ visaDocument.description }}
+                                            </p>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</section>
