@@ -1,6 +1,5 @@
 {
     "test": {
-        "SENDGRID_API_KEY": "",
         "SENDGRID_EMAIL_ID": "medxdev2022@gmail.com",
         "BASE_URL": "http://100.119.154.54:8002",
         "REQ_BASE_URL": "http://100.119.154.54:3000",
@@ -11,7 +10,6 @@
         "ADMIN_BASE_URL": "http://admin.medxdev.online/login"
     },
     "development": {
-        "SENDGRID_API_KEY": "",
         "SENDGRID_EMAIL_ID": "medxdev2022@gmail.com",
         "BASE_URL": "http://100.119.154.54:8002",
         "REQ_BASE_URL": "http://100.119.154.54:3000",
@@ -22,7 +20,6 @@
         "ADMIN_BASE_URL": "http://admin.medxdev.online/login"
     },
     "production": {
-        "SENDGRID_API_KEY": "",
         "SENDGRID_EMAIL_ID": "medxdev2022@gmail.com",
         "BASE_URL": "http://100.119.154.54:8002",
         "REQ_BASE_URL": "http://100.119.154.54:3000",
