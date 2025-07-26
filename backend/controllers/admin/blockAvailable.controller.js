@@ -100,7 +100,7 @@ const create = async (req, res) => {
     });
 
     return ReS(res, {
-      message: `Block available records created successfully.`,
+      message: `Block available record created successfully.`,
     }, 200);
 
 
