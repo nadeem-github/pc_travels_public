@@ -1,0 +1,18 @@
+{
+  "production": {
+    "username": "pctraval",
+    "password": "PtC!r@v3l123$",
+    "database": "pc_traval_db",
+    "host": "localhost",
+    "port": 3306,
+    "dialect": "mysql",
+    "logging": false,
+    "poll": {
+      "max": 5,
+      "min": 0,
+      "idle": 10000
+    }
+  },
+  "jwt_encryption": "testingApp",
+  "jwt_expiration": "365d"
+}
