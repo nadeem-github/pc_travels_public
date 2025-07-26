@@ -16,14 +16,14 @@ if (hostname == "PratikMalewar" || hostname == "DESKTOP-8O3VJHU"
   base_url = APP.development.BASE_URL;
   req_base_url = APP.development.REQ_BASE_URL;
   wallet_base_url = APP.development.WALLET_BASE_URL
-  fcm_server_key = APP.development.FCM_SERVER_KEY
+  // fcm_server_key = APP.development.FCM_SERVER_KEY
 } else {
   env = "production";
   port = APP.production.PORT;
   base_url = APP.production.BASE_URL;
   req_base_url = APP.production.REQ_BASE_URL;
   wallet_base_url = APP.production.WALLET_BASE_URL
-  fcm_server_key = APP.production.FCM_SERVER_KEY
+  // fcm_server_key = APP.production.FCM_SERVER_KEY
 }
 
 const app = {
@@ -32,7 +32,7 @@ const app = {
   base_url: base_url,
   req_base_url: req_base_url,
   wallet_base_url: wallet_base_url,
-  fcm_server_key: fcm_server_key
+  // fcm_server_key: fcm_server_key
 };
 
 module.exports = app;
