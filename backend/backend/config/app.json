@@ -27,6 +27,6 @@
         "IMAGE_PATH": "http://localhost:8003/storage/images",
         "PORT": 8003,
         "FCM_SERVER_KEY": "",
-        "ADMIN_BASE_URL": "http://admin.medxdev.online/login1"
+        "ADMIN_BASE_URL": "http://admin.medxdev.online/login"
     }
 }
