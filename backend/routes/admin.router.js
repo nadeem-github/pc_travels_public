@@ -25,6 +25,7 @@ const PackageDetailsController = require("@controllers/admin/packageDetails.cont
 const VisaController = require("@controllers/admin/visa.controllerr");
 const VisaTypeController = require("@controllers/admin/visaType.controller");
 const VisaDocumentController = require("@controllers/admin/visaDocument.controller");
+const BlockAvaileblePdfController = require("@controllers/admin/blockAvaileblePdf.controllerr");
 
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
@@ -141,6 +142,13 @@ adminRouter.post("/visadocument/create", passport.authenticate("jwt", { session:
 adminRouter.post("/visadocument/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, VisaDocumentController.fetchSingle);
 adminRouter.post("/visadocument/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, VisaDocumentController.update);
 adminRouter.post("/visadocument/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, VisaDocumentController.deleted);
+
+// ========== BlockAvaileblePdfController Routes==========
+adminRouter.post("/blockavaileblepdf/fetch", BlockAvaileblePdfController.fetch);
+adminRouter.post("/blockavaileblepdf/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, BlockAvaileblePdfController.create);
+adminRouter.post("/blockavaileblepdf/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, BlockAvaileblePdfController.fetchSingle);
+adminRouter.post("/blockavaileblepdf/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, BlockAvaileblePdfController.update);
+adminRouter.post("/blockavaileblepdf/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, BlockAvaileblePdfController.deleted);
 
 // ========== Error Handler ==========
 adminRouter.use(errorHandler);
