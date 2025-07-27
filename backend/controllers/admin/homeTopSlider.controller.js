@@ -8,7 +8,7 @@ const helper = require("@helpers/fileupload.helper");
 const fetch = async function (req, res) {
   try {
     const data = await HomeTopSlider.findAndCountAll({
-      order: [['id', 'DESC']],
+      order: [['sequence', 'ASC']],
     });
     if (!data) {
       return ReE(res, { message: "No Data Found" }, 200);
@@ -37,6 +37,7 @@ const create = async (req, res) => {
     const data = await HomeTopSlider.create({
       slider_image: homeTopSlider,
       name: body.name,
+      sequence: body.sequence,
     })
 
     if (data) {
@@ -85,6 +86,7 @@ const update = async function (req, res) {
     await HomeTopSlider.update({
       slider_image: homeTopSlider ? homeTopSlider : existData.slider_image,
       name: body.name ? body.name : existData.name,
+      sequence: body.sequence ? body.sequence : existData.sequence,
     },
       {
         where: { id: body.id }
