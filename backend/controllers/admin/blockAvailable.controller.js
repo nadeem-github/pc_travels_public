@@ -28,6 +28,10 @@ const create = async (req, res) => {
     let airlineImage2 = "";
     let airlineImage3 = "";
     let airlineImage4 = "";
+    let rairlineImage1 = "";
+    let rairlineImage2 = "";
+    let rairlineImage3 = "";
+    let rairlineImage4 = "";
     if (files) {
       if (files.airline_image_1) {
         const homeTopSliderName = Date.now() + '-' + files.airline_image_1.name;
@@ -61,15 +65,47 @@ const create = async (req, res) => {
           return ReE(res, { message: "Something went wrong" }, 200);
         }
       }
+      if (files.r_airline_image_1) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_1.name;
+        rairlineImage1 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_1, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      }
+      if (files.r_airline_image_2) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_2.name;
+        rairlineImage2 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_2, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      }
+      if (files.r_airline_image_3) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_3.name;
+        rairlineImage3 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_3, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      }
+      if (files.r_airline_image_4) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_4.name;
+        rairlineImage4 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_4, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      }
     }
 
     const newEntry = await BlockAvailable.create({
-     airline_1: body.airline_1 ? body.airline_1 : "",
-     airline_2: body.airline_2 ? body.airline_2 : "", 
+      airline_1: body.airline_1 ? body.airline_1 : "",
+      airline_2: body.airline_2 ? body.airline_2 : "",
       airline_3: body.airline_3 ? body.airline_3 : "",
       airline_4: body.airline_4 ? body.airline_4 : "",
       airline_image_1: airlineImage1 ? airlineImage1 : "",
-      airline_image_2: airlineImage2 ? airlineImage2 : "", 
+      airline_image_2: airlineImage2 ? airlineImage2 : "",
       airline_image_3: airlineImage3 ? airlineImage3 : "",
       airline_image_4: airlineImage4 ? airlineImage4 : "",
       from_date_1: body.from_date_1 ? body.from_date_1 : null,
@@ -88,7 +124,7 @@ const create = async (req, res) => {
       destination_2: body.destination_2 ? body.destination_2 : "",
       destination_3: body.destination_3 ? body.destination_3 : "",
       destination_4: body.destination_4 ? body.destination_4 : "",
-      destination_time_1: body.destination_time_1 ? body.destination_time_1 : "", 
+      destination_time_1: body.destination_time_1 ? body.destination_time_1 : "",
       destination_time_2: body.destination_time_2 ? body.destination_time_2 : "",
       destination_time_3: body.destination_time_3 ? body.destination_time_3 : "",
       destination_time_4: body.destination_time_4 ? body.destination_time_4 : "",
@@ -96,6 +132,39 @@ const create = async (req, res) => {
       departure_time_2: body.departure_time_2 ? body.departure_time_2 : "",
       departure_time_3: body.departure_time_3 ? body.departure_time_3 : "",
       departure_time_4: body.departure_time_4 ? body.departure_time_4 : "",
+
+      r_airline_1: body.r_airline_1 ? body.r_airline_1 : "",
+      r_airline_2: body.r_airline_2 ? body.r_airline_2 : "",
+      r_airline_3: body.r_airline_3 ? body.r_airline_3 : "",
+      r_airline_4: body.r_airline_4 ? body.r_airline_4 : "",
+      r_airline_image_1: rairlineImage1 ? rairlineImage1 : "",
+      r_airline_image_2: rairlineImage2 ? rairlineImage2 : "",
+      r_airline_image_3: rairlineImage3 ? rairlineImage3 : "",
+      r_airline_image_4: rairlineImage4 ? rairlineImage4 : "",
+      r_from_date_1: body.r_from_date_1 ? body.r_from_date_1 : null,
+      r_from_date_2: body.r_from_date_2 ? body.r_from_date_2 : null,
+      r_from_date_3: body.r_from_date_3 ? body.r_from_date_3 : null,
+      r_from_date_4: body.r_from_date_4 ? body.r_from_date_4 : null,
+      r_flight_number_1: body.r_flight_number_1 ? body.r_flight_number_1 : "",
+      r_flight_number_2: body.r_flight_number_2 ? body.r_flight_number_2 : "",
+      r_flight_number_3: body.r_flight_number_3 ? body.r_flight_number_3 : "",
+      r_flight_number_4: body.r_flight_number_4 ? body.r_flight_number_4 : "",
+      r_departure_1: body.r_departure_1 ? body.r_departure_1 : "",
+      r_departure_2: body.r_departure_2 ? body.r_departure_2 : "",
+      r_departure_3: body.r_departure_3 ? body.r_departure_3 : "",
+      r_departure_4: body.r_departure_4 ? body.r_departure_4 : "",
+      r_destination_1: body.r_destination_1 ? body.r_destination_1 : "",
+      r_destination_2: body.r_destination_2 ? body.r_destination_2 : "",
+      r_destination_3: body.r_destination_3 ? body.r_destination_3 : "",
+      r_destination_4: body.r_destination_4 ? body.r_destination_4 : "",
+      r_destination_time_1: body.r_destination_time_1 ? body.r_destination_time_1 : "",
+      r_destination_time_2: body.r_destination_time_2 ? body.r_destination_time_2 : "",
+      r_destination_time_3: body.r_destination_time_3 ? body.r_destination_time_3 : "",
+      r_destination_time_4: body.r_destination_time_4 ? body.r_destination_time_4 : "",
+      r_departure_time_1: body.r_departure_time_1 ? body.r_departure_time_1 : "",
+      r_departure_time_2: body.r_departure_time_2 ? body.r_departure_time_2 : "",
+      r_departure_time_3: body.r_departure_time_3 ? body.r_departure_time_3 : "",
+      r_departure_time_4: body.r_departure_time_4 ? body.r_departure_time_4 : "",
 
     });
 
@@ -139,6 +208,10 @@ const update = async function (req, res) {
     let airlineImage2 = "";
     let airlineImage3 = "";
     let airlineImage4 = "";
+    let rairlineImage1 = "";
+    let rairlineImage2 = "";  
+    let rairlineImage3 = "";
+    let rairlineImage4 = "";
     if (files) {
       if (files.airline_image_1) {
         const homeTopSliderName = Date.now() + '-' + files.airline_image_1.name;
@@ -172,6 +245,38 @@ const update = async function (req, res) {
           return ReE(res, { message: "Something went wrong" }, 200);
         }
       }
+      if (files.r_airline_image_1) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_1.name;
+        rairlineImage1 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_1, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      } 
+      if (files.r_airline_image_2) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_2.name;
+        rairlineImage2 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_2, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      } 
+      if (files.r_airline_image_3) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_3.name;
+        rairlineImage3 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_3, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      } 
+      if (files.r_airline_image_4) {
+        const homeTopSliderName = Date.now() + '-' + files.r_airline_image_4.name;
+        rairlineImage4 = "blockAvailable/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.r_airline_image_4, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      } 
     }
     const data = await BlockAvailable.update({
       airline_1: body.airline_1 ? body.airline_1 : existData.airline_1,
@@ -206,6 +311,39 @@ const update = async function (req, res) {
       destination_2: body.destination_2 ? body.destination_2 : existData.destination_2,
       destination_3: body.destination_3 ? body.destination_3 : existData.destination_3,
       destination_4: body.destination_4 ? body.destination_4 : existData.destination_4,
+
+      r_airline_1: body.r_airline_1 ? body.r_airline_1 : existData.r_airline_1,
+      r_airline_2: body.r_airline_2 ? body.r_airline_2 : existData.r_airline_2,
+      r_airline_3: body.r_airline_3 ? body.r_airline_3 : existData.r_airline_3,
+      r_airline_4: body.r_airline_4 ? body.r_airline_4 : existData.r_airline_4,
+      r_airline_image_1: rairlineImage1 ? rairlineImage1 : existData.r_airline_image_1,
+      r_airline_image_2: rairlineImage2 ? rairlineImage2 : existData.r_airline_image_2,
+      r_airline_image_3: rairlineImage3 ? rairlineImage3 : existData.r_airline_image_3,
+      r_airline_image_4: rairlineImage4 ? rairlineImage4 : existData.r_airline_image_4,
+      r_from_date_1: body.r_from_date_1 ? body.r_from_date_1 : existData.r_from_date_1,
+      r_from_date_2: body.r_from_date_2 ? body.r_from_date_2 : existData.r_from_date_2,
+      r_from_date_3: body.r_from_date_3 ? body.r_from_date_3 : existData.r_from_date_3,
+      r_from_date_4: body.r_from_date_4 ? body.r_from_date_4 : existData.r_from_date_4,
+      r_flight_number_1: body.r_flight_number_1 ? body.r_flight_number_1 : existData.r_flight_number_1,
+      r_flight_number_2: body.r_flight_number_2 ? body.r_flight_number_2 : existData.r_flight_number_2,
+      r_flight_number_3: body.r_flight_number_3 ? body.r_flight_number_3 : existData.r_flight_number_3,
+      r_flight_number_4: body.r_flight_number_4 ? body.r_flight_number_4 : existData.r_flight_number_4,
+      r_departure_1: body.r_departure_1 ? body.r_departure_1 : existData.r_departure_1,
+      r_departure_2: body.r_departure_2 ? body.r_departure_2 : existData.r_departure_2,
+      r_departure_3: body.r_departure_3 ? body.r_departure_3 : existData.r_departure_3,
+      r_departure_4: body.r_departure_4 ? body.r_departure_4 : existData.r_departure_4,
+      r_destination_1: body.r_destination_1 ? body.r_destination_1 : existData.r_destination_1,
+      r_destination_2: body.r_destination_2 ? body.r_destination_2 : existData.r_destination_2,
+      r_destination_3: body.r_destination_3 ? body.r_destination_3 : existData.r_destination_3,
+      r_destination_4: body.r_destination_4 ? body.r_destination_4 : existData.r_destination_4,
+      r_destination_time_1: body.r_destination_time_1 ? body.r_destination_time_1 : existData.r_destination_time_1,
+      r_destination_time_2: body.r_destination_time_2 ? body.r_destination_time_2 : existData.r_destination_time_2,
+      r_destination_time_3: body.r_destination_time_3 ? body.r_destination_time_3 : existData.r_destination_time_3,
+      r_destination_time_4: body.r_destination_time_4 ? body.r_destination_time_4 : existData.r_destination_time_4,
+      r_departure_time_1: body.r_departure_time_1 ? body.r_departure_time_1 : existData.r_departure_time_1,
+      r_departure_time_2: body.r_departure_time_2 ? body.r_departure_time_2 : existData.r_departure_time_2,
+      r_departure_time_3: body.r_departure_time_3 ? body.r_departure_time_3 : existData.r_departure_time_3,
+      r_departure_time_4: body.r_departure_time_4 ? body.r_departure_time_4 : existData.r_departure_time_4, 
     }, {
       where: { id: body.id }
     });

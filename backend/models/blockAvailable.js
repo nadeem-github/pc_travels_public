@@ -143,6 +143,141 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     },
+
+    r_airline_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_airline_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     r_airline_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     r_airline_4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    
+     r_airline_image_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_airline_image_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     r_airline_image_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_airline_image_4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     r_from_date_1: {
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
+    r_from_date_2: {
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
+    r_from_date_3: {
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
+    r_from_date_4: {
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
+    r_flight_number_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_flight_number_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_flight_number_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_flight_number_4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_departure_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_departure_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_departure_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_departure_4: {
+      type: DataTypes.STRING, 
+      allowNull: true,
+    },
+    r_departure_time_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_departure_time_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_departure_time_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_departure_time_4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_destination_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_destination_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     r_destination_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_destination_4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     r_destination_time_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_destination_time_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_destination_time_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_destination_time_4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    r_to_date: {
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
     deleted_at: {
       allowNull: true,
       type: DataTypes.DATE,
