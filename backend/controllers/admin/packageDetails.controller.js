@@ -7,20 +7,45 @@ const helper = require("@helpers/fileupload.helper");
 
 const fetch = async function (req, res) {
   try {
+    let packageFilter = {};
+    let body = req.body;
+    if (body.package_filter != '' && body.package_filter != undefined) {
+      packageFilter = {
+        package_filter: body.package_filter
+      };
+    }
     const data = await PackageDetail.findAll({
-      order: [['id', 'DESC']],
+       where: {
+                ...packageFilter,
+            },
+      order: [['sequence', 'ASC']],
     });
+    
     if (!data) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
     return ReS(res, { data: data, message: "success" });
   } catch (error) {
+    console.error("Error fetching package details:", error);
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
 const create = async (req, res) => {
   try {
     let body = req.body;
+    const files = req.files;
+    const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/packagesDetails`;
+        let packagesDetails = "";
+        if (files) {
+          if (files.package_logo) {
+            const homeTopSliderName = Date.now() + '-' + files.package_logo.name;
+            packagesDetails = "packagesDetails/" + homeTopSliderName;
+            const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.package_logo, baseFileUploadPath);
+            if (!homeTopSlidername) {
+              return ReE(res, { message: "Something went wrong" }, 200);
+            }
+          }
+        }
     const data = await PackageDetail.create({
       title: body.title,
       price: body.price,
@@ -34,6 +59,9 @@ const create = async (req, res) => {
       hotel_distance_2: body.hotel_distance_2,
       hotel_distance_3: body.hotel_distance_3,
       description: body.description,
+      package_logo: packagesDetails,
+      package_filter: body.package_filter,
+      sequence: body.sequence
     })
 
     if (data) {
@@ -65,6 +93,19 @@ const update = async function (req, res) {
     const existData = await PackageDetail.findOne({
       where: { id: body.id }
     });
+    const files = req.files;
+    const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/packagesDetails`;
+        let packagesDetails = "";
+        if (files) {
+          if (files.package_logo) {
+            const homeTopSliderName = Date.now() + '-' + files.package_logo.name;
+            packagesDetails = "packagesDetails/" + homeTopSliderName;
+            const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.package_logo, baseFileUploadPath);
+            if (!homeTopSlidername) {
+              return ReE(res, { message: "Something went wrong" }, 200);
+            }
+          }
+        }
 
     await PackageDetail.update({
       title: body.title ? body.title : existData.title,
@@ -79,6 +120,9 @@ const update = async function (req, res) {
       hotel_distance_2: body.hotel_distance_2 ? body.hotel_distance_2 : existData.hotel_distance_2,
       hotel_distance_3: body.hotel_distance_3 ? body.hotel_distance_3 : existData.hotel_distance_3,
       description: body.description ? body.description : existData.description,
+      package_logo: packagesDetails ? packagesDetails : existData.package_logo,
+      package_filter: body.package_filter ? body.package_filter : existData.package_filter,
+      sequence: body.sequence ? body.sequence : existData.sequence
 
     },
       {

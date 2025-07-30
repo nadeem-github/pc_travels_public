@@ -56,6 +56,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    package_logo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    package_filter: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    sequence: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    
     deleted_at: {
       allowNull: true,
       type: DataTypes.DATE,
