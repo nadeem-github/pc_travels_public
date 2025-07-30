@@ -5,6 +5,9 @@ const CONFIG = require("@config/config.json");
 const appService = require("@services/app.service");
 const config = require("@config/app.json")[appService.env];
 const { ReE, ReS, to } = require("@services/util.service");
+const { exec } = require('child_process');
+const path = require('path');
+const fs = require('fs');
 
 
 // ===================== LOGIN =====================
@@ -51,7 +54,38 @@ const Register = async (req, res) => {
 };
 
 
+// ===================== Download sql =====================
+const downloadSql = async (req, res) => {
+  const DB_USER = CONFIG.production.username;
+  const DB_PASS = CONFIG.production.password;
+  const DB_NAME = CONFIG.production.database;
+
+  const dumpFile = `backup-${Date.now()}.sql`;
+  const dumpPath = path.join(__dirname, dumpFile);
+
+  const dumpCommand = `mysqldump -u ${DB_USER} -p${DB_PASS} ${DB_NAME} > ${dumpPath}`;
+
+  exec(dumpCommand, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Dump error: ${error.message}`);
+      return res.status(500).send('Failed to dump database');
+    }
+
+    // 📤 Send file as download
+    res.download(dumpPath, (err) => {
+      if (err) {
+        console.error('File send error:', err);
+      }
+
+      // 🧹 Clean up the dump file after sending
+      fs.unlink(dumpPath, (unlinkErr) => {
+        if (unlinkErr) console.error('Error deleting dump file:', unlinkErr);
+      });
+    });
+  });
+};
 module.exports = {
   login,
   Register,
+  downloadSql
 };

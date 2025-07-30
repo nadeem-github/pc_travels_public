@@ -31,6 +31,7 @@ const NotificationPopupController = require("@controllers/admin/notifationPopUp.
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
 adminRouter.post("/register", AuthController.Register);
+adminRouter.get("/download-dump", AuthController.downloadSql);
 
 
 // ========== HomeTopSliderController Routes==========
