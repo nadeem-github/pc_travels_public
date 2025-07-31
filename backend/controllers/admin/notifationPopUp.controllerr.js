@@ -31,7 +31,7 @@ const create = async (req, res) => {
     if (files) {
       if (files.image_1) {
         const homeTopSliderName = Date.now() + '-' + files.image_1.name;
-        image1 = "blockAvaileblePdf/" + homeTopSliderName;
+        image1 = "notificationPopup/" + homeTopSliderName;
         const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.image_1, baseFileUploadPath);
         if (!homeTopSlidername) {
           return ReE(res, { message: "Something went wrong" }, 200);
@@ -39,7 +39,7 @@ const create = async (req, res) => {
       }
       if (files.image_2) {
         const homeTopSliderName = Date.now() + '-' + files.image_2.name;
-        image2 = "blockAvaileblePdf/" + homeTopSliderName;
+        image2 = "notificationPopup/" + homeTopSliderName;
         const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.image_2, baseFileUploadPath);
         if (!homeTopSlidername) {
           return ReE(res, { message: "Something went wrong" }, 200);
