@@ -7,6 +7,7 @@ const path = require("path");
 
 const config = require("@services/app.service");
 const adminRouter = require("@routes/admin.router");
+const b2bRouter = require('@routes/b2b.router');
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/storage', express.static(path.join(__dirname, 'storage')));
 
 // ========== Routes ==========
 app.use("/api/admin", adminRouter);
+app.use("/api/admin/b2b", b2bRouter);
 
 // Health check / default route
 app.get("/", (_req, res) => {
