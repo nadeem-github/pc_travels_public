@@ -55,7 +55,9 @@ const update = async function (req, res) {
         // text: `Your OTP is ${OtpValue}`,
         html: `
   <div style="font-family: Arial, sans-serif; background:#f9fbff; padding:20px; border-radius:8px; border:1px solid #e0e7ff; max-width:500px; margin:auto;">
-    <h2 style="color:#0a7cff; text-align:center; margin-bottom:20px;">PC Travels</h2>
+    <div style="color:#0a7cff; text-align:center; margin-bottom:20px; text-align:center">
+        <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" alt="PC Travels Logo" />
+    </div>
     
     <p style="font-size:16px; color:#333; margin:0 0 12px;">
       Hello <b>${existData.person_name || "User"}</b>,
@@ -112,7 +114,9 @@ const update = async function (req, res) {
         // text: `Your OTP is ${OtpValue}`,
         html: `
   <div style="font-family: Arial, sans-serif; background:#fff8f8; padding:20px; border-radius:8px; border:1px solid #f5c2c7; max-width:500px; margin:auto;">
-    <h2 style="color:#dc3545; text-align:center; margin-bottom:20px;">PC Travels</h2>
+    <div style="color:#0a7cff; text-align:center; margin-bottom:20px; text-align:center">
+        <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" alt="PC Travels Logo" />
+    </div>
     
     <p style="font-size:16px; color:#333; margin:0 0 12px;">
       Hello <b>${existData.person_name || "User"}</b>,
@@ -160,7 +164,9 @@ const update = async function (req, res) {
         // text: `Your OTP is ${OtpValue}`,
         html: `
   <div style="font-family: Arial, sans-serif; background:#fff8f8; padding:20px; border-radius:8px; border:1px solid #f5c2c7; max-width:500px; margin:auto;">
-    <h2 style="color:#dc3545; text-align:center; margin-bottom:20px;">PC Travels</h2>
+    <div style="color:#0a7cff; text-align:center; margin-bottom:20px; text-align:center">
+        <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" alt="PC Travels Logo" />
+    </div>
     
     <p style="font-size:16px; color:#333; margin:0 0 12px;">
       Hello <b>${existData.person_name || "User"}</b>,

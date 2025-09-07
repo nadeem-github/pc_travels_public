@@ -60,7 +60,7 @@ const Register = async (req, res) => {
 
   const data = await B2bUser.create({
     company_name: body.company_name,
-    password: body.password,
+    // password: body.password,
     email: body.email,
     whatsapp_number: body.whatsapp_number,
     person_name: body.person_name,
