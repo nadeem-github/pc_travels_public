@@ -85,7 +85,7 @@ const update = async function (req, res) {
 
     <!-- Login Link -->
     <div style="text-align:center; margin:24px 0;">
-      <a href="https://pctravelsonline.com/login" target="_blank" 
+      <a href="https://pctravelsonline.com/b2b/login" target="_blank" 
          style="display:inline-block; background:#0a7cff; color:#fff; text-decoration:none; padding:12px 22px; border-radius:6px; font-weight:600;">
         Login Now
       </a>
