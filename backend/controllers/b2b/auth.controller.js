@@ -84,6 +84,7 @@ const Register = async (req, res) => {
 
   return ReS(res, { user: data, message: "Your registration request has been submitted successfully to the admin for review." }, 200);
 };
+
 const UpdatePassword = async (req, res) => {
   let body = req.body;
   const existData = await B2bUser.findOne({
@@ -95,8 +96,6 @@ const UpdatePassword = async (req, res) => {
     return ReS(res, { message: "B2b user has been updated successfully." }, 200);
   }
 };
-
-
 
 const VerifyEmail = async (req, res) => {
   const { email, otp } = req.body;
@@ -118,9 +117,6 @@ const VerifyEmail = async (req, res) => {
   if (user.email_verify != otp) {
     return ReE(res, { message: "Invalid OTP!" }, 400);
   }
-
-
-
   return ReS(res, { message: "Email verified successfully!" }, 200);
 };
 
@@ -147,6 +143,7 @@ const VerifyMobile = async (req, res) => {
 
   return ReS(res, { message: "Whatsapp number verified successfully!" }, 200);
 };
+
 const otpVerification = async function (req, res) {
   try {
     let body = req.body;
@@ -197,6 +194,7 @@ const otpVerification = async function (req, res) {
     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
   }
 };
+
 const verifyOtp = async function (req, res) {
   try {
     const { email, otp } = req.body;
@@ -215,6 +213,7 @@ const verifyOtp = async function (req, res) {
     return ReE(res, { message: "Something went wrong", err: error }, 500);
   }
 };
+
 const changePassword = async (req, res) => {
   const { email,password } = req.body;
   const existData = await B2bUser.findOne({ where: { email } });
