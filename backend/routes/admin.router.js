@@ -28,6 +28,9 @@ const VisaDocumentController = require("@controllers/admin/visaDocument.controll
 const BlockAvaileblePdfController = require("@controllers/admin/blockAvaileblePdf.controllerr");
 const NotificationPopupController = require("@controllers/admin/notifationPopUp.controllerr");
 const B2bController = require("@controllers/admin/b2b.controller");
+const B2bMutamerListController = require("@controllers/admin/b2bMutamerList.controller");
+const B2bDriverController = require("@controllers/b2b/b2bDriver.controller");
+const B2bHotelController = require("@controllers/b2b/b2bHotel.controller");
 
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
@@ -165,6 +168,22 @@ adminRouter.post("/notificationpopup/delete", passport.authenticate("jwt", { ses
 adminRouter.post("/b2bAdmin/fetch",passport.authenticate("jwt", { session: false }),adminMidd.adminUser,   B2bController.fetch);
 adminRouter.post("/b2bAdmin/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bController.update);
 
+// ========== B2bMutamerListController Routes==========
+adminRouter.post("/b2bMutamerList/upload-excel", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.uploadExcelToDatabase);
+
+// ========== B2bDriverController Routes==========
+adminRouter.post("/b2bDriver/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.fetch);
+adminRouter.post("/b2bDriver/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.create);
+adminRouter.post("/b2bDriver/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.fetchSingle);
+adminRouter.post("/b2bDriver/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.update);
+adminRouter.post("/b2bDriver/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.deleted);
+
+// ========== B2bHotelController Routes==========
+adminRouter.post("/b2bHotel/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.fetch);
+adminRouter.post("/b2bHotel/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.create);
+adminRouter.post("/b2bHotel/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.fetchSingle);
+adminRouter.post("/b2bHotel/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.update);
+adminRouter.post("/b2bHotel/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.deleted);
 // ========== Error Handler ==========
 adminRouter.use(errorHandler);
 
