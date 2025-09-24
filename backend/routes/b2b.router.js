@@ -23,8 +23,8 @@ b2bRouter.post("/update-password", passport.authenticate("jwt", { session: false
 // b2bRouter.get("/download-dump", AuthController.downloadSql);
 
 // ========== B2bDashboardController Routes ==========
-// b2bRouter.post("/dashboard/fetch", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetch);  
-b2bRouter.post("/dashboard/fetch",  B2bDashboardController.fetch);  
+b2bRouter.post("/dashboard/fetch", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetch);  
+// b2bRouter.post("/dashboard/fetch",  B2bDashboardController.fetch);  
 
 
 

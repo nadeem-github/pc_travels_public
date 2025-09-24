@@ -31,6 +31,7 @@ const B2bController = require("@controllers/admin/b2b.controller");
 const B2bMutamerListController = require("@controllers/admin/b2bMutamerList.controller");
 const B2bDriverController = require("@controllers/b2b/b2bDriver.controller");
 const B2bHotelController = require("@controllers/b2b/b2bHotel.controller");
+const B2bFlightDetailsController = require("@controllers/b2b/b2bFlightDetails.controller");
 
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
@@ -184,6 +185,13 @@ adminRouter.post("/b2bHotel/create", passport.authenticate("jwt", { session: fal
 adminRouter.post("/b2bHotel/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.fetchSingle);
 adminRouter.post("/b2bHotel/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.update);
 adminRouter.post("/b2bHotel/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.deleted);
+
+// ========== B2bFlightDetailsController Routes==========
+adminRouter.post("/b2bFlightDetails/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.fetch);
+adminRouter.post("/b2bFlightDetails/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.create);
+adminRouter.post("/b2bFlightDetails/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.fetchSingle);
+adminRouter.post("/b2bFlightDetails/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.update);
+adminRouter.post("/b2bFlightDetails/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.deleted);
 // ========== Error Handler ==========
 adminRouter.use(errorHandler);
 
