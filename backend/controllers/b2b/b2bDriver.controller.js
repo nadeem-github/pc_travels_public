@@ -1,4 +1,4 @@
-const { Driver } = require("@models");
+const { Driver, MutamersList } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -31,6 +31,15 @@ const create = async (req, res) => {
     })
 
     if (data) {
+      const data1 = await MutamersList.update({
+        flight_details: data?.id,
+      },
+        {
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number
+          }
+        });
       return ReS(res, { message: "Driver created successfully." }, 200);
     }
 
@@ -60,7 +69,7 @@ const update = async function (req, res) {
     const existData = await Driver.findOne({
       where: { id: body.id }
     });
-    
+
     await Driver.update({
       driver_name: body.driver_name ? body.driver_name : existData.driver_name,
       driver_mobile: body.driver_mobile ? body.driver_mobile : existData.driver_mobile,

@@ -1,4 +1,4 @@
-const { B2bHotel } = require("@models");
+const { B2bHotel, MutamersList } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -34,6 +34,15 @@ const create = async (req, res) => {
     })
 
     if (data) {
+      const data1 = await MutamersList.update({
+        flight_details: data?.id,
+      },
+        {
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number
+          }
+        });
       return ReS(res, { message: "B2bHotel created successfully." }, 200);
     }
 

@@ -71,9 +71,9 @@ const uploadExcelToDatabase = async function (req, res) {
 const fetchAll = async (req, res) => {
   try {
     const { email } = req.body;
-    // if (!email) {
-    //   return ReS(res, { message: "Email is required" }, 200);
-    // }
+    if (!email) {
+      return ReS(res, { message: "Email is required" }, 200);
+    }
     // 1. Sab data ek sath lao
     const records = await MutamersList.findAll({
       attributes: [
@@ -89,7 +89,7 @@ const fetchAll = async (req, res) => {
         "view_dirver_details",
         "main_external_agent_code"
       ],
-      where: { email},
+      where: { email },
       raw: true
     });
 
@@ -213,7 +213,7 @@ const update = async function (req, res) {
 
     return ReS(res, { message: "MutamersList has been updated successfully." }, 200);
   } catch (error) {
-    console.error(error,"eeeee");
+    console.error(error, "eeeee");
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };

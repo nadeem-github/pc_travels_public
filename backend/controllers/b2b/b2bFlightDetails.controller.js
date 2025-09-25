@@ -1,4 +1,4 @@
-const { FlightDetail,MutamersList } = require("@models");
+const { FlightDetail, MutamersList } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -34,7 +34,17 @@ const create = async (req, res) => {
       airlines_number_1: body.airlines_number_1,
     })
 
+
     if (data) {
+      const data1 = await MutamersList.update({
+        flight_details: data?.id,
+      },
+        {
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number
+          }
+        });
       return ReS(res, { message: "FlightDetail created successfully." }, 200);
     }
 
@@ -64,7 +74,7 @@ const update = async function (req, res) {
     const existData = await FlightDetail.findOne({
       where: { id: body.id }
     });
-    
+
     await FlightDetail.update({
       date_of_arrival: body.date_of_arrival ? body.date_of_arrival : existData.date_of_arrival,
       flight_number: body.flight_number ? body.flight_number : existData.flight_number,
@@ -78,7 +88,6 @@ const update = async function (req, res) {
       {
         where: { id: body.id }
       });
-
     return ReS(res, { message: "FlightDetail has been updated successfully." }, 200);
   } catch (error) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
