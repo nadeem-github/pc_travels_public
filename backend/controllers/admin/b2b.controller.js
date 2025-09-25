@@ -208,7 +208,26 @@ const update = async function (req, res) {
   }
 };
 
+const deleted = async function (req, res) {
+  try {
+    let body = req.body;
+    let userId = body.id
+    const data = await B2bUser.destroy({
+      where: { id: userId }
+    }).then(function (result) {
+      if (!result) return ReE(res, { message: "Somthing Went Wrong Please try after sometime." }, 400);
+      return ReS(res, { message: "B2b user has been deleted successfully." }, 200);
+    }).catch(function (err) {
+      return ReE(res, { message: "Somthing Went Wrong", err: err.errors }, 200);
+    });
+
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+}
+
 module.exports = {
   fetch,
-  update
+  update,
+  deleted
 };

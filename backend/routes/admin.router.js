@@ -168,9 +168,15 @@ adminRouter.post("/notificationpopup/delete", passport.authenticate("jwt", { ses
 // adminRouter.post("/b2bAdmin/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bController.fetch);
 adminRouter.post("/b2bAdmin/fetch",passport.authenticate("jwt", { session: false }),adminMidd.adminUser,   B2bController.fetch);
 adminRouter.post("/b2bAdmin/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bController.update);
+adminRouter.post("/b2bAdmin/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser,  B2bController.deleted);
 
 // ========== B2bMutamerListController Routes==========
 adminRouter.post("/b2bMutamerList/upload-excel", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.uploadExcelToDatabase);
+adminRouter.post("/b2bMutamerList/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetch);
+adminRouter.post("/b2bMutamerList/fetch-all", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetchAll);
+adminRouter.post("/b2bMutamerList/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetchSingle);
+adminRouter.post("/b2bMutamerList/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.update);
+adminRouter.post("/b2bMutamerList/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.deleted);
 
 // ========== B2bDriverController Routes==========
 adminRouter.post("/b2bDriver/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.fetch);

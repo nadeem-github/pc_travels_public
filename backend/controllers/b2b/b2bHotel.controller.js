@@ -30,6 +30,7 @@ const create = async (req, res) => {
       hotel_name: body.hotel_name,
       nights: body.nights,
       rooms: body.rooms,
+      description : body.description,
     })
 
     if (data) {
@@ -70,6 +71,7 @@ const update = async function (req, res) {
       hotel_name: body.hotel_name ? body.hotel_name : existData.hotel_name,
       nights: body.nights ? body.nights : existData.nights,
       rooms: body.rooms ? body.rooms : existData.rooms,
+      description : body.description ? body.description : existData.description,
     },
       {
         where: { id: body.id }
