@@ -89,6 +89,7 @@ const fetchAll = async (req, res) => {
         "view_dirver_details",
         "main_external_agent_code"
       ],
+      where: { email},
       raw: true
     });
 
