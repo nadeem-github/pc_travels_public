@@ -8,13 +8,14 @@ const path = require("path");
 // ===================== LOGIN =====================
 const fetch = async (req, res) => {
   try {
+    console.log("Request Body:", req.user.email); // Debugging line
     const { email } = req.body;
     if (!email) {
       return ReS(res, { message: "Email is required" }, 200);
     }
     // 1. Sab data ek sath lao
     const records = await MutamersList.findAll({
-      where: { email },
+      where: { email: req.user.email},
       attributes: ["email", "group_name_number", "group_number",
         "hotel_details", "flight_details", "arrival_date", "group_size",
         "transport_route", "remark", "view_dirver_details", "main_external_agent_code"],
