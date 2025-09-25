@@ -35,7 +35,7 @@ const create = async (req, res) => {
 
     if (data) {
       const data1 = await MutamersList.update({
-        flight_details: data?.id,
+        hotel_details: data?.id,
       },
         {
           where: {
