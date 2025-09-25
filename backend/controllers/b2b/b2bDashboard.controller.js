@@ -9,9 +9,9 @@ const path = require("path");
 const fetch = async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email) {
-      return ReS(res, { message: "Email is required" }, 200);
-    }
+    // if (!email) {
+    //   return ReS(res, { message: "Email is required" }, 200);
+    // }
     // 1. Sab data ek sath lao
     const records = await MutamersList.findAll({
       where: { email: req.user.email},
