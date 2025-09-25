@@ -1,4 +1,4 @@
-const { FlightDetail } = require("@models");
+const { FlightDetail,MutamersList } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];

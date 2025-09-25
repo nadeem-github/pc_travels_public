@@ -71,9 +71,9 @@ const uploadExcelToDatabase = async function (req, res) {
 const fetchAll = async (req, res) => {
   try {
     const { email } = req.body;
-    if (!email) {
-      return ReS(res, { message: "Email is required" }, 200);
-    }
+    // if (!email) {
+    //   return ReS(res, { message: "Email is required" }, 200);
+    // }
     // 1. Sab data ek sath lao
     const records = await MutamersList.findAll({
       attributes: [
