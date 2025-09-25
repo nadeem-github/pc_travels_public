@@ -8,7 +8,6 @@ const path = require("path");
 // ===================== LOGIN =====================
 const fetch = async (req, res) => {
   try {
-    console.log("Request Body:", req.user.email); // Debugging line
     const { email } = req.body;
     if (!email) {
       return ReS(res, { message: "Email is required" }, 200);
