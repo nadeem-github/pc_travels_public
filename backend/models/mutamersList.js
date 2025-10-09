@@ -29,9 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     arrival_date: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: true,
     },
+   
     group_size: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -95,6 +96,18 @@ module.exports = (sequelize, DataTypes) => {
     },
     mofa_number: {
       type: DataTypes.STRING,
+      allowNull: true,
+    },
+    leader_name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    mobile_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     return_date: {
+      type: DataTypes.DATE,
       allowNull: true,
     },
     deleted_at: {

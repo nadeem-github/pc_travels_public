@@ -32,6 +32,42 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+     driver_name_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    driver_mobile_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    bus_no_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    status_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    d_date: {
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
+    location: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    to_location: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    time: {
+      type: DataTypes.TIME,
+      allowNull: true,
+    },
+    remarks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     deleted_at: {
       allowNull: true,
       type: DataTypes.DATE,

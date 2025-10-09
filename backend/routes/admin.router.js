@@ -175,6 +175,7 @@ adminRouter.post("/b2bMutamerList/upload-excel", passport.authenticate("jwt", { 
 adminRouter.post("/b2bMutamerList/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetch);
 adminRouter.post("/b2bMutamerList/fetch-all", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetchAll);
 adminRouter.post("/b2bMutamerList/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetchSingle);
+adminRouter.post("/b2bMutamerList/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.create);
 adminRouter.post("/b2bMutamerList/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.update);
 adminRouter.post("/b2bMutamerList/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.deleted);
 

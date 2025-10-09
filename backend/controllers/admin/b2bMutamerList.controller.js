@@ -165,6 +165,89 @@ const fetch = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+const create = async (req, res) => {
+ 
+  try {
+    let body = req.body;
+    const data = await MutamersList.findOne({
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number,
+      }
+    });
+
+
+
+    if (data) {
+      const data1 = await MutamersList.update({
+        arrival_date: body.arrival_date ? body.arrival_date : data.arrival_date,
+        return_date: body.return_date ? body.return_date : data.return_date,
+        transport_route: body.transport_route ? body.transport_route : data.transport_route,
+        remark: body.remark ? body.remark : data.remark,
+        leader_name: body.leader_name ? body.leader_name : data.leader_name,
+        mobile_number: body.mobile_number ? body.mobile_number : data.mobile_number,
+      },
+        {
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number,
+
+          }
+        });
+      return ReS(res, { message: "b2b group name updated successfully." }, 200);
+    }
+    else {
+      
+      function getInitials(fullName) {
+        if (!fullName || typeof fullName !== 'string') return '';
+
+        // normalize spaces, remove extra punctuation (optional)
+        const cleaned = fullName.trim().replace(/\s+/g, ' ').replace(/[^\p{L}\s'-]/gu, '');
+        const parts = cleaned.split(' ');
+
+        if (parts.length === 0) return '';
+
+        // first letter of first word
+        const first = parts[0].charAt(0) || '';
+        // first letter of last word (if only one word, you can choose same as first or '')
+        const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+
+        // return uppercase letters separated (or concat if you want "RP")
+        return (first + last).toUpperCase(); // => "RP"
+      }
+      function getDayAndMonth(dateString) {
+        if (!dateString) return '';
+
+        const date = new Date(dateString); // "2025-10-09"
+
+        // Get day and month with leading zeros
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // month 0-based hota hai
+
+        return `${day}${month}`; // "09-10"
+      }
+      const initials = getInitials(body.company_name);
+      const formatted = getDayAndMonth(body.return_date);
+      const formatted1 = getDayAndMonth(body.arrival_date);
+      const gname = `PC${initials}${formatted1}R${formatted}`;
+      const data = await MutamersList.create({
+        email: body.email,
+        group_name_number: gname,
+        arrival_date: body?.arrival_date,
+        return_date: body?.return_date,
+        transport_route: body?.transport_route,
+        remark: body?.remark,
+        leader_name: body?.leader_name,
+        mobile_number: body?.mobile_number,
+
+      })
+      return ReS(res, { message: "b2b group name created successfully." }, 200);
+    }
+
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
 const fetchSingle = async function (req, res) {
   try {
     let body = req.body;
@@ -240,6 +323,7 @@ module.exports = {
   uploadExcelToDatabase,
   fetchAll,
   fetch,
+  create,
   fetchSingle,
   update,
   deleted

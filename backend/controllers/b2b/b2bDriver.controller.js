@@ -28,6 +28,15 @@ const create = async (req, res) => {
       driver_mobile: body.driver_mobile,
       bus_no: body.bus_no,
       status: body.status,
+      driver_name_1: body.driver_name_1,
+      driver_mobile_1: body.driver_mobile_1,
+      bus_no_1: body.bus_no_1,
+      status_1: body.status_1,
+      d_date: body.d_date,
+      location: body.location,
+      to_location: body.to_location,
+      time: body.time,
+      remarks: body.remarks,
     })
 
     if (data) {
@@ -75,6 +84,15 @@ const update = async function (req, res) {
       driver_mobile: body.driver_mobile ? body.driver_mobile : existData.driver_mobile,
       bus_no: body.bus_no ? body.bus_no : existData.bus_no,
       status: body.status ? body.status : existData.status,
+      driver_name_1: body.driver_name_1 ? body.driver_name_1 : existData.driver_name_1,
+      driver_mobile_1: body.driver_mobile_1 ? body.driver_mobile_1 : existData.driver_mobile_1,
+      bus_no_1: body.bus_no_1 ? body.bus_no_1 : existData.bus_no_1,
+      status_1: body.status_1 ? body.status_1 : existData.status_1,
+      d_date: body.d_date ? body.d_date : existData.d_date,
+      location: body.location ? body.location : existData.location,
+      to_location: body.to_location ? body.to_location : existData.to_location,
+      time: body.time ? body.time : existData.time,
+      remarks: body.remarks ? body.remarks : existData.remarks,
     },
       {
         where: { id: body.id }
