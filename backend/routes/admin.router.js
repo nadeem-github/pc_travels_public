@@ -177,6 +177,7 @@ adminRouter.post("/b2bMutamerList/fetch-all", passport.authenticate("jwt", { ses
 adminRouter.post("/b2bMutamerList/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetchSingle);
 adminRouter.post("/b2bMutamerList/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.create);
 adminRouter.post("/b2bMutamerList/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.update);
+adminRouter.post("/b2bMutamerList/update-before-export", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.updateGn);
 adminRouter.post("/b2bMutamerList/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.deleted);
 
 // ========== B2bDriverController Routes==========
