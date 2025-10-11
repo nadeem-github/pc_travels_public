@@ -77,6 +77,7 @@ const fetchAll = async (req, res) => {
     // 1. Sab data ek sath lao
     const records = await MutamersList.findAll({
       attributes: [
+        "id",
         "email",
         "group_name_number",
         "group_number",
@@ -128,6 +129,7 @@ const fetchAll = async (req, res) => {
           view_dirver_details: curr.view_dirver_details,
           leader_name: curr.leader_name,
           mobile_number: curr.mobile_number,
+          id: curr.id,
           groupnumber: []
         };
         emailGroup.groups.push(existing);
