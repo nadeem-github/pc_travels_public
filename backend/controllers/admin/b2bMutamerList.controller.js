@@ -89,7 +89,10 @@ const fetchAll = async (req, res) => {
         "transport_route",
         "remark",
         "view_dirver_details",
-        "main_external_agent_code"
+        "main_external_agent_code",
+        "leader_name",
+        "mobile_number"
+
       ],
       where: { email },
       raw: true
