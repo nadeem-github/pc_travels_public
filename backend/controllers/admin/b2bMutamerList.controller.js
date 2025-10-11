@@ -235,6 +235,7 @@ const create = async (req, res) => {
       const data = await MutamersList.create({
         email: body.email,
         group_name_number: gname,
+        group_size: body?.group_size,
         arrival_date: body?.arrival_date,
         return_date: body?.return_date,
         transport_route: body?.transport_route,
