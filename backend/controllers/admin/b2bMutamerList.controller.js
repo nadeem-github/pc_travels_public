@@ -321,6 +321,10 @@ const update = async function (req, res) {
       biometric_status: body.biometric_status ? body.biometric_status : existData.biometric_status,
       visa_number: body.visa_number ? body.visa_number : existData.visa_number,
       mofa_number: body.mofa_number ? body.mofa_number : existData.mofa_number,
+      leader_name: body.leader_name ? body.leader_name : existData.leader_name,
+      mobile_number: body.mobile_number ? body.mobile_number : existData.mobile_number,
+      group_size: body.group_size ? body.group_size : existData.group_size,
+      return_date: body.return_date ? body.return_date : existData.return_date,
     },
       {
         where: { id: body.id }
