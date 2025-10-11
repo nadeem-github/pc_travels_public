@@ -46,6 +46,7 @@ const update = async function (req, res) {
         : "";
       const combinedWord = firstFour + lastFour;
       existData.status = body.status;
+      existData.b2b_unique_id = body.b2b_unique_id;
       existData.password = combinedWord;
       await existData.save();
       await transporter.sendMail({
