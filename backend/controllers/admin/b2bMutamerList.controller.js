@@ -135,13 +135,15 @@ const fetchAll = async (req, res) => {
         emailGroup.groups.push(existing);
       }
 
-      if (!existing.groupnumber.includes(curr.main_external_agent_code)) {
+      // 👈 यहाँ change: null/empty को ignore करने के लिए check add किया
+      if (curr.main_external_agent_code && !existing.groupnumber.includes(curr.main_external_agent_code)) {
         existing.groupnumber.push(curr.main_external_agent_code);
         existing.remark.push(curr.remark);
       }
 
       return acc;
     }, []);
+
     groupedByEmail.forEach(emailGroup => {
       emailGroup.groups.sort((a, b) => b.id - a.id);
     });
@@ -151,6 +153,55 @@ const fetchAll = async (req, res) => {
       id: index + 1,
       ...item
     }));
+
+    // let groupedByEmail = records.reduce((acc, curr) => {
+    //       let emailGroup = acc.find(item => item.email === curr.email);
+    //       if (!emailGroup) {
+    //         emailGroup = {
+    //           email: curr.email,
+    //           groups: []
+    //         };
+    //         acc.push(emailGroup);
+    //       }
+
+    //       let existing = emailGroup.groups.find(
+    //         g => g.group_name_number === curr.group_name_number
+    //       );
+    //       if (!existing) {
+    //         existing = {
+    //           group_name_number: curr.group_name_number,
+    //           hotel_details: curr.hotel_details,
+    //           flight_details: curr.flight_details,
+    //           arrival_date: curr.arrival_date,
+    //           return_date: curr.return_date,
+    //           transport_route: curr.transport_route,
+    //           remark: [],
+    //           group_size: curr.group_size,
+    //           view_dirver_details: curr.view_dirver_details,
+    //           leader_name: curr.leader_name,
+    //           mobile_number: curr.mobile_number,
+    //           id: curr.id,
+    //           groupnumber: []
+    //         };
+    //         emailGroup.groups.push(existing);
+    //       }
+
+    //       if (!existing.groupnumber.includes(curr.main_external_agent_code)) {
+    //         existing.groupnumber.push(curr.main_external_agent_code);
+    //         existing.remark.push(curr.remark);
+    //       }
+
+    //       return acc;
+    //     }, []);
+    //     groupedByEmail.forEach(emailGroup => {
+    //       emailGroup.groups.sort((a, b) => b.id - a.id);
+    //     });
+
+    //     // 👉 id add karo (1,2,3...)
+    //     groupedByEmail = groupedByEmail.map((item, index) => ({
+    //       id: index + 1,
+    //       ...item
+    //     }));
 
 
     return ReS(res, { data: groupedByEmail, message: "success" });
@@ -228,23 +279,23 @@ const create = async (req, res) => {
 
       return `${day}${month}`; // "09-10"
     }
-      const initials = getInitials(body.company_name);
-      const formatted = getDayAndMonth(body.return_date);
-      const formatted1 = getDayAndMonth(body.arrival_date);
-      const gname = `PC${initials}${formatted1}R${formatted}`;
-      const data = await MutamersList.create({
-        email: body.email,
-        group_name_number: gname,
-        group_size: body?.group_size,
-        arrival_date: body?.arrival_date,
-        return_date: body?.return_date,
-        transport_route: body?.transport_route,
-        remark: body?.remark,
-        leader_name: body?.leader_name,
-        mobile_number: body?.mobile_number,
+    const initials = getInitials(body.company_name);
+    const formatted = getDayAndMonth(body.return_date);
+    const formatted1 = getDayAndMonth(body.arrival_date);
+    const gname = `PC${initials}${formatted1}R${formatted}`;
+    const data = await MutamersList.create({
+      email: body.email,
+      group_name_number: gname,
+      group_size: body?.group_size,
+      arrival_date: body?.arrival_date,
+      return_date: body?.return_date,
+      transport_route: body?.transport_route,
+      remark: body?.remark,
+      leader_name: body?.leader_name,
+      mobile_number: body?.mobile_number,
 
-      })
-      return ReS(res, { message: "b2b group name created successfully." }, 200);
+    })
+    return ReS(res, { message: "b2b group name created successfully." }, 200);
 
   } catch (error) {
     con
