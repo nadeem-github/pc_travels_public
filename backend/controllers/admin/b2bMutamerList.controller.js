@@ -391,6 +391,36 @@ const update = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+const updateExcel = async function (req, res) {
+  try {
+    let body = req.body;
+    const existData = await MutamersList.findOne({
+      where: { id: body.id }
+    });
+    await MutamersList.update({
+      mutamer_name: body.mutamer_name ? body.mutamer_name : existData.mutamer_name,
+      mutamer_age: body.mutamer_age ? body.mutamer_age : existData.mutamer_age,
+      passport_number: body.passport_number ? body.passport_number : existData.passport_number,
+      remark: body.remark ? body.remark : existData.remark,
+      nationality: body.nationality ? body.nationality : existData.nationality,
+      sub_ea_code: body.sub_ea_code ? body.sub_ea_code : existData.sub_ea_code,
+      sub_ea_name: body.sub_ea_name ? body.sub_ea_name : existData.sub_ea_name,
+      visa_status: body.visa_status ? body.visa_status : existData.visa_status,
+      biometric_status: body.biometric_status ? body.biometric_status : existData.biometric_status,
+      visa_number: body.visa_number ? body.visa_number : existData.visa_number,
+      mofa_number: body.mofa_number ? body.mofa_number : existData.mofa_number,
+      main_external_agent_name: body.main_external_agent_name ? body.main_external_agent_name : existData.main_external_agent_name,
+    },
+      {
+        where: { id: body.id }
+      });
+
+    return ReS(res, { message: "MutamersList has been updated successfully." }, 200);
+  } catch (error) {
+    console.error(error, "eeeee");
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
 const deleted = async function (req, res) {
   try {
     let body = req.body;
@@ -417,5 +447,6 @@ module.exports = {
   create,
   fetchSingle,
   update,
-  deleted
+  deleted,
+  updateExcel
 };
