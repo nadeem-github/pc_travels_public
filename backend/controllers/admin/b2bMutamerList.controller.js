@@ -439,6 +439,24 @@ const deleted = async function (req, res) {
   }
 }
 
+const deletedGroup = async function (req, res) {
+  try {
+    let body = req.body;
+    // let userId = body.id
+    const data = await MutamersList.destroy({
+      where: { email: body.email, group_name_number: body.group_name_number }
+    }).then(function (result) {
+      if (!result) return ReE(res, { message: "Somthing Went Wrong Please try after sometime." }, 400);
+      return ReS(res, { message: "MutamersList has been deleted successfully." }, 200);
+    }).catch(function (err) {
+      return ReE(res, { message: "Somthing Went Wrong", err: err.errors }, 200);
+    });
+
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+}
+
 
 module.exports = {
   uploadExcelToDatabase,
@@ -448,5 +466,6 @@ module.exports = {
   fetchSingle,
   update,
   deleted,
-  updateExcel
+  updateExcel,
+  deletedGroup
 };
