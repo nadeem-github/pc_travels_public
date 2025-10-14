@@ -9,25 +9,35 @@ const path = require("path");
 const fetch = async (req, res) => {
   try {
     const { email } = req.body;
-    // if (!email) {
-    //   return ReS(res, { message: "Email is required" }, 200);
-    // }
-    // 1. Sab data ek sath lao
+
     const records = await MutamersList.findAll({
-      where: { email: req.user.email},
-      attributes: ["email", "group_name_number", "group_number",
-        "hotel_details", "flight_details", "arrival_date", "group_size",
-        "transport_route", "remark", "view_dirver_details", "main_external_agent_code"],
-      // group: ["email"], 
+      where: { email: req.user.email },
+      attributes: [
+        "email",
+        "group_name_number",
+        "group_number",
+        "hotel_details",
+        "flight_details",
+        "arrival_date",
+        "group_size",
+        "return_date",
+        "leader_name",
+        "mobile_number",
+        "transport_route",
+        "remark",
+        "view_dirver_details",
+        "main_external_agent_code"
+      ],
       raw: true
     });
+
     if (!records.length) {
       return ReS(res, { message: "No records found for this email" }, 200);
     }
-    // 2. Data ko restructure karo
+
     const groupedData = records.reduce((acc, curr) => {
-      // check if group_name_number already added
       let existing = acc.find(item => item.group_name_number === curr.group_name_number);
+
       if (!existing) {
         existing = {
           email: curr.email,
@@ -35,8 +45,10 @@ const fetch = async (req, res) => {
           hotel_details: curr.hotel_details,
           flight_details: curr.flight_details,
           arrival_date: curr.arrival_date,
+          return_date: curr.return_date,
+          leader_name: curr.leader_name,
+          mobile_number: curr.mobile_number,
           transport_route: curr.transport_route,
-          // remark: curr.remark,
           remark: [],
           group_size: curr.group_size,
           view_dirver_details: curr.view_dirver_details,
@@ -44,18 +56,35 @@ const fetch = async (req, res) => {
         };
         acc.push(existing);
       }
-      // push unique group_number
-      if (!existing.groupnumber.includes(curr.main_external_agent_code)) {
+
+      // ✅ groupnumber push only if not null/empty and not duplicate
+      if (
+        curr.main_external_agent_code &&
+        curr.main_external_agent_code.trim() !== "" &&
+        !existing.groupnumber.includes(curr.main_external_agent_code)
+      ) {
         existing.groupnumber.push(curr.main_external_agent_code);
+      }
+
+      // ✅ remark push only if not null/empty and not duplicate
+      if (
+        curr.remark &&
+        curr.remark.trim() !== "" &&
+        !existing.remark.includes(curr.remark)
+      ) {
         existing.remark.push(curr.remark);
       }
+
       return acc;
     }, []);
+
     return ReS(res, { data: groupedData, message: "success" });
   } catch (error) {
     console.error(error);
+    return ReE(res, error);
   }
 };
+
 
 const downloadMutamerList = async function (req, res) {
 
