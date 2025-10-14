@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 const login = async (req, res) => {
   const { password, email } = req.body;
   const [err, user] = await to(B2bUser.findOne({
-    attributes: ['id', 'email', 'password'],
+    attributes: ['id', 'email', 'password', 'company_name', 'person_name'],
     where: { email, status: "complete" }
   }));
   if (err || !user) return ReE(res, {
