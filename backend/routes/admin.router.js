@@ -183,6 +183,7 @@ adminRouter.post("/b2bMutamerList/delete-group", passport.authenticate("jwt", { 
 
 // ========== B2bDriverController Routes==========
 adminRouter.post("/b2bDriver/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.fetch);
+adminRouter.post("/b2bDriver/fetch-b2b", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.fetchB2b);
 adminRouter.post("/b2bDriver/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.create);
 adminRouter.post("/b2bDriver/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.fetchSingle);
 adminRouter.post("/b2bDriver/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.update);
@@ -190,6 +191,7 @@ adminRouter.post("/b2bDriver/delete", passport.authenticate("jwt", { session: fa
 
 // ========== B2bHotelController Routes==========
 adminRouter.post("/b2bHotel/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.fetch);
+adminRouter.post("/b2bHotel/fetch-b2b", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.fetchB2b);
 adminRouter.post("/b2bHotel/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.create);
 adminRouter.post("/b2bHotel/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.fetchSingle);
 adminRouter.post("/b2bHotel/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bHotelController.update);
@@ -197,6 +199,7 @@ adminRouter.post("/b2bHotel/delete", passport.authenticate("jwt", { session: fal
 
 // ========== B2bFlightDetailsController Routes==========
 adminRouter.post("/b2bFlightDetails/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.fetch);
+adminRouter.post("/b2bFlightDetails/fetch-b2b", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.fetchB2b);
 adminRouter.post("/b2bFlightDetails/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.create);
 adminRouter.post("/b2bFlightDetails/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.fetchSingle);
 adminRouter.post("/b2bFlightDetails/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.update);

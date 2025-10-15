@@ -18,6 +18,26 @@ const fetch = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+
+const fetchB2b = async function (req, res) {
+  try {
+    let body = req.body;
+    const data = await Driver.findAll({
+      order: [['id', 'DESC']],
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number
+      }
+    });
+    if (!data) {
+      return ReE(res, { message: "No Data Found" }, 200);
+    }
+    return ReS(res, { data: data, message: "success" });
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
+
 const create = async (req, res) => {
   try {
     let body = req.body;
@@ -124,6 +144,7 @@ const deleted = async function (req, res) {
 
 module.exports = {
   fetch,
+  fetchB2b,
   create,
   fetchSingle,
   update,

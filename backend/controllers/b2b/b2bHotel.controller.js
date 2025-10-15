@@ -18,6 +18,26 @@ const fetch = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+
+const fetchB2b = async function (req, res) {
+  try {
+    let body = req.body;
+    const data = await B2bHotel.findAll({
+      order: [['id', 'DESC']],
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number
+      }
+    });
+    if (!data) {
+      return ReE(res, { message: "No Data Found" }, 200);
+    }
+    return ReS(res, { data: data, message: "success" });
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
+
 const create = async (req, res) => {
   try {
     let body = req.body;
@@ -26,11 +46,11 @@ const create = async (req, res) => {
       group_name_number: body.group_name_number,
       check_in: body.check_in,
       check_out: body.check_out,
-      city: body.city,  
+      city: body.city,
       hotel_name: body.hotel_name,
       nights: body.nights,
       rooms: body.rooms,
-      description : body.description,
+      description: body.description,
     })
 
     if (data) {
@@ -72,7 +92,7 @@ const update = async function (req, res) {
     const existData = await B2bHotel.findOne({
       where: { id: body.id }
     });
-    
+
     await B2bHotel.update({
       check_in: body.check_in ? body.check_in : existData.check_in,
       check_out: body.check_out ? body.check_out : existData.check_out,
@@ -80,7 +100,7 @@ const update = async function (req, res) {
       hotel_name: body.hotel_name ? body.hotel_name : existData.hotel_name,
       nights: body.nights ? body.nights : existData.nights,
       rooms: body.rooms ? body.rooms : existData.rooms,
-      description : body.description ? body.description : existData.description,
+      description: body.description ? body.description : existData.description,
     },
       {
         where: { id: body.id }
@@ -112,6 +132,7 @@ const deleted = async function (req, res) {
 
 module.exports = {
   fetch,
+  fetchB2b,
   create,
   fetchSingle,
   update,

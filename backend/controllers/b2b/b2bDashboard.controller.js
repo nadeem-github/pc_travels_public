@@ -182,7 +182,7 @@ const fetchFlightDetail = async function (req, res) {
     let userId = body.id
     const data = await FlightDetail.findAll({
       where: {
-        id: userId,
+        // id: userId,
         email: body.email,
         group_name_number: body.group_name_number
       }
@@ -202,7 +202,7 @@ const fetchHotelDetail = async function (req, res) {
     let userId = body.id
     const data = await B2bHotel.findAll({
       where: {
-        id: userId,
+        // id: userId,
         email: body.email,
         group_name_number: body.group_name_number
       }
@@ -222,7 +222,7 @@ const fetchDriverDetail = async function (req, res) {
     let userId = body.id
     const data = await Driver.findAll({
       where: {
-        id: userId,
+        // id: userId,
         email: body.email,
         group_name_number: body.group_name_number
       }
