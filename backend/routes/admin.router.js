@@ -32,6 +32,7 @@ const B2bMutamerListController = require("@controllers/admin/b2bMutamerList.cont
 const B2bDriverController = require("@controllers/b2b/b2bDriver.controller");
 const B2bHotelController = require("@controllers/b2b/b2bHotel.controller");
 const B2bFlightDetailsController = require("@controllers/b2b/b2bFlightDetails.controller");
+const AssignPackageController = require("@controllers/admin/assignPackage.controller");
 
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
@@ -204,6 +205,13 @@ adminRouter.post("/b2bFlightDetails/create", passport.authenticate("jwt", { sess
 adminRouter.post("/b2bFlightDetails/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.fetchSingle);
 adminRouter.post("/b2bFlightDetails/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.update);
 adminRouter.post("/b2bFlightDetails/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bFlightDetailsController.deleted);
+
+// ========== AssignPackageController Routes==========
+adminRouter.post("/assignPackage/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.fetch);
+adminRouter.post("/assignPackage/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.create);
+adminRouter.post("/assignPackage/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.fetchSingle);
+adminRouter.post("/assignPackage/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.update);
+adminRouter.post("/assignPackage/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.deleted);
 // ========== Error Handler ==========
 adminRouter.use(errorHandler);
 
