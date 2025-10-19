@@ -3,11 +3,11 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class AssignPackage extends Model {
+  class AssignPackageHousing extends Model {
     static associate(models) {
     }
   }
-  AssignPackage.init({
+  AssignPackageHousing.init({
     email: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -16,47 +16,35 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },  
-    arrival_airport: {
-      type: DataTypes.STRING,
-      allowNull: true,
+     notes: {
+      type: DataTypes.TEXT,
+      allowNull: true,      
     },
-    arrival_time: {
+    check_out:{
       type: DataTypes.DATE,
       allowNull: true,
     },
-    arrival_date: {
+    check_in:{
       type: DataTypes.DATE,
       allowNull: true,
     },
-    flight_no: {
+    nights:{
       type: DataTypes.STRING,
       allowNull: true,
     },
-    airline_name : {
+    rooms:{
       type: DataTypes.STRING,
       allowNull: true,
     },
-     departure_airport : {
+    hotel_name:{
       type: DataTypes.STRING,
       allowNull: true,
     },
-    departure_time : {
-      type: DataTypes.DATE,
-      allowNull: true,  
-    },
-    departure_date : {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-     flight_no_1: {
+    city:{
       type: DataTypes.STRING,
       allowNull: true,
     },
-    airline_name_1 : {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    
+   
     deleted_at: {
       allowNull: true,
       type: DataTypes.DATE,
@@ -64,13 +52,13 @@ module.exports = (sequelize, DataTypes) => {
   },
     {
       sequelize,
-      modelName: 'AssignPackage',
-      tableName: "assign_packages",
+      modelName: 'AssignPackageHousing',
+      tableName: "assign_package_housing",
       createdAt: "created_at",
       updatedAt: "updated_at",
       paranoid: true,
       underscored: true
     });
 
-  return AssignPackage;
+  return AssignPackageHousing;
 };

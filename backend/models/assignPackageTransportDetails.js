@@ -3,11 +3,11 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class AssignPackage extends Model {
+  class AssignPackageTransportDetails extends Model {
     static associate(models) {
     }
   }
-  AssignPackage.init({
+  AssignPackageTransportDetails.init({
     email: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -16,22 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },  
-    arrival_airport: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    arrival_time: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    arrival_date: {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-    flight_no: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    
     airline_name : {
       type: DataTypes.STRING,
       allowNull: true,
@@ -40,23 +25,26 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    departure_time : {
+    notes: {
+      type: DataTypes.TEXT,
+      allowNull: true,      
+    },
+    assign_time: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    assign_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    assign_to: {
+      type: DataTypes.STRING,
       allowNull: true,  
     },
-    departure_date : {
-      type: DataTypes.DATE,
-      allowNull: true,
-    },
-     flight_no_1: {
+    assign_from: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: true,  
     },
-    airline_name_1 : {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    
     deleted_at: {
       allowNull: true,
       type: DataTypes.DATE,
@@ -64,13 +52,13 @@ module.exports = (sequelize, DataTypes) => {
   },
     {
       sequelize,
-      modelName: 'AssignPackage',
-      tableName: "assign_packages",
+      modelName: 'AssignPackageTransportDetails',
+      tableName: "assign_package_transport_details",
       createdAt: "created_at",
       updatedAt: "updated_at",
       paranoid: true,
       underscored: true
     });
 
-  return AssignPackage;
+  return AssignPackageTransportDetails;
 };
