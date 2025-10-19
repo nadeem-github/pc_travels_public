@@ -1,4 +1,4 @@
-const { MutamersList, FlightDetail, B2bHotel, Driver } = require("@models");
+const { MutamersList, FlightDetail, B2bHotel, Driver,AssignPackage, AssignPackageTransportDetails, AssignPackageHousing } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const { QueryTypes } = require("sequelize");
 const { sequelize } = require("@models");
@@ -235,6 +235,49 @@ const fetchDriverDetail = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+const fetchAssignPackage = async function (req, res) {
+  try {
+    let body = req.body;
+
+    const [data, data1, data2] = await Promise.all([
+      AssignPackage.findAll({
+        order: [['id', 'DESC']],
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+        },
+      }),
+      AssignPackageTransportDetails.findAll({
+        order: [['id', 'DESC']],
+        attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+        },
+      }),
+      AssignPackageHousing.findAll({
+        order: [['id', 'DESC']],
+        attributes: ['id','notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+        },
+      }),
+    ]);
+    if (!data) {
+      return ReE(res, { message: "No Data Found" }, 200);
+    }
+    return ReS(res, {
+      result: {
+        packageDetails: data,
+        transportDetails: data1,
+        hotelDetails: data2
+      }, message: "success"
+    });
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
 
 
 
@@ -244,5 +287,6 @@ module.exports = {
   fetchAll,
   fetchFlightDetail,
   fetchHotelDetail,
-  fetchDriverDetail
+  fetchDriverDetail,
+  fetchAssignPackage
 };
