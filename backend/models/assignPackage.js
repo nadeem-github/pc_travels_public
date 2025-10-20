@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     arrival_time: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: true,
     },
     arrival_date: {
@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     departure_time : {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: true,  
     },
     departure_date : {

@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,      
     },
     assign_time: {
-      type: DataTypes.DATE,
+      type: DataTypes.STRING,
       allowNull: true,
     },
     assign_date: {
