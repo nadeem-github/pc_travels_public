@@ -33,6 +33,7 @@ const B2bDriverController = require("@controllers/b2b/b2bDriver.controller");
 const B2bHotelController = require("@controllers/b2b/b2bHotel.controller");
 const B2bFlightDetailsController = require("@controllers/b2b/b2bFlightDetails.controller");
 const AssignPackageController = require("@controllers/admin/assignPackage.controller");
+const transportDetailsController = require("@controllers/admin/transportDetails.controller");
 
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
@@ -212,6 +213,10 @@ adminRouter.post("/assignPackage/create", passport.authenticate("jwt", { session
 adminRouter.post("/assignPackage/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.fetchSingle);
 adminRouter.post("/assignPackage/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.update);
 adminRouter.post("/assignPackage/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.deleted);
+
+// ========== transportDetailsController Routes==========
+adminRouter.post("/transportDetails/fetch-upcomin-and-expiry", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, transportDetailsController.fetchUpcomingAndExpiry);
+
 // ========== Error Handler ==========
 adminRouter.use(errorHandler);
 

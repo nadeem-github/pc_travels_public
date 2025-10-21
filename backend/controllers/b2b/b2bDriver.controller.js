@@ -9,12 +9,14 @@ const fetch = async function (req, res) {
   try {
     let body = req.body;
     const transportDetails = await AssignPackageTransportDetails.findAll({
+      order: [['id', 'DESC']],
       where: {
         email: body.email,
         group_name_number: body.group_name_number
       }
     });
     const driverDetails = await Driver.findAll({
+      order: [['id', 'DESC']],
       where: {
         email: body.email,
         group_name_number: body.group_name_number
@@ -35,6 +37,7 @@ const fetch = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+
 
 const fetchB2b = async function (req, res) {
   try {
