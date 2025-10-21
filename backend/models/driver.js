@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+     transport_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     group_name_number: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -32,22 +36,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-     driver_name_1: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    driver_mobile_1: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    bus_no_1: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    status_1: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    
     d_date: {
       allowNull: true,
       type: DataTypes.DATE,

@@ -1,4 +1,4 @@
-const { Driver, MutamersList } = require("@models");
+const { Driver, MutamersList, AssignPackageTransportDetails } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -7,13 +7,19 @@ const helper = require("@helpers/fileupload.helper");
 
 const fetch = async function (req, res) {
   try {
-    const data = await Driver.findAll({
-      order: [['id', 'DESC']],
+    const transportDetails = await AssignPackageTransportDetails.findAll();
+    const driverDetails = await Driver.findAll();
+    const mergedData = transportDetails.map(transport => {
+      const relatedDrivers = driverDetails.filter(
+        driver => driver.transport_id === transport.id
+      );
+      return {
+        ...transport.dataValues,
+        driverDetails: relatedDrivers
+      };
     });
-    if (!data) {
-      return ReE(res, { message: "No Data Found" }, 200);
-    }
-    return ReS(res, { data: data, message: "success" });
+    return ReS(res, { data: mergedData, message: "success" });
+
   } catch (error) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
@@ -41,36 +47,27 @@ const fetchB2b = async function (req, res) {
 const create = async (req, res) => {
   try {
     let body = req.body;
-    const data = await Driver.create({
-      email: body.email,
-      group_name_number: body.group_name_number,
-      driver_name: body.driver_name,
-      driver_mobile: body.driver_mobile,
-      bus_no: body.bus_no,
-      status: body.status,
-      driver_name_1: body.driver_name_1,
-      driver_mobile_1: body.driver_mobile_1,
-      bus_no_1: body.bus_no_1,
-      status_1: body.status_1,
-      d_date: body.d_date,
-      location: body.location,
-      to_location: body.to_location,
-      time: body.time,
-      remarks: body.remarks,
-    })
+    body.driverDetails.forEach(async (item) => {
+      await Driver.create({
+        email: item.email,
+        group_name_number: item.group_name_number,
+        transport_id: item.transport_id,
+        driver_name: item.driver_name,
+        driver_mobile: item.driver_mobile,
+        bus_no: item.bus_no,
+        status: item.status,
+        d_date: item.d_date,
+        location: item.location,
+        to_location: item.to_location,
+        time: item.time,
+        remarks: item.remarks,
+      });
+    });
 
-    if (data) {
-      const data1 = await MutamersList.update({
-        view_dirver_details: data?.id,
-      },
-        {
-          where: {
-            email: body.email,
-            group_name_number: body.group_name_number
-          }
-        });
-      return ReS(res, { message: "Driver created successfully." }, 200);
-    }
+
+
+
+    return ReS(res, { message: "Driver created successfully." }, 200);
 
   } catch (error) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
@@ -80,13 +77,23 @@ const fetchSingle = async function (req, res) {
   try {
     let body = req.body;
     let userId = body.id
-    const data = await Driver.findOne({
-      where: { id: userId }
+    const transportDetails = await AssignPackageTransportDetails.findAll({
+      where: { id: body.transport_id }
     });
-    if (!data) {
-      return ReE(res, { message: "No Data Found" }, 200);
-    }
-    return ReS(res, { data: data, message: "success" });
+    const driverDetails = await Driver.findAll({
+      where: { transport_id: body.transport_id }
+    });
+    const mergedData = transportDetails.map(transport => {
+      const relatedDrivers = driverDetails.filter(
+        driver => driver.transport_id === transport.id
+      );
+      return {
+        ...transport.dataValues,
+        driverDetails: relatedDrivers
+      };
+    });
+    return ReS(res, { data: mergedData, message: "success" });
+   
   } catch (error) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
@@ -94,33 +101,46 @@ const fetchSingle = async function (req, res) {
 
 const update = async function (req, res) {
   try {
-    let body = req.body;
-    const existData = await Driver.findOne({
-      where: { id: body.id }
-    });
+    const { driverDetails } = req.body;
 
-    await Driver.update({
-      driver_name: body.driver_name ? body.driver_name : existData.driver_name,
-      driver_mobile: body.driver_mobile ? body.driver_mobile : existData.driver_mobile,
-      bus_no: body.bus_no ? body.bus_no : existData.bus_no,
-      status: body.status ? body.status : existData.status,
-      driver_name_1: body.driver_name_1 ? body.driver_name_1 : existData.driver_name_1,
-      driver_mobile_1: body.driver_mobile_1 ? body.driver_mobile_1 : existData.driver_mobile_1,
-      bus_no_1: body.bus_no_1 ? body.bus_no_1 : existData.bus_no_1,
-      status_1: body.status_1 ? body.status_1 : existData.status_1,
-      d_date: body.d_date ? body.d_date : existData.d_date,
-      location: body.location ? body.location : existData.location,
-      to_location: body.to_location ? body.to_location : existData.to_location,
-      time: body.time ? body.time : existData.time,
-      remarks: body.remarks ? body.remarks : existData.remarks,
-    },
-      {
-        where: { id: body.id }
+    if (!driverDetails || !Array.isArray(driverDetails)) {
+      return ReE(res, { message: "driverDetails array is required" }, 400);
+    }
+
+    for (const item of driverDetails) {
+      // 1️⃣ Existing record lo
+      const existing = await Driver.findOne({
+        where: {
+          id: item.id,
+        },
       });
+     
 
-    return ReS(res, { message: "Driver has been updated successfully." }, 200);
+      if (existing) {
+        // 2️⃣ Conditional update (agar naya value aaya hai to lo, warna purana rakho)
+        const updatedData = {
+          driver_name: item.driver_name ?? existing.driver_name,
+          driver_mobile: item.driver_mobile ?? existing.driver_mobile,
+          bus_no: item.bus_no ?? existing.bus_no,
+          status: item.status ?? existing.status,
+         
+          d_date: item.d_date ?? existing.d_date,
+          location: item.location ?? existing.location,
+          to_location: item.to_location ?? existing.to_location,
+          time: item.time ?? existing.time,
+          remarks: item.remarks ?? existing.remarks,
+        };
+
+        // 3️⃣ Record update karo
+        await existing.update(updatedData);
+      }
+    }
+
+    return ReS(res, { message: "Driver details updated successfully." }, 200);
+
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    console.error("Error updating driver details:", error);
+    return ReE(res, { message: "Something went wrong", err: error.message }, 500);
   }
 };
 const deleted = async function (req, res) {
