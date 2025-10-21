@@ -7,8 +7,19 @@ const helper = require("@helpers/fileupload.helper");
 
 const fetch = async function (req, res) {
   try {
-    const transportDetails = await AssignPackageTransportDetails.findAll();
-    const driverDetails = await Driver.findAll();
+    let body = req.body;
+    const transportDetails = await AssignPackageTransportDetails.findAll({
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number
+      }
+    });
+    const driverDetails = await Driver.findAll({
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number
+      }
+    });
     const mergedData = transportDetails.map(transport => {
       const relatedDrivers = driverDetails.filter(
         driver => driver.transport_id === transport.id
