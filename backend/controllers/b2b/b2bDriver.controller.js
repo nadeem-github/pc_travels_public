@@ -70,7 +70,7 @@ const create = async (req, res) => {
         driver_mobile: item.driver_mobile,
         bus_no: item.bus_no,
         status: item.status,
-        d_date: item.d_date,
+        // d_date: item.d_date,
         location: item.location,
         to_location: item.to_location,
         time: item.time,
