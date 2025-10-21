@@ -70,18 +70,19 @@ const create = async (req, res) => {
         driver_mobile: item.driver_mobile,
         bus_no: item.bus_no,
         status: item.status,
-        d_date: item.d_date,
+        // d_date: item.d_date,
         location: item.location,
         to_location: item.to_location,
         time: item.time,
         remarks: item.remarks,
       });
     });
+    const testData = await Driver.findAll();
 
 
 
 
-    return ReS(res, { message: "Driver created successfully." }, 200);
+    return ReS(res, {data:testData, message: "Driver created successfully." }, 200);
 
   } catch (error) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
