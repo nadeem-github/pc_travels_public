@@ -178,6 +178,7 @@ const update = async function (req, res) {
     if (body.transportDetails && Array.isArray(body.transportDetails)) {
       for (const item of body.transportDetails) {
         // Existing record lo
+         if (item.id) {
         const existing = await AssignPackageTransportDetails.findOne({
           where: {
             id: item.id,
@@ -198,7 +199,7 @@ const update = async function (req, res) {
 
           await existing.update(updatedData);
         }
-         else {
+       } else {
           // 🆕 Create new
           await AssignPackageTransportDetails.create({
             email: body.email,
@@ -216,6 +217,7 @@ const update = async function (req, res) {
       for (const item of body.hotelDetails) {
         // Existing record lo
         // console.log
+         if (item.id) {
         const existing = await AssignPackageHousing.findOne({
           where: {
             id: item.id,
@@ -238,7 +240,7 @@ const update = async function (req, res) {
 
           await existing.update(updatedData);
         }
-        else {
+       } else {
           // 🆕 Create new
           await AssignPackageHousing.create({
             email: body.email,
