@@ -18,7 +18,7 @@ const fetch = async function (req, res) {
         },
       }),
       AssignPackageTransportDetails.findAll({
-        order: [['id', 'ASC']],
+        order: [['assign_date', 'ASC']],
         attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
         where: {
           email: body.email,
@@ -26,7 +26,7 @@ const fetch = async function (req, res) {
         },
       }),
       AssignPackageHousing.findAll({
-        order: [['id', 'ASC']],
+        order: [['check_in', 'ASC']],
         attributes: ['id','notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
         where: {
           email: body.email,
@@ -113,7 +113,7 @@ const fetchSingle = async function (req, res) {
         },
       }),
       AssignPackageTransportDetails.findAll({
-        order: [['id', 'ASC']],
+        order: [['assign_date', 'ASC']],
         attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
         where: {
           email: body.email,
@@ -121,7 +121,7 @@ const fetchSingle = async function (req, res) {
         },
       }),
       AssignPackageHousing.findAll({
-        order: [['id', 'ASC']],
+        order: [['check_in', 'ASC']],
         attributes: ['id', 'notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
         where: {
           email: body.email,
