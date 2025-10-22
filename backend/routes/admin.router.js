@@ -182,6 +182,7 @@ adminRouter.post("/b2bMutamerList/update", passport.authenticate("jwt", { sessio
 adminRouter.post("/b2bMutamerList/update-excel", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.updateExcel);
 adminRouter.post("/b2bMutamerList/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.deleted);
 adminRouter.post("/b2bMutamerList/delete-group", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.deletedGroup);
+adminRouter.post("/b2bMutamerList/delete-group-number", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.deletedGroupNumber);    
 
 // ========== B2bDriverController Routes==========
 adminRouter.post("/b2bDriver/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bDriverController.fetch);

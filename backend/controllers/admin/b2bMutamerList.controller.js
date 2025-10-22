@@ -32,7 +32,7 @@ const uploadExcelToDatabase = async function (req, res) {
         hotel_details: body.hotel_details,
         flight_details: body.flight_details,
         arrival_date: body.arrival_date,
-        // group_size: finalTotal,
+        group_size: body.group_size,
         transport_route: body.transport_route,
         remark: body.remark,
         view_dirver_details: body.view_dirver_details,
@@ -50,15 +50,15 @@ const uploadExcelToDatabase = async function (req, res) {
       }));
 
       await MutamersList.bulkCreate(formattedBatch);
-      await MutamersList.update(
-        { group_size: finalTotal },  // 👈 new value
-        {
-          where: {
-            email: body.email,
-            group_name_number: body.group_name_number
-          }
-        }
-      );
+      // await MutamersList.update(
+      //   // { group_size: finalTotal },  // 👈 new value
+      //   {
+      //     where: {
+      //       email: body.email,
+      //       group_name_number: body.group_name_number
+      //     }
+      //   }
+      // );
     }
 
     return ReS(res, { message: "Data inserted successfully." }, 200);
@@ -482,6 +482,23 @@ const deletedGroup = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 }
+const deletedGroupNumber = async function (req, res) {
+  try {
+    let body = req.body;
+    // let userId = body.id
+    const data = await MutamersList.destroy({
+      where: { email: body.email, group_name_number: body.group_name_number, main_external_agent_code: body.main_external_agent_code }
+    }).then(function (result) {
+      if (!result) return ReE(res, { message: "Somthing Went Wrong Please try after sometime." }, 400);
+      return ReS(res, { message: "MutamersList has been deleted successfully." }, 200);
+    }).catch(function (err) {
+      return ReE(res, { message: "Somthing Went Wrong", err: err.errors }, 200);
+    });
+
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+}
 
 
 module.exports = {
@@ -493,5 +510,6 @@ module.exports = {
   update,
   deleted,
   updateExcel,
-  deletedGroup
+  deletedGroup,
+  deletedGroupNumber
 };
