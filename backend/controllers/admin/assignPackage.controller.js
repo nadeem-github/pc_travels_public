@@ -11,14 +11,14 @@ const fetch = async function (req, res) {
 
     const [data, data1, data2] = await Promise.all([
       AssignPackage.findAll({
-        order: [['id', 'DESC']],
+       order: [['id', 'ASC']],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
         },
       }),
       AssignPackageTransportDetails.findAll({
-        order: [['id', 'DESC']],
+        order: [['id', 'ASC']],
         attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
         where: {
           email: body.email,
@@ -26,7 +26,7 @@ const fetch = async function (req, res) {
         },
       }),
       AssignPackageHousing.findAll({
-        order: [['id', 'DESC']],
+        order: [['id', 'ASC']],
         attributes: ['id','notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
         where: {
           email: body.email,
@@ -106,14 +106,14 @@ const fetchSingle = async function (req, res) {
     let body = req.body;
     const [data, data1, data2] = await Promise.all([
       AssignPackage.findAll({
-        order: [['id', 'DESC']],
+        order: [['id', 'ASC']],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
         },
       }),
       AssignPackageTransportDetails.findAll({
-        order: [['id', 'DESC']],
+        order: [['id', 'ASC']],
         attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
         where: {
           email: body.email,
@@ -121,7 +121,7 @@ const fetchSingle = async function (req, res) {
         },
       }),
       AssignPackageHousing.findAll({
-        order: [['id', 'DESC']],
+        order: [['id', 'ASC']],
         attributes: ['id', 'notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
         where: {
           email: body.email,
