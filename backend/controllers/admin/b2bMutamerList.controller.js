@@ -251,23 +251,47 @@ const create = async (req, res) => {
 
   try {
     let body = req.body;
+    // function getInitials(fullName) {
+    //   if (!fullName || typeof fullName !== 'string') return '';
+
+    //   // normalize spaces, remove extra punctuation (optional)
+    //   const cleaned = fullName.trim().replace(/\s+/g, ' ').replace(/[^\p{L}\s'-]/gu, '');
+    //   const parts = cleaned.split(' ');
+
+    //   if (parts.length === 0) return '';
+
+    //   // first letter of first word
+    //   const first = parts[0].charAt(0) || '';
+    //   // first letter of last word (if only one word, you can choose same as first or '')
+    //   const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+
+    //   // return uppercase letters separated (or concat if you want "RP")
+    //   return (first + last).toUpperCase(); // => "RP"
+    // }
     function getInitials(fullName) {
-      if (!fullName || typeof fullName !== 'string') return '';
+      if (!fullName || typeof fullName !== "string") return "";
 
-      // normalize spaces, remove extra punctuation (optional)
-      const cleaned = fullName.trim().replace(/\s+/g, ' ').replace(/[^\p{L}\s'-]/gu, '');
-      const parts = cleaned.split(' ');
+      // Trim spaces
+      const cleaned = fullName.trim();
 
-      if (parts.length === 0) return '';
+      // Find first non-digit (letters part)
+      const match = cleaned.match(/[A-Za-z]+(\d*[A-Za-z]*)?/);
+      if (!match) return "";
 
-      // first letter of first word
-      const first = parts[0].charAt(0) || '';
-      // first letter of last word (if only one word, you can choose same as first or '')
-      const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+      const text = cleaned; // Full text
 
-      // return uppercase letters separated (or concat if you want "RP")
-      return (first + last).toUpperCase(); // => "RP"
+      // Find index where digits start
+      const lettersPart = text.match(/[A-Za-z]+/);
+      const letters = lettersPart ? lettersPart[0] : "";
+      const afterLetters = text.slice(letters.length); // Remaining part after letters
+
+      // Take first 2 characters after that
+      const nextTwo = afterLetters.slice(0, 2);
+
+      // Return combined
+      return nextTwo.toUpperCase();
     }
+
     function getDayAndMonth(dateString) {
       if (!dateString) return '';
 
@@ -279,7 +303,7 @@ const create = async (req, res) => {
 
       return `${day}${month}`; // "09-10"
     }
-    const initials = getInitials(body.company_name);
+    const initials = getInitials(body.b2b_unique_id);
     const formatted = getDayAndMonth(body.return_date);
     const formatted1 = getDayAndMonth(body.arrival_date);
     const gname = `PC${initials}${formatted1}R${formatted}`;
@@ -326,23 +350,47 @@ const update = async function (req, res) {
     const existData = await MutamersList.findOne({
       where: { id: body.id }
     });
+    // function getInitials(fullName) {
+    //   if (!fullName || typeof fullName !== 'string') return '';
+
+    //   // normalize spaces, remove extra punctuation (optional)
+    //   const cleaned = fullName.trim().replace(/\s+/g, ' ').replace(/[^\p{L}\s'-]/gu, '');
+    //   const parts = cleaned.split(' ');
+
+    //   if (parts.length === 0) return '';
+
+    //   // first letter of first word
+    //   const first = parts[0].charAt(0) || '';
+    //   // first letter of last word (if only one word, you can choose same as first or '')
+    //   const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+
+    //   // return uppercase letters separated (or concat if you want "RP")
+    //   return (first + last).toUpperCase(); // => "RP"
+    // }
     function getInitials(fullName) {
-      if (!fullName || typeof fullName !== 'string') return '';
+      if (!fullName || typeof fullName !== "string") return "";
 
-      // normalize spaces, remove extra punctuation (optional)
-      const cleaned = fullName.trim().replace(/\s+/g, ' ').replace(/[^\p{L}\s'-]/gu, '');
-      const parts = cleaned.split(' ');
+      // Trim spaces
+      const cleaned = fullName.trim();
 
-      if (parts.length === 0) return '';
+      // Find first non-digit (letters part)
+      const match = cleaned.match(/[A-Za-z]+(\d*[A-Za-z]*)?/);
+      if (!match) return "";
 
-      // first letter of first word
-      const first = parts[0].charAt(0) || '';
-      // first letter of last word (if only one word, you can choose same as first or '')
-      const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+      const text = cleaned; // Full text
 
-      // return uppercase letters separated (or concat if you want "RP")
-      return (first + last).toUpperCase(); // => "RP"
+      // Find index where digits start
+      const lettersPart = text.match(/[A-Za-z]+/);
+      const letters = lettersPart ? lettersPart[0] : "";
+      const afterLetters = text.slice(letters.length); // Remaining part after letters
+
+      // Take first 2 characters after that
+      const nextTwo = afterLetters.slice(0, 2);
+
+      // Return combined
+      return nextTwo.toUpperCase();
     }
+
     function getDayAndMonth(dateString) {
       if (!dateString) return '';
 
@@ -354,7 +402,7 @@ const update = async function (req, res) {
 
       return `${day}${month}`; // "09-10"
     }
-    const initials = getInitials(body.company_name);
+    const initials = getInitials(body.b2b_unique_id);
     const formatted = getDayAndMonth(body.return_date);
     const formatted1 = getDayAndMonth(body.arrival_date);
     const gname = `PC${initials}${formatted1}R${formatted}`;

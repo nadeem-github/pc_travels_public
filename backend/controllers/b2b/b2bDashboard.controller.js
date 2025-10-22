@@ -239,7 +239,7 @@ const fetchDriverDetailWithTransport = async function (req, res) {
   try {
     let body = req.body;
     const transportDetails = await AssignPackageTransportDetails.findAll({
-      order: [['id', 'DESC']],
+      order: [['assign_date', 'ASC']],
       where: {
         email: body.email,
         group_name_number: body.group_name_number
@@ -273,14 +273,14 @@ const fetchAssignPackage = async function (req, res) {
 
     const [data, data1, data2] = await Promise.all([
       AssignPackage.findAll({
-        order: [['id', 'DESC']],
+        order: [['id', 'ASC']],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
         },
       }),
       AssignPackageTransportDetails.findAll({
-        order: [['id', 'DESC']],
+        order: [['assign_date', 'ASC']],
         attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
         where: {
           email: body.email,
@@ -288,7 +288,7 @@ const fetchAssignPackage = async function (req, res) {
         },
       }),
       AssignPackageHousing.findAll({
-        order: [['id', 'DESC']],
+        order: [['check_in', 'ASC']],
         attributes: ['id','notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
         where: {
           email: body.email,
