@@ -274,22 +274,11 @@ const create = async (req, res) => {
       // Trim spaces
       const cleaned = fullName.trim();
 
-      // Find first non-digit (letters part)
-      const match = cleaned.match(/[A-Za-z]+(\d*[A-Za-z]*)?/);
-      if (!match) return "";
+      // Match only starting alphabets (A–Z or a–z)
+      const match = cleaned.match(/^[A-Za-z]{1,2}/);
 
-      const text = cleaned; // Full text
-
-      // Find index where digits start
-      const lettersPart = text.match(/[A-Za-z]+/);
-      const letters = lettersPart ? lettersPart[0] : "";
-      const afterLetters = text.slice(letters.length); // Remaining part after letters
-
-      // Take first 2 characters after that
-      const nextTwo = afterLetters.slice(0, 2);
-
-      // Return combined
-      return nextTwo.toUpperCase();
+      // Return first two letters in uppercase
+      return match ? match[0].toUpperCase() : "";
     }
 
     function getDayAndMonth(dateString) {
@@ -373,22 +362,11 @@ const update = async function (req, res) {
       // Trim spaces
       const cleaned = fullName.trim();
 
-      // Find first non-digit (letters part)
-      const match = cleaned.match(/[A-Za-z]+(\d*[A-Za-z]*)?/);
-      if (!match) return "";
+      // Match only starting alphabets (A–Z or a–z)
+      const match = cleaned.match(/^[A-Za-z]{1,2}/);
 
-      const text = cleaned; // Full text
-
-      // Find index where digits start
-      const lettersPart = text.match(/[A-Za-z]+/);
-      const letters = lettersPart ? lettersPart[0] : "";
-      const afterLetters = text.slice(letters.length); // Remaining part after letters
-
-      // Take first 2 characters after that
-      const nextTwo = afterLetters.slice(0, 2);
-
-      // Return combined
-      return nextTwo.toUpperCase();
+      // Return first two letters in uppercase
+      return match ? match[0].toUpperCase() : "";
     }
 
     function getDayAndMonth(dateString) {
