@@ -198,6 +198,18 @@ const update = async function (req, res) {
 
           await existing.update(updatedData);
         }
+         else {
+          // 🆕 Create new
+          await AssignPackageTransportDetails.create({
+            email: body.email,
+            group_name_number: body.group_name_number,
+            notes: item.notes ?? "",
+            assign_time: item.assign_time ?? null,
+            assign_date: item.assign_date ?? null,
+            assign_to: item.assign_to ?? "",
+            assign_from: item.assign_from ?? "",
+          });
+        }
       }
     }
     if (body.hotelDetails && Array.isArray(body.hotelDetails)) {
@@ -225,6 +237,20 @@ const update = async function (req, res) {
           };
 
           await existing.update(updatedData);
+        }
+        else {
+          // 🆕 Create new
+          await AssignPackageHousing.create({
+            email: body.email,
+            group_name_number: body.group_name_number,
+            notes: item.notes ?? "",
+            check_out: item.check_out ?? null,
+            check_in: item.check_in ?? null,
+            nights: item.nights ?? 0,
+            rooms: item.rooms ?? 0,
+            hotel_name: item.hotel_name ?? "",
+            city: item.city ?? "",
+          });
         }
       }
     }
