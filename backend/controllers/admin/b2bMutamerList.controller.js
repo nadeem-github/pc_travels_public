@@ -303,7 +303,7 @@ const create = async (req, res) => {
 
       return `${day}${month}`; // "09-10"
     }
-    const initials = getInitials(body.b2b_unique_id);
+    const initials = getInitials(body.company_name);
     const formatted = getDayAndMonth(body.return_date);
     const formatted1 = getDayAndMonth(body.arrival_date);
     const gname = `PC${initials}${formatted1}R${formatted}`;
@@ -402,7 +402,7 @@ const update = async function (req, res) {
 
       return `${day}${month}`; // "09-10"
     }
-    const initials = getInitials(body.b2b_unique_id);
+    const initials = getInitials(body.company_name);
     const formatted = getDayAndMonth(body.return_date);
     const formatted1 = getDayAndMonth(body.arrival_date);
     const gname = `PC${initials}${formatted1}R${formatted}`;
