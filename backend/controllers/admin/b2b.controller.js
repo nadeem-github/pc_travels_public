@@ -55,53 +55,38 @@ const update = async function (req, res) {
         subject: "Welcome to PC Travels - Your Account is Activated",
         // text: `Your OTP is ${OtpValue}`,
         html: `
-  <div style="font-family: Arial, sans-serif; background:#f9fbff; padding:20px; border-radius:8px; border:1px solid #e0e7ff; max-width:500px; margin:auto;">
-    <div style="color:#0a7cff; text-align:center; margin-bottom:20px; text-align:center">
-        <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" alt="PC Travels Logo" />
+  <div style="font-family:Arial,sans-serif;background:#b7ffac;padding:20px;margin:0;">
+  <div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+    <div style="background:#174a7f;text-align:center;padding:20px;">
+      <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
     </div>
-    
-    <p style="font-size:16px; color:#333; margin:0 0 12px;">
-      Hello <b>${existData.person_name || "User"}</b>,
-    </p>
-    
-    <p style="font-size:15px; color:#444; margin:0 0 16px; line-height:1.5;">
-      Your account has been activated. Please use the credentials below to log in:
-    </p>
+    <div style="padding:24px;">
+      <h2 style="color:#174a7f;margin-top:0;text-align: center;">Welcome to PC Travels!</h2>
+      <p style="font-size:15px;color:#333;">Dear <b>${existData.person_name || "User"}</b>,</p>
+      <p style="font-size:15px;color:#444;line-height:1.6;">
+        Your account has been successfully <b style="color: #039a03">activated</b>. Use the credentials below to log in:
+      </p>
 
-    <!-- Username -->
-    <div style="margin:12px 0;">
-      <strong style="display:inline-block; width:100px;">Username:</strong>
-      <span style="background:#eef4ff; padding:6px 10px; border-radius:4px; font-weight:600; color:#0a7cff;">
-        ${existData.email}
-      </span>
-    </div>
+      <div style="background:#f0f4fa;padding:14px;border-radius:6px;margin:16px 0;">
+        <p style="margin:4px 0;"><b>Email:</b> <span style="color:#174a7f;">${existData.email}</span></p>
+        <p style="margin:4px 0;"><b>Password:</b> <span style="color:#174a7f;">${combinedWord}</span></p>
+      </div>
 
-    <!-- Password -->
-    <div style="margin:12px 0;">
-      <strong style="display:inline-block; width:100px;">Password:</strong>
-      <span style="background:#eef4ff; padding:6px 10px; border-radius:4px; font-weight:600; color:#0a7cff;">
-        ${combinedWord}
-      </span>
-    </div>
+      <div style="text-align:center;margin:30px 0;">
+        <a href="https://pctravelsonline.com/b2b/login" target="_blank"
+           style="display:inline-block;background:#174a7f;color:#fff;text-decoration:none;padding:12px 26px;border-radius:6px;font-weight:bold;">
+          Login Now
+        </a>
+      </div>
 
-    <!-- Login Link -->
-    <div style="text-align:center; margin:24px 0;">
-      <a href="https://pctravelsonline.com/b2b/login" target="_blank" 
-         style="display:inline-block; background:#0a7cff; color:#fff; text-decoration:none; padding:12px 22px; border-radius:6px; font-weight:600;">
-        Login Now
-      </a>
+      <p style="font-size:13px;color:#666;text-align:center">For security, please change your password after first login.</p>
     </div>
-    
-    <p style="font-size:14px; color:#555; margin:0;">
-      ✅ For security, please change your password after first login.
-    </p>
-    
-    <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
-    
-    <p style="font-size:12px; color:#888; text-align:center; margin:0;">
+    <div style="background:#f6f9fc;padding:14px;text-align:center;font-size:12px;color:#888;">
       © ${new Date().getFullYear()} PC Travels. All rights reserved.
-    </p>
-  </div>`
+    </div>
+  </div>
+</div>
+  `
       });
       return ReS(res, { message: "B2b user has been updated successfully." }, 200);
     }
@@ -114,43 +99,31 @@ const update = async function (req, res) {
         subject: "Welcome to PC Travels - Your Account is Activated",
         // text: `Your OTP is ${OtpValue}`,
         html: `
-  <div style="font-family: Arial, sans-serif; background:#fff8f8; padding:20px; border-radius:8px; border:1px solid #f5c2c7; max-width:500px; margin:auto;">
-    <div style="color:#0a7cff; text-align:center; margin-bottom:20px; text-align:center">
-        <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" alt="PC Travels Logo" />
+  <div style="font-family:Arial,sans-serif;background:#c0dcf8;padding:20px;margin:0;">
+  <div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+    <div style="background:#174a7f;text-align:center;padding:20px;">
+      <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
     </div>
-    
-    <p style="font-size:16px; color:#333; margin:0 0 12px;">
-      Hello <b>${existData.person_name || "User"}</b>,
-    </p>
-    
-    <p style="font-size:15px; color:#444; margin:0 0 16px; line-height:1.5;">
-      Your account is currently <b style="color:#dc3545;">on hold</b>.  
-      You will not be able to log in until the issue is resolved.
-    </p>
+    <div style="padding:24px;">
+      <h2 style="color:#d50606;text-align: center;font-size: 1.5rem; font-weight: bold;margin-top:0;">Account On Hold</h2>
+      <p style="font-size:15px;color:#333;">Dear <b>${existData.person_name || "User"}</b>,</p>
+      <p style="font-size:15px;color:#444;line-height:1.6;">
+        Your account has been temporarily placed <b style="color:#d97706;">on hold</b>.  
+        You will not be able to log in until the issue is resolved.
+      </p>
 
-    <!-- Account Status -->
-    <div style="text-align:center; margin:20px 0;">
-      <span style="display:inline-block; background:#dc3545; color:#fff; padding:12px 24px; font-size:18px; font-weight:bold; border-radius:6px;">
-        🚫 Account on Hold
-      </span>
-    </div>
+      <div style="background:#fff6e0;border-left:4px solid #d97706;padding:14px 16px;border-radius:6px;margin:16px 0;">
+        <strong style="color:#d97706;">Reason:</strong>
+        <span style="color:#444;">${body?.issue || "Account temporarily suspended by admin."}</span>
+      </div>
 
-    <!-- Show Issue -->
-    <div style="margin:16px 0; padding:14px; background:#fff0f0; border-left:4px solid #dc3545; border-radius:6px;">
-      <strong style="color:#dc3545;">Reason:</strong> 
-      <span style="color:#444;">${body?.issue || "Your account has been temporarily suspended by admin."}</span>
+      <p style="font-size:14px;color:#555;text-align:center">Our team will review and contact you soon.</p>
     </div>
-    
-    <p style="font-size:14px; color:#555; margin:0;">
-      ⚠️ Please wait until this issue is resolved by our team.
-    </p>
-    
-    <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
-    
-    <p style="font-size:12px; color:#888; text-align:center; margin:0;">
+    <div style="background:#f6f9fc;padding:14px;text-align:center;font-size:12px;color:#888;">
       © ${new Date().getFullYear()} PC Travels. All rights reserved.
-    </p>
-  </div>`
+    </div>
+  </div>
+</div>`
       });
       return ReS(res, { message: "B2b user has been updated successfully." }, 200);
     }
@@ -164,43 +137,31 @@ const update = async function (req, res) {
         subject: "Welcome to PC Travels - Your Account is Activated",
         // text: `Your OTP is ${OtpValue}`,
         html: `
-  <div style="font-family: Arial, sans-serif; background:#fff8f8; padding:20px; border-radius:8px; border:1px solid #f5c2c7; max-width:500px; margin:auto;">
-    <div style="color:#0a7cff; text-align:center; margin-bottom:20px; text-align:center">
-        <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" alt="PC Travels Logo" />
+  <div style="font-family:Arial,sans-serif;background:#c0dcf8;padding:20px;margin:0;">
+  <div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+    <div style="background:#174a7f;text-align:center;padding:20px;">
+      <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
     </div>
-    
-    <p style="font-size:16px; color:#333; margin:0 0 12px;">
-      Hello <b>${existData.person_name || "User"}</b>,
-    </p>
-    
-    <p style="font-size:15px; color:#444; margin:0 0 16px; line-height:1.5;">
-      We regret to inform you that your account has been <b style="color:#dc3545;">permanently cancelled</b>.  
-      You will no longer be able to log in or use our services with this account.
-    </p>
+    <div style="padding:24px;">
+      <h2 style="color:#174a7f;margin-top:0;">Account Cancelled</h2>
+      <p style="font-size:15px;color:#333;">Dear <b>${existData.person_name || "User"}</b>,</p>
+      <p style="font-size:15px;color:#444;line-height:1.6;">
+        Your account has been <b style="color:#dc2626;">permanently cancelled</b>.  
+        You will no longer be able to log in or use our services with this account.
+      </p>
 
-    <!-- Account Status -->
-    <div style="text-align:center; margin:20px 0;">
-      <span style="display:inline-block; background:#dc3545; color:#fff; padding:12px 24px; font-size:18px; font-weight:bold; border-radius:6px;">
-        ❌ Account Cancelled
-      </span>
-    </div>
+      <div style="background:#ffecec;border-left:4px solid #dc2626;padding:14px 16px;border-radius:6px;margin:16px 0;">
+        <strong style="color:#dc2626;">Reason:</strong>
+        <span style="color:#444;">${body?.issue || "Account cancelled by admin."}</span>
+      </div>
 
-    <!-- Show Issue -->
-    <div style="margin:16px 0; padding:14px; background:#fff0f0; border-left:4px solid #dc3545; border-radius:6px;">
-      <strong style="color:#dc3545;">Reason:</strong> 
-      <span style="color:#444;">${body?.issue || "Your account has been cancelled by admin."}</span>
+      <p style="font-size:14px;color:#555;text-align:center">If this was unexpected, please contact our support team.</p>
     </div>
-    
-    <p style="font-size:14px; color:#555; margin:0;">
-      ⚠️ If this was unexpected, please contact our team for further clarification.
-    </p>
-    
-    <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
-    
-    <p style="font-size:12px; color:#888; text-align:center; margin:0;">
+    <div style="background:#f6f9fc;padding:14px;text-align:center;font-size:12px;color:#888;">
       © ${new Date().getFullYear()} PC Travels. All rights reserved.
-    </p>
-  </div>`
+    </div>
+  </div>
+</div>`
       });
       return ReS(res, { message: "B2b user has been deleted successfully." }, 200);
     }
