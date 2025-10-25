@@ -11,7 +11,7 @@ const uploadExcelToDatabase = async function (req, res) {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = xlsx.utils.sheet_to_json(sheet);
     const BATCH_SIZE = 1000;
-    const total = data.length - 1;
+    const total = data.length;
 
     const count = await MutamersList.count({
       where: {
@@ -32,7 +32,7 @@ const uploadExcelToDatabase = async function (req, res) {
         hotel_details: body.hotel_details,
         flight_details: body.flight_details,
         arrival_date: body.arrival_date,
-        // group_size: body.group_size,
+        group_size: body.group_size,
         transport_route: body.transport_route,
         remark: body.remark,
         view_dirver_details: body.view_dirver_details,
@@ -50,15 +50,15 @@ const uploadExcelToDatabase = async function (req, res) {
       }));
 
       await MutamersList.bulkCreate(formattedBatch);
-      await MutamersList.update(
-        { group_size: finalTotal },  // 👈 new value
-        {
-          where: {
-            email: body.email,
-            group_name_number: body.group_name_number
-          }
-        }
-      );
+      // await MutamersList.update(
+      //   { group_size: finalTotal },  // 👈 new value
+      //   {
+      //     where: {
+      //       email: body.email,
+      //       group_name_number: body.group_name_number
+      //     }
+      //   }
+      // );
     }
 
     return ReS(res, { message: "Data inserted successfully." }, 200);
@@ -521,19 +521,21 @@ const deletedGroupNumber = async function (req, res) {
       where: {
         email: body.email,
         group_name_number: body.group_name_number,
+        main_external_agent_code: body.main_external_agent_code,
       },
     });
+      // await MutamersList.update(
+      //   { group_size: count },
+      //   {
+      //     where: {
+      //       email: body.email,
+      //       group_name_number: body.group_name_number,
+      //     },
+      //   }
+      // );
 
     // ✅ Step 3: Update group_size with new count
-    await MutamersList.update(
-      { group_size: count },
-      {
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        },
-      }
-    );
+
 
     // ✅ Step 4: Response back with updated info
     return ReS(
