@@ -116,6 +116,81 @@ const { assign } = require("nodemailer/lib/shared");
 //   }
 // };
 
+// const fetchUpcomingAndExpiry = async (req, res) => {
+//   try {
+//     const data = await AssignPackageTransportDetails.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const driverData = await Driver.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const B2bUserData = await B2bUser.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     if (!data || data.length === 0) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+
+//     const today = new Date();
+//     const todayDateOnly = new Date(today.toDateString()); // time part removed
+
+//     // Arrays to keep data and records to soft-delete
+//     const processedData = [];
+//     const toSoftDelete = [];
+
+//     for (const item of data) {
+//       const assignDate = new Date(item.assign_date);
+//       const assignDateOnly = new Date(assignDate.toDateString());
+//       const diffDays =
+//         (todayDateOnly - assignDateOnly) / (1000 * 60 * 60 * 24);
+
+//       let statusFlag = null;
+
+//       if (diffDays <= 0 && diffDays >= -1) {
+//         statusFlag = "upcoming";
+//       } else if (diffDays === 1) {
+//         statusFlag = "expiry";
+//       } else if (diffDays >= 2) {
+//         // mark for soft delete
+//         toSoftDelete.push(item.id);
+//         continue; // skip showing
+//       }
+//       // Merge driver details by transport_id
+//       const driver = driverData.find(
+//         (d) => d.transport_id === item.id
+//       );
+//       // 🔹 Merge company details by b2b_user_id or company_id
+//       const company = B2bUserData.find(
+//         (b) => b.email === item.email 
+//       );
+
+//       if (statusFlag) {
+//         processedData.push({
+//           ...item.dataValues,
+//           statusFlag,
+//           driverDetails: driver ? driver.dataValues : null,
+//           companyName: company ? company.company_name : null,
+//         });
+//       }
+//     }
+
+//     // ✅ Soft delete (update deleted_at for remove condition)
+//     if (toSoftDelete.length > 0) {
+//       await AssignPackageTransportDetails.update(
+//         { deleted_at: new Date() },
+//         { where: { id: toSoftDelete } }
+//       );
+//     }
+
+//     return ReS(res, {
+//       result: { data: processedData },
+//       message: "success",
+//     });
+//   } catch (error) {
+//     console.error("Error fetching upcoming/expiry:", error);
+//     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
+//   }
+// };
 const fetchUpcomingAndExpiry = async (req, res) => {
   try {
     const data = await AssignPackageTransportDetails.findAll({
@@ -127,14 +202,14 @@ const fetchUpcomingAndExpiry = async (req, res) => {
     const B2bUserData = await B2bUser.findAll({
       order: [["id", "DESC"]],
     });
+
     if (!data || data.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
 
-    const today = new Date();
-    const todayDateOnly = new Date(today.toDateString()); // time part removed
+    const now = new Date();
+    const todayDateOnly = new Date(now.toDateString()); // remove time part
 
-    // Arrays to keep data and records to soft-delete
     const processedData = [];
     const toSoftDelete = [];
 
@@ -146,22 +221,29 @@ const fetchUpcomingAndExpiry = async (req, res) => {
 
       let statusFlag = null;
 
-      if (diffDays <= 0 && diffDays >= -1) {
+      // ✅ Updated expiry logic: even 1 second before current time => expiry
+      if (assignDate < now) {
+        const diffHours = (now - assignDate) / (1000 * 60 * 60);
+        if (diffHours >= 48) {
+          // 2 days or more -> soft delete
+          toSoftDelete.push(item.id);
+          continue;
+        } else {
+          statusFlag = "expiry";
+        }
+      } else if (diffDays <= 0 && diffDays >= -1) {
+        // upcoming if today or tomorrow (same as before)
         statusFlag = "upcoming";
-      } else if (diffDays === 1) {
-        statusFlag = "expiry";
-      } else if (diffDays >= 2) {
-        // mark for soft delete
-        toSoftDelete.push(item.id);
-        continue; // skip showing
       }
-      // Merge driver details by transport_id
+
+      // 🔹 Merge driver details by transport_id
       const driver = driverData.find(
         (d) => d.transport_id === item.id
       );
-      // 🔹 Merge company details by b2b_user_id or company_id
+
+      // 🔹 Merge company details by email
       const company = B2bUserData.find(
-        (b) => b.email === item.email 
+        (b) => b.email === item.email
       );
 
       if (statusFlag) {
@@ -191,6 +273,7 @@ const fetchUpcomingAndExpiry = async (req, res) => {
     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
   }
 };
+
 
 
 
