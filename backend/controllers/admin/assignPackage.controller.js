@@ -4,7 +4,6 @@ const { ReE, ReS, to } = require("@services/util.service");
 const { check } = require("express-validator");
 const { assign } = require("nodemailer/lib/shared");
 
-
 const fetch = async function (req, res) {
   try {
     let body = req.body;
@@ -92,6 +91,7 @@ const create = async (req, res) => {
         city: item.city,
       });
     });
+
 
     if (data) {
       return ReS(res, { message: "AssignPackage created successfully." }, 200);
@@ -288,7 +288,6 @@ const deleted = async function (req, res) {
       200
     );
   } catch (err) {
-    console.error(err);
     return ReE(
       res,
       { message: "Something went wrong.", error: err.message },
