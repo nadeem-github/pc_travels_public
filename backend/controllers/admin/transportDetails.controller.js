@@ -146,7 +146,7 @@ const fetchUpcomingAndExpiry = async (req, res) => {
 
       let statusFlag = null;
 
-      if (diffDays === -1) {
+      if (diffDays <= 0 && diffDays >= -1) {
         statusFlag = "upcoming";
       } else if (diffDays === 1) {
         statusFlag = "expiry";
