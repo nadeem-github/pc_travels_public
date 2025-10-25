@@ -1,4 +1,4 @@
-const { MutamersList } = require("@models");
+const { MutamersList,AssignPackageTransportDetails,Driver,B2bHotel,FlightDetail } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const xlsx = require('xlsx');
 
@@ -465,23 +465,63 @@ const deleted = async function (req, res) {
   }
 }
 
+// const deletedGroup = async function (req, res) {
+//   try {
+//     let body = req.body;
+//     // let userId = body.id
+//     const data = await MutamersList.destroy({
+//       where: { email: body.email, group_name_number: body.group_name_number }
+//     }).then(function (result) {
+//       if (!result) return ReE(res, { message: "Somthing Went Wrong Please try after sometime." }, 400);
+//       return ReS(res, { message: "MutamersList has been deleted successfully." }, 200);
+//     }).catch(function (err) {
+//       return ReE(res, { message: "Somthing Went Wrong", err: err.errors }, 200);
+//     });
+
+//   } catch (error) {
+//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+//   }
+// }
 const deletedGroup = async function (req, res) {
   try {
-    let body = req.body;
-    // let userId = body.id
-    const data = await MutamersList.destroy({
-      where: { email: body.email, group_name_number: body.group_name_number }
-    }).then(function (result) {
-      if (!result) return ReE(res, { message: "Somthing Went Wrong Please try after sometime." }, 400);
-      return ReS(res, { message: "MutamersList has been deleted successfully." }, 200);
-    }).catch(function (err) {
-      return ReE(res, { message: "Somthing Went Wrong", err: err.errors }, 200);
-    });
+    const { email, group_name_number } = req.body;
 
+    if (!email || !group_name_number) {
+      return ReE(res, { message: "Email and Group Name Number are required" }, 400);
+    }
+
+    // ✅ Promise.all for parallel deletion
+    const results = await Promise.all([
+      MutamersList.destroy({ where: { email, group_name_number } }),
+      AssignPackageTransportDetails.destroy({ where: { email, group_name_number } }),
+      Driver.destroy({ where: { email, group_name_number } }),
+      B2bHotel.destroy({ where: { email, group_name_number } }),
+      FlightDetail.destroy({ where: { email, group_name_number } }),
+    ]);
+
+    // ✅ Count total deleted records
+    const totalDeleted = results.reduce((sum, count) => sum + count, 0);
+
+    if (totalDeleted === 0) {
+      return ReE(res, { message: "No matching records found to delete." }, 404);
+    }
+
+    return ReS(res, {
+      message: "All related records deleted successfully.",
+      deletedCounts: {
+        MutamersList: results[0],
+        AssignPackageTransportDetails: results[1],
+        Driver: results[2],
+        B2bHotel: results[3],
+        FlightDetail: results[4],
+      },
+    }, 200);
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    console.error("Error deleting group data:", error);
+    return ReE(res, { message: "Something Went Wrong", err: error }, 500);
   }
-}
+};
+
 // const deletedGroupNumber = async function (req, res) {
 //   try {
 //     let body = req.body;
