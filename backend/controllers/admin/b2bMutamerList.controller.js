@@ -521,7 +521,6 @@ const deletedGroupNumber = async function (req, res) {
       where: {
         email: body.email,
         group_name_number: body.group_name_number,
-        main_external_agent_code: body.main_external_agent_code,
       },
     });
       // await MutamersList.update(
