@@ -124,7 +124,7 @@ const fetchUpcomingAndExpiry = async (req, res) => {
     const driverData = await Driver.findAll({
       order: [["id", "DESC"]],
     });
-    const B2bUser = await B2bUser.findAll({
+    const B2bUserData = await B2bUser.findAll({
       order: [["id", "DESC"]],
     });
     if (!data || data.length === 0) {
@@ -160,7 +160,7 @@ const fetchUpcomingAndExpiry = async (req, res) => {
         (d) => d.transport_id === item.id
       );
       // 🔹 Merge company details by b2b_user_id or company_id
-      const company = B2bUser.find(
+      const company = B2bUserData.find(
         (b) => b.id === item.b2b_user_id || b.id === item.company_id
       );
 
