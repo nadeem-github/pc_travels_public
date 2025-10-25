@@ -172,7 +172,6 @@ const create = async (req, res) => {
             <th>Mobile</th>
             <th>Bus No</th>
             <th>Remarks</th>
-           
           </tr>
         </thead>
         <tbody>
@@ -242,9 +241,9 @@ const create = async (req, res) => {
       html: `
         <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;">
           <div style="max-width:700px;margin:auto;background:#fff;padding:24px;border-radius:8px;">
-                <div style="background:#174a7f;text-align:center;padding:20px;">
-            <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
-          </div>
+              <div style="background:#a0c3ff;text-align:center;padding:20px;">
+                <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
+              </div>
            
             <p style="font-size:15px;color:#333;text-align:center;">
               Below are the driver and transport details for <b>${groupName}</b>:
@@ -466,7 +465,7 @@ const update = async function (req, res) {
       html: `
         <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;">
           <div style="max-width:700px;margin:auto;background:#fff;padding:24px;border-radius:8px;">
-            <div style="background:#174a7f;text-align:center;padding:20px;">
+            <div style="background:#a0c3ff;text-align:center;padding:20px;">
               <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
             </div>
 
@@ -474,10 +473,10 @@ const update = async function (req, res) {
               The following driver and transport details for <b>${groupName}</b> have been <b style="color:#039a03;">updated</b>:
             </p>
 
-            <h3 style="color:#174a7f;margin-top:40px;">Transport Details:</h3>
+            <h3 style="color:#174a7f;margin-top:40px; margin-bottom:5px;">Transport Details:</h3>
             ${transportTable}
 
-            <h3 style="color:#174a7f;">Driver Details:</h3>
+            <h3 style="color:#174a7f; margin-bottom:5px;">Driver Details:</h3>
             ${driverTable}
 
             <p style="font-size:13px;color:#666;text-align:center;margin-top:30px;">
