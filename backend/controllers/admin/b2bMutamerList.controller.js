@@ -11,7 +11,7 @@ const uploadExcelToDatabase = async function (req, res) {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = xlsx.utils.sheet_to_json(sheet);
     const BATCH_SIZE = 1000;
-    const total = data.length;
+    const total = data.length - 1;
 
     const count = await MutamersList.count({
       where: {
@@ -482,23 +482,74 @@ const deletedGroup = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 }
+// const deletedGroupNumber = async function (req, res) {
+//   try {
+//     let body = req.body;
+//     // let userId = body.id
+//     const data = await MutamersList.destroy({
+//       where: { email: body.email, group_name_number: body.group_name_number, main_external_agent_code: body.main_external_agent_code }
+//     }).then(function (result) {
+//       if (!result) return ReE(res, { message: "Somthing Went Wrong Please try after sometime." }, 400);
+//       return ReS(res, { message: "MutamersList has been deleted successfully." }, 200);
+//     }).catch(function (err) {
+//       return ReE(res, { message: "Somthing Went Wrong", err: err.errors }, 200);
+//     });
+
+//   } catch (error) {
+//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+//   }
+// }
 const deletedGroupNumber = async function (req, res) {
   try {
-    let body = req.body;
-    // let userId = body.id
-    const data = await MutamersList.destroy({
-      where: { email: body.email, group_name_number: body.group_name_number, main_external_agent_code: body.main_external_agent_code }
-    }).then(function (result) {
-      if (!result) return ReE(res, { message: "Somthing Went Wrong Please try after sometime." }, 400);
-      return ReS(res, { message: "MutamersList has been deleted successfully." }, 200);
-    }).catch(function (err) {
-      return ReE(res, { message: "Somthing Went Wrong", err: err.errors }, 200);
+    const body = req.body;
+
+    // 🧹 Step 1: Delete record
+    const result = await MutamersList.destroy({
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number,
+        main_external_agent_code: body.main_external_agent_code,
+      },
     });
 
+    if (!result) {
+      return ReE(res, { message: "Something went wrong, please try again." }, 400);
+    }
+
+    // ✅ Step 2: Count remaining records
+    const count = await MutamersList.count({
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number,
+      },
+    });
+
+    // ✅ Step 3: Update group_size with new count
+    await MutamersList.update(
+      { group_size: count },
+      {
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+        },
+      }
+    );
+
+    // ✅ Step 4: Response back with updated info
+    return ReS(
+      res,
+      {
+        message: "MutamersList record deleted successfully.",
+        remainingCount: count,
+      },
+      200
+    );
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    console.error("Error in deletedGroupNumber:", error);
+    return ReE(res, { message: "Something went wrong", err: error }, 500);
   }
-}
+};
+
 
 
 module.exports = {
