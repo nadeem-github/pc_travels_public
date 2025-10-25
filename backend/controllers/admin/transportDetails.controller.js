@@ -161,7 +161,7 @@ const fetchUpcomingAndExpiry = async (req, res) => {
       );
       // 🔹 Merge company details by b2b_user_id or company_id
       const company = B2bUserData.find(
-        (b) => b.id === item.b2b_user_id || b.id === item.company_id
+        (b) => b.email === item.email 
       );
 
       if (statusFlag) {
