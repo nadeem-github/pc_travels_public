@@ -1,4 +1,4 @@
-const { AssignPackageTransportDetails,Driver } = require("@models");
+const { AssignPackageTransportDetails, Driver, B2bUser } = require("@models");
 const hotel = require("@root/models/hotel");
 const { ReE, ReS, to } = require("@services/util.service");
 const { check } = require("express-validator");
@@ -124,6 +124,9 @@ const fetchUpcomingAndExpiry = async (req, res) => {
     const driverData = await Driver.findAll({
       order: [["id", "DESC"]],
     });
+    const B2bUser = await B2bUser.findAll({
+      order: [["id", "DESC"]],
+    });
     if (!data || data.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
@@ -156,12 +159,17 @@ const fetchUpcomingAndExpiry = async (req, res) => {
       const driver = driverData.find(
         (d) => d.transport_id === item.id
       );
+      // 🔹 Merge company details by b2b_user_id or company_id
+      const company = B2bUser.find(
+        (b) => b.id === item.b2b_user_id || b.id === item.company_id
+      );
 
       if (statusFlag) {
         processedData.push({
           ...item.dataValues,
           statusFlag,
-           driverDetails: driver ? driver.dataValues : null,
+          driverDetails: driver ? driver.dataValues : null,
+          companyName: company ? company.company_name : null,
         });
       }
     }

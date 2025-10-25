@@ -32,7 +32,7 @@ const uploadExcelToDatabase = async function (req, res) {
         hotel_details: body.hotel_details,
         flight_details: body.flight_details,
         arrival_date: body.arrival_date,
-        group_size: body.group_size,
+        // group_size: body.group_size,
         transport_route: body.transport_route,
         remark: body.remark,
         view_dirver_details: body.view_dirver_details,
@@ -50,15 +50,15 @@ const uploadExcelToDatabase = async function (req, res) {
       }));
 
       await MutamersList.bulkCreate(formattedBatch);
-      // await MutamersList.update(
-      //   // { group_size: finalTotal },  // 👈 new value
-      //   {
-      //     where: {
-      //       email: body.email,
-      //       group_name_number: body.group_name_number
-      //     }
-      //   }
-      // );
+      await MutamersList.update(
+        { group_size: finalTotal },  // 👈 new value
+        {
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number
+          }
+        }
+      );
     }
 
     return ReS(res, { message: "Data inserted successfully." }, 200);

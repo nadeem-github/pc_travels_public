@@ -1,4 +1,4 @@
-const { Driver, MutamersList, AssignPackageTransportDetails,B2bUser } = require("@models");
+const { Driver, MutamersList, AssignPackageTransportDetails, B2bUser } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -409,7 +409,7 @@ const update = async function (req, res) {
     const transportDetails = await AssignPackageTransportDetails.findAll({
       where: { id: transportIds },
     });
-     const B2bUserEmail = await B2bUser.findAll({
+    const B2bUserEmail = await B2bUser.findAll({
       where: { email: email },
     });
     const companyName = B2bUserEmail[0]?.company_name || "Valued Customer";
