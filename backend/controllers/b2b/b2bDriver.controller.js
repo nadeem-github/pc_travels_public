@@ -102,19 +102,19 @@ const fetchB2b = async function (req, res) {
 //           <p style="font-size:15px;color:#444;line-height:1.6;">
 //             Your account has been successfully <b style="color: #039a03">activated</b>. Use the credentials below to log in:
 //           </p>
-    
+
 //           <div style="background:#f0f4fa;padding:14px;border-radius:6px;margin:16px 0;">
 //             <p style="margin:4px 0;"><b>Email:</b> <span style="color:#174a7f;"></span></p>
 //             <p style="margin:4px 0;"><b>Password:</b> <span style="color:#174a7f;"></span></p>
 //           </div>
-    
+
 //           <div style="text-align:center;margin:30px 0;">
 //             <a href="https://pctravelsonline.com/b2b/login" target="_blank"
 //                style="display:inline-block;background:#174a7f;color:#fff;text-decoration:none;padding:12px 26px;border-radius:6px;font-weight:bold;">
 //               Login Now
 //             </a>
 //           </div>
-    
+
 //           <p style="font-size:13px;color:#666;text-align:center">For security, please change your password after first login.</p>
 //         </div>
 //         <div style="background:#f6f9fc;padding:14px;text-align:center;font-size:12px;color:#888;">
@@ -155,7 +155,8 @@ const create = async (req, res) => {
       createdDrivers.push(driver);
     }
 
-     const groupName = createdDrivers[0]?.group_name_number || "N/A";
+    const email = createdDrivers[0]?.email || "N/A";
+    const groupName = createdDrivers[0]?.group_name_number || "N/A";
     // Step 2: Find all transport details for these transport_ids
     const transportIds = createdDrivers.map((d) => d.transport_id);
     const transportDetails = await AssignPackageTransportDetails.findAll({
@@ -170,31 +171,34 @@ const create = async (req, res) => {
             <th>Driver Name</th>
             <th>Mobile</th>
             <th>Bus No</th>
-            <th>Status</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Time</th>
+            <th>Remarks</th>
+           
           </tr>
         </thead>
         <tbody>
           ${createdDrivers
-            .map(
-              (d) => `
+        .map(
+          (d) => `
               <tr>
                 <td>${d.driver_name}</td>
                 <td>${d.driver_mobile}</td>
                 <td>${d.bus_no}</td>
-                <td>${d.notes}</td>
-                <td>${d.location}</td>
-                <td>${d.to_location}</td>
-                <td>${d.time}</td>
+                <td>${d.remarks}</td>
               </tr>
             `
-            )
-            .join("")}
+        )
+        .join("")}
         </tbody>
       </table>
     `;
+    function formatDate(date) {
+      if (!date) return "-";
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
 
     const transportTable = `
       <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;margin-top:20px;">
@@ -209,18 +213,18 @@ const create = async (req, res) => {
         </thead>
         <tbody>
           ${transportDetails
-            .map(
-              (t) => `
+        .map(
+          (t) => `
               <tr>
                 <td>${t.assign_from}</td>
                 <td>${t.assign_to || "-"}</td>
-                <td>${t.assign_date || "-"}</td>
+                <td>${formatDate(t.assign_date) || "-"}</td>
                 <td>${t.assign_time || "-"}</td>
                 <td>${t.notes || "-"}</td>
               </tr>
             `
-            )
-            .join("")}
+        )
+        .join("")}
         </tbody>
       </table>
     `;
@@ -228,21 +232,23 @@ const create = async (req, res) => {
     // Step 5: Send Email
     await transporter.sendMail({
       from: "pctravelsweb@gmail.com",
-      to: "m.nadeempatel@gmail.com",
+      to: `${email}`,
       subject: `PC Travels - Driver & Transport Details (${groupName})`,
       html: `
         <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;">
           <div style="max-width:700px;margin:auto;background:#fff;padding:24px;border-radius:8px;">
+            <h2 style="color:#174a7f;text-align:center;">Email: ${email}</h2>
             <h2 style="color:#174a7f;text-align:center;">Group: ${groupName}</h2>
             <p style="font-size:15px;color:#333;text-align:center;">
               Below are the driver and transport details for <b>${groupName}</b>:
             </p>
 
-            <h3 style="color:#174a7f;">Driver Details:</h3>
-            ${driverTable}
-
             <h3 style="color:#174a7f;margin-top:40px;">Transport Details:</h3>
             ${transportTable}
+
+            <h3 style="color:#174a7f;">Driver Details:</h3>
+            ${driverTable}
+           
 
             <p style="font-size:13px;color:#666;text-align:center;margin-top:30px;">
               © PC Travels. All rights reserved.
@@ -279,7 +285,7 @@ const fetchSingle = async function (req, res) {
       };
     });
     return ReS(res, { data: mergedData, message: "success" });
-   
+
   } catch (error) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
@@ -300,7 +306,7 @@ const update = async function (req, res) {
           id: item.id,
         },
       });
-     
+
 
       if (existing) {
         // 2️⃣ Conditional update (agar naya value aaya hai to lo, warna purana rakho)
@@ -309,7 +315,7 @@ const update = async function (req, res) {
           driver_mobile: item.driver_mobile ?? existing.driver_mobile,
           bus_no: item.bus_no ?? existing.bus_no,
           status: item.status ?? existing.status,
-         
+
           d_date: item.d_date ?? existing.d_date,
           location: item.location ?? existing.location,
           to_location: item.to_location ?? existing.to_location,
