@@ -165,13 +165,12 @@ const create = async (req, res) => {
 
     // Step 3: Generate HTML tables for email
     const driverTable = `
-      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;">
+      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
         <thead>
           <tr style="background:#174a7f;color:#fff;">
             <th>Driver Name</th>
             <th>Mobile</th>
             <th>Bus No</th>
-            <th>Remarks</th>
           </tr>
         </thead>
         <tbody>
@@ -182,7 +181,12 @@ const create = async (req, res) => {
                 <td>${d.driver_name}</td>
                 <td>${d.driver_mobile}</td>
                 <td>${d.bus_no}</td>
-                <td>${d.remarks}</td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <b>Remarks</b>:
+                  <span>${d.remarks}</span>
+                </td>
               </tr>
             `
         )
@@ -205,14 +209,13 @@ const create = async (req, res) => {
 
 
     const transportTable = `
-      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;margin-top:20px;">
+      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
         <thead>
           <tr style="background:#174a7f;color:#fff;">
             <th>From</th>
             <th>To</th>
             <th>Date</th>
             <th>Time</th>
-            <th>Remarks</th>
           </tr>
         </thead>
         <tbody>
@@ -224,7 +227,12 @@ const create = async (req, res) => {
                 <td>${t.assign_to || "-"}</td>
                 <td>${formatDate(t.assign_date) || "-"}</td>
                 <td>${t.assign_time || "-"}</td>
-                <td>${t.notes || "-"}</td>
+              </tr>
+              <tr>
+                <td colspan="5">
+                  <b>Remarks</b>:
+                  <span>${t.notes || "-"}</span>
+                </td>
               </tr>
             `
         )
@@ -239,24 +247,37 @@ const create = async (req, res) => {
       to: `${email}`,
       subject: `PC Travels - Driver & Transport Details For Group No. - (${groupName})`,
       html: `
-        <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;">
-          <div style="max-width:700px;margin:auto;background:#fff;padding:24px;border-radius:8px;">
-              <div style="background:#a0c3ff;text-align:center;padding:20px;">
-                <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
+        <div style="font-family:Arial,sans-serif;background: #f1f1f1;padding:20px;">
+          <div style="max-width:700px;margin:auto;background:#fff;padding:15px;border-radius:10px;border: solid 2px #174a7f;position: relative;">
+              <div style="background:#fff;text-align:center;padding:20px; border-bottom: solid #174a7f;padding-top: 0;">
+                <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels Logo" />
+              </div>
+
+              <div>
+                <h4 style="margin-bottom: 0;">Dear, ${companyName}</h4>
+                <p style="margin-top: 10px;">Assalamualaikum wa rahmatullahi wa barakatuh.</p>
               </div>
            
-            <p style="font-size:15px;color:#333;text-align:center;">
-              Below are the driver and transport details for <b>${groupName}</b>:
-            </p>
+              <p style="font-size:15px;color:#333;">
+                Below are the driver and transport details for <b>${groupName}</b>:
+              </p>
 
-            <h3 style="color:#174a7f;margin-top:40px;">Transport Details:</h3>
-            ${transportTable}
+              <h3 style="color:#174a7f;margin-top:20px;margin-bottom: 10px;">Transport Details:</h3>
+              <div style="width: 100%; overflow: auto;">
+                ${transportTable}
+              </div>
 
-            <h3 style="color:#174a7f;">Driver Details:</h3>
-            ${driverTable}
-           
+              <h3 style="color:#174a7f;margin-bottom: 10px;">Driver Details:</h3>
+              <div style="width: 100%; overflow: auto;">
+                  ${driverTable}
+              </div>
+              <div>
+                  <p style="margin-bottom: 0;">Thanks & Regards</p>
+                  <p style="margin-top: 10px;margin-bottom: 0;">Team PC</p>
+              </div>
 
-            <p style="font-size:13px;color:#666;text-align:center;margin-top:30px;">
+
+            <p style="font-size:14px;color:#e4e4e4;text-align:center;margin-top:15px;background:#174a7f;padding: 10px 0;margin-bottom: 0;">
               © PC Travels. All rights reserved.
             </p>
           </div>
@@ -401,61 +422,69 @@ const update = async function (req, res) {
 
     // Step 4️⃣ Create driver table
     const driverTable = `
-      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;">
-        <thead>
-          <tr style="background:#174a7f;color:#fff;">
-            <th>Driver Name</th>
-            <th>Mobile</th>
-            <th>Bus No</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${updatedDrivers
-            .map(
-              (d) => `
-              <tr>
-                <td>${d.driver_name}</td>
-                <td>${d.driver_mobile}</td>
-                <td>${d.bus_no}</td>
-                <td>${d.remarks || "-"}</td>
-              </tr>
-            `
-            )
-            .join("")}
-        </tbody>
-      </table>
-    `;
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
+  <thead>
+    <tr style="background:#174a7f;color:#fff;">
+      <th>Driver Name</th>
+      <th>Mobile</th>
+      <th>Bus No</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${updatedDrivers
+        .map(
+          (d) => `
+    <tr>
+      <td>${d.driver_name}</td>
+      <td>${d.driver_mobile}</td>
+      <td>${d.bus_no}</td>
+    </tr>
+    <tr>
+      <td colspan="4">
+        <b>Remarks</b>:
+        <span>${d.remarks}</span>
+      </td>
+    </tr>
+    `
+        )
+        .join("")}
+  </tbody>
+</table>
+`;
 
     // Step 5️⃣ Create transport table
     const transportTable = `
-      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;margin-top:20px;">
-        <thead>
-          <tr style="background:#174a7f;color:#fff;">
-            <th>From</th>
-            <th>To</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${transportDetails
-            .map(
-              (t) => `
-              <tr>
-                <td>${t.assign_from}</td>
-                <td>${t.assign_to || "-"}</td>
-                <td>${formatDate(t.assign_date) || "-"}</td>
-                <td>${t.assign_time || "-"}</td>
-                <td>${t.notes || "-"}</td>
-              </tr>
-            `
-            )
-            .join("")}
-        </tbody>
-      </table>
-    `;
+<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
+  <thead>
+    <tr style="background:#174a7f;color:#fff;">
+      <th>From</th>
+      <th>To</th>
+      <th>Date</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${transportDetails
+        .map(
+          (t) => `
+    <tr>
+      <td>${t.assign_from}</td>
+      <td>${t.assign_to || "-"}</td>
+      <td>${formatDate(t.assign_date) || "-"}</td>
+      <td>${t.assign_time || "-"}</td>
+    </tr>
+    <tr>
+      <td colspan="5">
+        <b>Remarks</b>:
+        <span>${t.notes || "-"}</span>
+      </td>
+    </tr>
+    `
+        )
+        .join("")}
+  </tbody>
+</table>
+`;
 
     // Step 6️⃣ Send Email (same design as create)
     await transporter.sendMail({
@@ -463,24 +492,38 @@ const update = async function (req, res) {
       to: `${email}`,
       subject: `PC Travels - Updated Driver & Transport Details For Group No. - (${groupName})`,
       html: `
-        <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;">
-          <div style="max-width:700px;margin:auto;background:#fff;padding:24px;border-radius:8px;">
-            <div style="background:#a0c3ff;text-align:center;padding:20px;">
-              <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
+        <div style="font-family:Arial,sans-serif;background: #f1f1f1;padding:20px;">
+          <div style="max-width:700px;margin:auto;background:#fff;padding:15px;border-radius:10px;border: solid 2px #174a7f;position: relative;">
+            <div style="background:#fff;text-align:center;padding:20px; border-bottom: solid #174a7f;padding-top: 0;">
+              <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels Logo" />
+            </div>
+
+            <div>
+                <h4 style="margin-bottom: 0;">Dear, ${companyName}</h4>
+                <p style="margin-top: 10px;">Assalamualaikum wa rahmatullahi wa barakatuh.</p>
             </div>
 
             <p style="font-size:15px;color:#333;text-align:center;">
               The following driver and transport details for <b>${groupName}</b> have been <b style="color:#039a03;">updated</b>:
             </p>
 
-            <h3 style="color:#174a7f;margin-top:40px; margin-bottom:5px;">Transport Details:</h3>
-            ${transportTable}
+            <h3 style="color:#174a7f;margin-top:20px;margin-bottom: 10px;">Transport Details:</h3>
+            <div style="width: 100%; overflow: auto;">
+                ${transportTable}
+            </div>
 
-            <h3 style="color:#174a7f; margin-bottom:5px;">Driver Details:</h3>
-            ${driverTable}
+            <h3 style="color:#174a7f;margin-bottom: 10px;">Driver Details:</h3>
+            <div style="width: 100%; overflow: auto;">
+                ${driverTable}
+            </div>
 
-            <p style="font-size:13px;color:#666;text-align:center;margin-top:30px;">
-              © PC Travels. All rights reserved.
+            <div>
+                <p style="margin-bottom: 0;">Thanks & Regards</p>
+                <p style="margin-top: 10px;margin-bottom: 0;">Team PC</p>
+            </div>
+
+            <p style="font-size:14px;color:#e4e4e4;text-align:center;margin-top:15px;background:#174a7f;padding: 10px 0;margin-bottom: 0;">
+                © PC Travels. All rights reserved.
             </p>
           </div>
         </div>
