@@ -1,4 +1,4 @@
-const { Driver, MutamersList, AssignPackageTransportDetails } = require("@models");
+const { Driver, MutamersList, AssignPackageTransportDetails,B2bUser } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -162,6 +162,10 @@ const create = async (req, res) => {
     const transportDetails = await AssignPackageTransportDetails.findAll({
       where: { id: transportIds },
     });
+    const B2bUserEmail = await B2bUser.findAll({
+      where: { email: email },
+    });
+    const companyName = B2bUserEmail[0]?.company_name || "Valued Customer";
 
     // Step 3: Generate HTML tables for email
     const driverTable = `
@@ -405,6 +409,10 @@ const update = async function (req, res) {
     const transportDetails = await AssignPackageTransportDetails.findAll({
       where: { id: transportIds },
     });
+     const B2bUserEmail = await B2bUser.findAll({
+      where: { email: email },
+    });
+    const companyName = B2bUserEmail[0]?.company_name || "Valued Customer";
 
     // Step 3️⃣ Helper function for date format
     function formatDate(date) {
