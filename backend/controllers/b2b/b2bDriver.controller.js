@@ -195,10 +195,15 @@ const create = async (req, res) => {
       if (!date) return "-";
       const d = new Date(date);
       const day = String(d.getDate()).padStart(2, "0");
-      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      ];
+      const month = monthNames[d.getMonth()];
       const year = d.getFullYear();
-      return `${day}-${month}-${year}`;
+      return `${day} ${month} ${year}`;
     }
+
 
     const transportTable = `
       <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;margin-top:20px;">
@@ -233,12 +238,14 @@ const create = async (req, res) => {
     await transporter.sendMail({
       from: "pctravelsweb@gmail.com",
       to: `${email}`,
-      subject: `PC Travels - Driver & Transport Details (${groupName})`,
+      subject: `PC Travels - Driver & Transport Details For Group No. - (${groupName})`,
       html: `
         <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;">
           <div style="max-width:700px;margin:auto;background:#fff;padding:24px;border-radius:8px;">
-            <h2 style="color:#174a7f;text-align:center;">Email: ${email}</h2>
-            <h2 style="color:#174a7f;text-align:center;">Group: ${groupName}</h2>
+                <div style="background:#174a7f;text-align:center;padding:20px;">
+            <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
+          </div>
+           
             <p style="font-size:15px;color:#333;text-align:center;">
               Below are the driver and transport details for <b>${groupName}</b>:
             </p>
@@ -291,6 +298,51 @@ const fetchSingle = async function (req, res) {
   }
 };
 
+// const update = async function (req, res) {
+//   try {
+//     const { driverDetails } = req.body;
+
+//     if (!driverDetails || !Array.isArray(driverDetails)) {
+//       return ReE(res, { message: "driverDetails array is required" }, 400);
+//     }
+
+//     for (const item of driverDetails) {
+//       // 1️⃣ Existing record lo
+//       const existing = await Driver.findOne({
+//         where: {
+//           id: item.id,
+//         },
+//       });
+
+
+//       if (existing) {
+//         // 2️⃣ Conditional update (agar naya value aaya hai to lo, warna purana rakho)
+//         const updatedData = {
+//           driver_name: item.driver_name ?? existing.driver_name,
+//           driver_mobile: item.driver_mobile ?? existing.driver_mobile,
+//           bus_no: item.bus_no ?? existing.bus_no,
+//           status: item.status ?? existing.status,
+
+//           d_date: item.d_date ?? existing.d_date,
+//           location: item.location ?? existing.location,
+//           to_location: item.to_location ?? existing.to_location,
+//           time: item.time ?? existing.time,
+//           remarks: item.remarks ?? existing.remarks,
+//         };
+
+//         // 3️⃣ Record update karo
+//         await existing.update(updatedData);
+//       }
+//     }
+
+//     return ReS(res, { message: "Driver details updated successfully." }, 200);
+
+//   } catch (error) {
+//     console.error("Error updating driver details:", error);
+//     return ReE(res, { message: "Something went wrong", err: error.message }, 500);
+//   }
+// };
+
 const update = async function (req, res) {
   try {
     const { driverDetails } = req.body;
@@ -299,42 +351,150 @@ const update = async function (req, res) {
       return ReE(res, { message: "driverDetails array is required" }, 400);
     }
 
+    const updatedDrivers = [];
+
+    // Step 1️⃣ Update records
     for (const item of driverDetails) {
-      // 1️⃣ Existing record lo
-      const existing = await Driver.findOne({
-        where: {
-          id: item.id,
-        },
-      });
-
-
+      const existing = await Driver.findOne({ where: { id: item.id } });
       if (existing) {
-        // 2️⃣ Conditional update (agar naya value aaya hai to lo, warna purana rakho)
         const updatedData = {
           driver_name: item.driver_name ?? existing.driver_name,
           driver_mobile: item.driver_mobile ?? existing.driver_mobile,
           bus_no: item.bus_no ?? existing.bus_no,
           status: item.status ?? existing.status,
-
           d_date: item.d_date ?? existing.d_date,
           location: item.location ?? existing.location,
           to_location: item.to_location ?? existing.to_location,
           time: item.time ?? existing.time,
           remarks: item.remarks ?? existing.remarks,
         };
-
-        // 3️⃣ Record update karo
-        await existing.update(updatedData);
+        const updated = await existing.update(updatedData);
+        updatedDrivers.push(updated);
       }
     }
 
-    return ReS(res, { message: "Driver details updated successfully." }, 200);
+    if (updatedDrivers.length === 0) {
+      return ReE(res, { message: "No matching driver records found." }, 404);
+    }
 
+    // Step 2️⃣ Email preparation (similar to create)
+    const email = updatedDrivers[0]?.email || "N/A";
+    const groupName = updatedDrivers[0]?.group_name_number || "N/A";
+
+    const transportIds = updatedDrivers.map((d) => d.transport_id);
+    const transportDetails = await AssignPackageTransportDetails.findAll({
+      where: { id: transportIds },
+    });
+
+    // Step 3️⃣ Helper function for date format
+    function formatDate(date) {
+      if (!date) return "-";
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, "0");
+      const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+      ];
+      const month = monthNames[d.getMonth()];
+      const year = d.getFullYear();
+      return `${day} ${month} ${year}`;
+    }
+
+    // Step 4️⃣ Create driver table
+    const driverTable = `
+      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="background:#174a7f;color:#fff;">
+            <th>Driver Name</th>
+            <th>Mobile</th>
+            <th>Bus No</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${updatedDrivers
+            .map(
+              (d) => `
+              <tr>
+                <td>${d.driver_name}</td>
+                <td>${d.driver_mobile}</td>
+                <td>${d.bus_no}</td>
+                <td>${d.remarks || "-"}</td>
+              </tr>
+            `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+
+    // Step 5️⃣ Create transport table
+    const transportTable = `
+      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;margin-top:20px;">
+        <thead>
+          <tr style="background:#174a7f;color:#fff;">
+            <th>From</th>
+            <th>To</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${transportDetails
+            .map(
+              (t) => `
+              <tr>
+                <td>${t.assign_from}</td>
+                <td>${t.assign_to || "-"}</td>
+                <td>${formatDate(t.assign_date) || "-"}</td>
+                <td>${t.assign_time || "-"}</td>
+                <td>${t.notes || "-"}</td>
+              </tr>
+            `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+
+    // Step 6️⃣ Send Email (same design as create)
+    await transporter.sendMail({
+      from: "pctravelsweb@gmail.com",
+      to: `${email}`,
+      subject: `PC Travels - Updated Driver & Transport Details For Group No. - (${groupName})`,
+      html: `
+        <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px;">
+          <div style="max-width:700px;margin:auto;background:#fff;padding:24px;border-radius:8px;">
+            <div style="background:#174a7f;text-align:center;padding:20px;">
+              <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
+            </div>
+
+            <p style="font-size:15px;color:#333;text-align:center;">
+              The following driver and transport details for <b>${groupName}</b> have been <b style="color:#039a03;">updated</b>:
+            </p>
+
+            <h3 style="color:#174a7f;margin-top:40px;">Transport Details:</h3>
+            ${transportTable}
+
+            <h3 style="color:#174a7f;">Driver Details:</h3>
+            ${driverTable}
+
+            <p style="font-size:13px;color:#666;text-align:center;margin-top:30px;">
+              © PC Travels. All rights reserved.
+            </p>
+          </div>
+        </div>
+      `,
+    });
+
+    return ReS(res, { message: "Driver(s) updated and email sent successfully." }, 200);
   } catch (error) {
     console.error("Error updating driver details:", error);
     return ReE(res, { message: "Something went wrong", err: error.message }, 500);
   }
 };
+
 const deleted = async function (req, res) {
   try {
     let body = req.body;
