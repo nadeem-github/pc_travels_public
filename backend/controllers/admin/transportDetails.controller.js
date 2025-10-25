@@ -1,4 +1,4 @@
-const { AssignPackageTransportDetails } = require("@models");
+const { AssignPackageTransportDetails,Driver } = require("@models");
 const hotel = require("@root/models/hotel");
 const { ReE, ReS, to } = require("@services/util.service");
 const { check } = require("express-validator");
@@ -121,7 +121,9 @@ const fetchUpcomingAndExpiry = async (req, res) => {
     const data = await AssignPackageTransportDetails.findAll({
       order: [["id", "DESC"]],
     });
-
+    const driverData = await Driver.findAll({
+      order: [["id", "DESC"]],
+    });
     if (!data || data.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
@@ -150,11 +152,16 @@ const fetchUpcomingAndExpiry = async (req, res) => {
         toSoftDelete.push(item.id);
         continue; // skip showing
       }
+      // Merge driver details by transport_id
+      const driver = driverData.find(
+        (d) => d.transport_id === item.id
+      );
 
       if (statusFlag) {
         processedData.push({
           ...item.dataValues,
           statusFlag,
+           driverDetails: driver ? driver.dataValues : null,
         });
       }
     }
