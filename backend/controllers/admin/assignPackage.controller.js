@@ -1,4 +1,4 @@
-const { AssignPackage, AssignPackageTransportDetails, AssignPackageHousing } = require("@models");
+const { AssignPackage, AssignPackageTransportDetails, AssignPackageHousing, MutamersList } = require("@models");
 const hotel = require("@root/models/hotel");
 const { ReE, ReS, to } = require("@services/util.service");
 const { check } = require("express-validator");
@@ -8,9 +8,9 @@ const fetch = async function (req, res) {
   try {
     let body = req.body;
 
-    const [data, data1, data2] = await Promise.all([
+    const [data, data1, data2, data3] = await Promise.all([
       AssignPackage.findAll({
-       order: [['id', 'ASC']],
+        order: [['id', 'ASC']],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
@@ -26,26 +26,39 @@ const fetch = async function (req, res) {
       }),
       AssignPackageHousing.findAll({
         order: [['check_in', 'ASC']],
-        attributes: ['id','notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
+        attributes: ['id', 'notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
         },
       }),
+      MutamersList.findAll({
+        attributes: [
+          'main_external_agent_code',
+          'email',
+          'group_name_number'
+        ],
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+        },
+        group: ['main_external_agent_code', 'email', 'group_name_number'],
+        order: [['id', 'ASC']],
+      }),
     ]);
-    if (!data) {
-      return ReE(res, { message: "No Data Found" }, 200);
-    }
-    return ReS(res, {
-      result: {
-        packageDetails: data,
-        transportDetails: data1,
-        hotelDetails: data2
-      }, message: "success"
-    });
+if (!data) {
+  return ReE(res, { message: "No Data Found" }, 200);
+}
+return ReS(res, {
+  result: {
+    packageDetails: data,
+    transportDetails: data1,
+    hotelDetails: data2
+  }, message: "success"
+});
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
-  }
+  return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+}
 };
 const create = async (req, res) => {
   try {
@@ -82,7 +95,7 @@ const create = async (req, res) => {
       await AssignPackageHousing.create({
         email: body.email,
         group_name_number: body.group_name_number,
-         notes: item.notes,
+        notes: item.notes,
         check_out: item.check_out,
         check_in: item.check_in,
         nights: item.nights,
@@ -178,28 +191,28 @@ const update = async function (req, res) {
     if (body.transportDetails && Array.isArray(body.transportDetails)) {
       for (const item of body.transportDetails) {
         // Existing record lo
-         if (item.id) {
-        const existing = await AssignPackageTransportDetails.findOne({
-          where: {
-            id: item.id,
-            email: body.email,
-            group_name_number: body.group_name_number,
-          },
-        });
+        if (item.id) {
+          const existing = await AssignPackageTransportDetails.findOne({
+            where: {
+              id: item.id,
+              email: body.email,
+              group_name_number: body.group_name_number,
+            },
+          });
 
-        if (existing) {
-          // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
-          const updatedData = {
-            notes: item.notes ?? existing.notes,
-            assign_time: item.assign_time ?? existing.assign_time,
-            assign_date: item.assign_date ?? existing.assign_date,
-            assign_to: item.assign_to ?? existing.assign_to,
-            assign_from: item.assign_from ?? existing.assign_from,
-          };
+          if (existing) {
+            // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
+            const updatedData = {
+              notes: item.notes ?? existing.notes,
+              assign_time: item.assign_time ?? existing.assign_time,
+              assign_date: item.assign_date ?? existing.assign_date,
+              assign_to: item.assign_to ?? existing.assign_to,
+              assign_from: item.assign_from ?? existing.assign_from,
+            };
 
-          await existing.update(updatedData);
-        }
-       } else {
+            await existing.update(updatedData);
+          }
+        } else {
           // 🆕 Create new
           await AssignPackageTransportDetails.create({
             email: body.email,
@@ -217,30 +230,30 @@ const update = async function (req, res) {
       for (const item of body.hotelDetails) {
         // Existing record lo
         // console.log
-         if (item.id) {
-        const existing = await AssignPackageHousing.findOne({
-          where: {
-            id: item.id,
-            email: body.email,
-            group_name_number: body.group_name_number,
-          },
-        });
+        if (item.id) {
+          const existing = await AssignPackageHousing.findOne({
+            where: {
+              id: item.id,
+              email: body.email,
+              group_name_number: body.group_name_number,
+            },
+          });
 
-        if (existing) {
-          // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
-          const updatedData = {
-            notes: item.notes ?? existing.notes,
-            check_out: item.check_out ?? existing.check_out,
-            check_in: item.check_in ?? existing.check_in,
-            nights: item.nights ?? existing.nights,
-            rooms: item.rooms ?? existing.rooms,
-            hotel_name: item.hotel_name ?? existing.hotel_name,
-            city: item.city ?? existing.city,
-          };
+          if (existing) {
+            // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
+            const updatedData = {
+              notes: item.notes ?? existing.notes,
+              check_out: item.check_out ?? existing.check_out,
+              check_in: item.check_in ?? existing.check_in,
+              nights: item.nights ?? existing.nights,
+              rooms: item.rooms ?? existing.rooms,
+              hotel_name: item.hotel_name ?? existing.hotel_name,
+              city: item.city ?? existing.city,
+            };
 
-          await existing.update(updatedData);
-        }
-       } else {
+            await existing.update(updatedData);
+          }
+        } else {
           // 🆕 Create new
           await AssignPackageHousing.create({
             email: body.email,
@@ -280,7 +293,7 @@ const deleted = async function (req, res) {
     ]);
 
     // check agar koi record mila hi nahi delete karne ke liye
-   
+
 
     return ReS(
       res,

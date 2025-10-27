@@ -17,14 +17,14 @@ const fetch = async function (req, res) {
   try {
     let body = req.body;
     const transportDetails = await AssignPackageTransportDetails.findAll({
-      order: [['id', 'DESC']],
+      order: [['assign_date', 'ASC']],
       where: {
         email: body.email,
         group_name_number: body.group_name_number
       }
     });
     const driverDetails = await Driver.findAll({
-      order: [['id', 'DESC']],
+      order: [['d_date', 'ASC']],
       where: {
         email: body.email,
         group_name_number: body.group_name_number
