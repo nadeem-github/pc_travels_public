@@ -170,7 +170,7 @@ const otpVerification = async function (req, res) {
               <div
                 style="font-family: Arial, sans-serif; background:#f9fbff; padding:20px; border-radius:8px; border:1px solid #e0e7ff; max-width:500px; margin:auto;">
                 <div style="color:#0a7cff; text-align:center; margin-bottom:20px; text-align:center">
-                  <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" alt="PC Travels Logo" />
+                  <img src="https://pctravelsonline.com/assets/images/PClogoEmail.jpg" width="150" alt="PC Travels Logo" />
                 </div>
                 <h2 style="color:#0a7cff; text-align:center;">Verify Your Account</h2>
                 <p style="font-size:16px; color:#333;">Hello <b>${existData.person_name || "User"}</b>,</p>
