@@ -94,7 +94,7 @@ const fetchB2b = async function (req, res) {
 //       <div style="font-family:Arial,sans-serif;background:#b7ffac;padding:20px;margin:0;">
 //       <div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.05);">
 //         <div style="background:#174a7f;text-align:center;padding:20px;">
-//           <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
+//           <img src="https://pctravelsonline.com/assets/images/PClogoEmail.jpg" width="150" style="max-width:100%;height:auto;" alt="PC Travels" />
 //         </div>
 //         <div style="padding:24px;">
 //           <h2 style="color:#174a7f;margin-top:0;text-align: center;">Welcome to PC Travels!</h2>
@@ -182,14 +182,14 @@ const create = async (req, res) => {
         .map(
           (d) => `
               <tr>
-                <td>${d.driver_name}</td>
-                <td>${d.driver_mobile}</td>
-                <td>${d.bus_no}</td>
+                <td>${d.driver_name || "-"}</td>
+                <td>${d.driver_mobile || "-"}</td>
+                <td>${d.bus_no || "-"}</td>
               </tr>
               <tr>
                 <td colspan="4">
                   <b>Remarks</b>:
-                  <span>${d.remarks}</span>
+                  <span>${d.remarks || "-"}</span>
                 </td>
               </tr>
             `
@@ -227,7 +227,7 @@ const create = async (req, res) => {
         .map(
           (t) => `
               <tr>
-                <td>${t.assign_from}</td>
+                <td>${t.assign_from || "-"}</td>
                 <td>${t.assign_to || "-"}</td>
                 <td>${formatDate(t.assign_date) || "-"}</td>
                 <td>${t.assign_time || "-"}</td>
@@ -253,18 +253,22 @@ const create = async (req, res) => {
       html: `
         <div style="font-family:Arial,sans-serif;background: #f1f1f1;padding:20px;">
           <div style="max-width:700px;margin:auto;background:#fff;padding:15px;border-radius:10px;border: solid 2px #174a7f;position: relative;">
-              <div style="background:#fff;text-align:center;padding:20px; border-bottom: solid #174a7f;padding-top: 0;">
-                <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels Logo" />
+              <div style="background:#fff;text-align:center;padding:15px; border-bottom: solid #174a7f;padding-top: 0;">
+                <img src="https://pctravelsonline.com/assets/images/PClogoEmail.jpg" width="150" style="max-width:100%;height:auto;" alt="PC Travels Logo" />
               </div>
 
               <div>
-                <h4 style="margin-bottom: 0;">Dear, ${companyName}</h4>
-                <p style="margin-top: 10px;">Assalamualaikum wa rahmatullahi wa barakatuh.</p>
+                <p style="margin: 1rem 0 0 0;">Dear,</p>
+                <h3 style="font-weight: bold;color: #174a7f;margin-top: 10px;">${companyName}</h3>
+                <p style="margin-top: 10px;">Assalamu Alaikum Warahmatullahi Wabarakatuh.</p>
+                <p>Thank you for choosing PC Travels.</p>
               </div>
            
               <p style="font-size:15px;color:#333;">
-                Below are the driver and transport details for <b>${groupName}</b>:
+                We are pleased to provide the confirmed driver and vehicle details for Group Number: 
+                <b style="color: #174a7f;">${groupName}</b>
               </p>
+              <p>Please find the details below:</p>
 
               <h3 style="color:#174a7f;margin-top:20px;margin-bottom: 10px;">Transport Details:</h3>
               <div style="width: 100%; overflow: auto;">
@@ -275,9 +279,23 @@ const create = async (req, res) => {
               <div style="width: 100%; overflow: auto;">
                   ${driverTable}
               </div>
+
+              <div>
+                <p style="line-height: 1.4;">
+                    For any immediate assistance related to transportation and visa, please do not hesitate to contact
+                    us. Our 24/7 operations team is also available at 
+                    <a href="tel:+919826953206" style="text-decoration: none;color: #174a7f;font-weight: 600;">+919826953206</a> should you require any further
+                    support.
+                </p>
+                <p style="line-height: 1.4;">
+                    We are honored to be of service and pray that your group's Umrah is accepted and spiritually fulfilling.
+                </p>
+                <p>Jazakum Allahu Khairan,</p>
+              </div>
+
               <div>
                   <p style="margin-bottom: 0;">Thanks & Regards</p>
-                  <p style="margin-top: 10px;margin-bottom: 0;">Team PC</p>
+                  <p style="margin-top: 5px;margin-bottom: 0;">Team PC</p>
               </div>
 
 
@@ -430,108 +448,133 @@ const update = async function (req, res) {
 
     // Step 4️⃣ Create driver table
     const driverTable = `
-<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
-  <thead>
-    <tr style="background:#174a7f;color:#fff;">
-      <th>Driver Name</th>
-      <th>Mobile</th>
-      <th>Bus No</th>
-    </tr>
-  </thead>
-  <tbody>
-    ${updatedDrivers
+      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
+        <thead>
+          <tr style="background:#174a7f;color:#fff;">
+            <th>Driver Name</th>
+            <th>Mobile</th>
+            <th>Bus No</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${updatedDrivers
         .map(
           (d) => `
-    <tr>
-      <td>${d.driver_name}</td>
-      <td>${d.driver_mobile}</td>
-      <td>${d.bus_no}</td>
-    </tr>
-    <tr>
-      <td colspan="4">
-        <b>Remarks</b>:
-        <span>${d.remarks}</span>
-      </td>
-    </tr>
-    `
+              <tr>
+                <td>${d.driver_name || "-"}</td>
+                <td>
+                  ${
+                    d.driver_mobile? `<a href="tel:${d.driver_mobile}" style="color:#174a7f;text-decoration:none;font-weight:600;">${d.driver_mobile}</a>` : "-"
+                  }
+                </td>
+                <td>${d.bus_no || "-"}</td>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <b>Remarks</b>:
+                  <span>${d.remarks || "-"}</span>
+                </td>
+              </tr>
+            `
         )
         .join("")}
-  </tbody>
-</table>
-`;
+        </tbody>
+      </table>
+    `;
 
     // Step 5️⃣ Create transport table
     const transportTable = `
-<table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
-  <thead>
-    <tr style="background:#174a7f;color:#fff;">
-      <th>From</th>
-      <th>To</th>
-      <th>Date</th>
-      <th>Time</th>
-    </tr>
-  </thead>
-  <tbody>
-    ${transportDetails
+      <table border="1" cellpadding="8" cellspacing="0" style="width:100%; border-collapse:collapse;text-align: left;">
+        <thead>
+          <tr style="background:#174a7f;color:#fff;">
+            <th>From</th>
+            <th>To</th>
+            <th>Date</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${transportDetails
         .map(
           (t) => `
-    <tr>
-      <td>${t.assign_from}</td>
-      <td>${t.assign_to || "-"}</td>
-      <td>${formatDate(t.assign_date) || "-"}</td>
-      <td>${t.assign_time || "-"}</td>
-    </tr>
-    <tr>
-      <td colspan="5">
-        <b>Remarks</b>:
-        <span>${t.notes || "-"}</span>
-      </td>
-    </tr>
-    `
+              <tr>
+                <td>${t.assign_from || "-"}</td>
+                <td>${t.assign_to || "-"}</td>
+                <td>${formatDate(t.assign_date) || "-"}</td>
+                <td>${t.assign_time || "-"}</td>
+              </tr>
+              <tr>
+                <td colspan="5">
+                  <b>Remarks</b>:
+                  <span>${t.notes || "-"}</span>
+                </td>
+              </tr>
+            `
         )
         .join("")}
-  </tbody>
-</table>
-`;
+        </tbody>
+      </table>
+    `;
 
     // Step 6️⃣ Send Email (same design as create)
     await transporter.sendMail({
       from: "pctravelsweb@gmail.com",
       to: `${email}`,
-      subject: `PC Travels - Updated Driver & Transport Details For Group No. - (${groupName})`,
+      subject: `PC Travels - Updated Driver Details For Group No. - (${groupName})`,
       html: `
         <div style="font-family:Arial,sans-serif;background: #f1f1f1;padding:20px;">
-          <div style="max-width:700px;margin:auto;background:#fff;padding:15px;border-radius:10px;border: solid 2px #174a7f;position: relative;">
-            <div style="background:#fff;text-align:center;padding:20px; border-bottom: solid #174a7f;padding-top: 0;">
-              <img src="https://pctravelsonline.com/assets/images/logo.png" width="150" style="max-width:100%;height:auto;" alt="PC Travels Logo" />
+          <div
+            style="max-width:700px;margin:auto;background:#fff;padding:15px;border-radius:10px;border: solid 2px #174a7f;position: relative;">
+            <div style="background:#fff;text-align:center;padding:15px; border-bottom: solid #174a7f;padding-top: 0;">
+                <img src="https://pctravelsonline.com/assets/images/PClogoEmail.jpg" width="150"
+                    style="max-width:100%;height:auto;" alt="PC Travels Logo" />
             </div>
 
             <div>
-                <h4 style="margin-bottom: 0;">Dear, ${companyName}</h4>
-                <p style="margin-top: 10px;">Assalamualaikum wa rahmatullahi wa barakatuh.</p>
+                <p style="margin: 1rem 0 0 0;">Dear,</p>
+                <h3 style="font-weight: bold;color: #174a7f;margin-top: 10px;">${companyName}</h3>
+                <p style="margin-top: 10px;">Assalamu Alaikum Warahmatullahi Wabarakatuh.</p>
+                <p>We hope you are doing well.</p>
             </div>
 
-            <p style="font-size:15px;color:#333;text-align:center;">
-              The following driver and transport details for <b>${groupName}</b> have been <b style="color:#039a03;">updated</b>:
+            <p style="font-size:15px;color:#333;">
+              This is to inform you that there has been an update in the driver or vehicle assignment for
+              <b style="color: #174a7f;">Group No. ${groupName}</b>.
+              Please find below the latest confirmed details for your reference.
             </p>
 
-            <h3 style="color:#174a7f;margin-top:20px;margin-bottom: 10px;">Transport Details:</h3>
+            <h3 style="color:#174a7f;margin-top:20px;margin-bottom: 10px;">Updated Transport Details:</h3>
             <div style="width: 100%; overflow: auto;">
-                ${transportTable}
+              ${transportTable}
             </div>
 
-            <h3 style="color:#174a7f;margin-bottom: 10px;">Driver Details:</h3>
+            <h3 style="color:#174a7f;margin-bottom: 10px;">Updated Driver Details:</h3>
             <div style="width: 100%; overflow: auto;">
-                ${driverTable}
+              ${driverTable}
             </div>
 
             <div>
-                <p style="margin-bottom: 0;">Thanks & Regards</p>
-                <p style="margin-top: 10px;margin-bottom: 0;">Team PC</p>
+              <p style="line-height: 1.4;">
+                Should you require any clarification or immediate assistance, please do not hesitate to contact our
+                24/7 Operations Team at
+                <a href="tel:+919826953206" style="text-decoration: none;color: #174a7f;font-weight: 600;">
+                  +919826953206
+                </a>.
+              </p>
+              <p style="line-height: 1.4;">
+                We sincerely apologize for any inconvenience caused and appreciate your understanding and cooperation.
+              </p>
+              <p>Jazakum Allahu Khairan,</p>
             </div>
 
-            <p style="font-size:14px;color:#e4e4e4;text-align:center;margin-top:15px;background:#174a7f;padding: 10px 0;margin-bottom: 0;">
-                © PC Travels. All rights reserved.
+            <div>
+              <p style="margin-bottom: 0;">Thanks & Regards</p>
+              <p style="margin-top: 5px;margin-bottom: 0;">Team PC</p>
+            </div>
+
+            <p
+              style="font-size: 14px; color: #909090; text-align: center; margin-top: 15px; background: #f1f1f1; padding: 8px 0; margin-bottom: 0; border-radius: 0px 0px 10px 10px;">
+              © PC Travels. All rights reserved.
             </p>
           </div>
         </div>
