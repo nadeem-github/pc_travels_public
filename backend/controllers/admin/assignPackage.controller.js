@@ -3,6 +3,7 @@ const hotel = require("@root/models/hotel");
 const { ReE, ReS, to } = require("@services/util.service");
 const { check } = require("express-validator");
 const { assign } = require("nodemailer/lib/shared");
+const { Sequelize, Op } = require("sequelize");
 
 const fetch = async function (req, res) {
   try {
@@ -41,9 +42,10 @@ const fetch = async function (req, res) {
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
+           main_external_agent_code: { [Op.ne]: null }
         },
         group: ['main_external_agent_code', 'email', 'group_name_number'],
-        order: [['id', 'ASC']],
+        order: [[Sequelize.fn('MIN', Sequelize.col('id')), 'ASC']],
       }),
     ]);
 if (!data) {
@@ -53,7 +55,9 @@ return ReS(res, {
   result: {
     packageDetails: data,
     transportDetails: data1,
-    hotelDetails: data2
+    hotelDetails: data2,
+    groupNumber:data3
+
   }, message: "success"
 });
   } catch (error) {
