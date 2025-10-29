@@ -33,6 +33,7 @@ const fetch = async function (req, res) {
           group_name_number: body.group_name_number,
         },
       }),
+<<<<<<< HEAD
       MutamersList.findAll({
         attributes: [
           'main_external_agent_code',
@@ -47,6 +48,21 @@ const fetch = async function (req, res) {
         group: ['main_external_agent_code', 'email', 'group_name_number'],
         order: [[Sequelize.fn('MIN', Sequelize.col('id')), 'ASC']],
       }),
+=======
+      // MutamersList.findAll({
+      //   attributes: [
+      //     'main_external_agent_code',
+      //     'email',
+      //     'group_name_number'
+      //   ],
+      //   where: {
+      //     email: body.email,
+      //     group_name_number: body.group_name_number,
+      //   },
+      //   group: ['main_external_agent_code', 'email', 'group_name_number'],
+      //   order: [['id', 'ASC']],
+      // }),
+>>>>>>> 05407fc3de794e682328576d9a4f29ef362eae55
     ]);
 if (!data) {
   return ReE(res, { message: "No Data Found" }, 200);
