@@ -43,23 +43,22 @@ const fetch = async function (req, res) {
           group_name_number: body.group_name_number,
         },
         group: ['main_external_agent_code', 'email', 'group_name_number'],
-        // order: [[Sequelize.literal('MAX(id)'), 'ASC']],
-        order: [[Sequelize.col('id'), 'ASC']], // ✅ simpler and correct
+        order: [['id', 'ASC']],
       }),
     ]);
-    if (!data) {
-      return ReE(res, { message: "No Data Found" }, 200);
-    }
-    return ReS(res, {
-      result: {
-        packageDetails: data,
-        transportDetails: data1,
-        hotelDetails: data2
-      }, message: "success"
-    });
+if (!data) {
+  return ReE(res, { message: "No Data Found" }, 200);
+}
+return ReS(res, {
+  result: {
+    packageDetails: data,
+    transportDetails: data1,
+    hotelDetails: data2
+  }, message: "success"
+});
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
-  }
+  return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+}
 };
 const create = async (req, res) => {
   try {
