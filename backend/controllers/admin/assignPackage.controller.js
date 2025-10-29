@@ -32,19 +32,19 @@ const fetch = async function (req, res) {
           group_name_number: body.group_name_number,
         },
       }),
-      MutamersList.findAll({
-        attributes: [
-          'main_external_agent_code',
-          'email',
-          'group_name_number'
-        ],
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        },
-        group: ['main_external_agent_code', 'email', 'group_name_number'],
-        order: [['id', 'ASC']],
-      }),
+      // MutamersList.findAll({
+      //   attributes: [
+      //     'main_external_agent_code',
+      //     'email',
+      //     'group_name_number'
+      //   ],
+      //   where: {
+      //     email: body.email,
+      //     group_name_number: body.group_name_number,
+      //   },
+      //   group: ['main_external_agent_code', 'email', 'group_name_number'],
+      //   order: [['id', 'ASC']],
+      // }),
     ]);
 if (!data) {
   return ReE(res, { message: "No Data Found" }, 200);
