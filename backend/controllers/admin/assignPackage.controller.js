@@ -43,7 +43,8 @@ const fetch = async function (req, res) {
           group_name_number: body.group_name_number,
         },
         group: ['main_external_agent_code', 'email', 'group_name_number'],
-        order: [[Sequelize.literal('MAX(id)'), 'ASC']], // ✅ Order by aggregated id
+        // order: [[Sequelize.literal('MAX(id)'), 'ASC']],
+        order: [[Sequelize.col('id'), 'ASC']], // ✅ simpler and correct
       }),
     ]);
     if (!data) {
