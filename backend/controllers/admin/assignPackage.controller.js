@@ -6,7 +6,7 @@ const { assign } = require("nodemailer/lib/shared");
 
 const fetch = async function (req, res) {
   try {
-    const body = req.body;
+    let body = req.body;
 
     const [data, data1, data2, data3] = await Promise.all([
       AssignPackage.findAll({
@@ -36,31 +36,30 @@ const fetch = async function (req, res) {
         attributes: [
           'main_external_agent_code',
           'email',
-          'group_name_number',
-          [Sequelize.fn('MAX', Sequelize.col('id')), 'id'],
+          'group_name_number'
         ],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
         },
         group: ['main_external_agent_code', 'email', 'group_name_number'],
-        order: [[Sequelize.literal('MAX(id)'), 'ASC']],
+        order: [[Sequelize.literal('MAX(id)'), 'ASC']], // ✅ Order by aggregated id
       }),
     ]);
-
     if (!data) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
-
-    return ReS(res, { data, data1, data2, data3 }, 200);
-
-  } catch (err) {
-    console.error(err);
-    return ReE(res, { message: "Something Went Wrong", err }, 500);
+    return ReS(res, {
+      result: {
+        packageDetails: data,
+        transportDetails: data1,
+        hotelDetails: data2
+      }, message: "success"
+    });
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
-
-
 const create = async (req, res) => {
   try {
     let body = req.body;
