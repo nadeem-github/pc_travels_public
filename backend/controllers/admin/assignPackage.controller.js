@@ -36,14 +36,15 @@ const fetch = async function (req, res) {
         attributes: [
           'main_external_agent_code',
           'email',
-          'group_name_number'
+          'group_name_number',
+          [Sequelize.fn('MAX', Sequelize.col('id')), 'id'], // ✅ Add this line
         ],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
         },
         group: ['main_external_agent_code', 'email', 'group_name_number'],
-        order: [['id', 'ASC']],
+        order: [[Sequelize.literal('MAX(id)'), 'ASC']], // ✅ Order by aggregated id
       }),
     ]);
 if (!data) {
