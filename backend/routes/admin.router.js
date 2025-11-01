@@ -34,6 +34,7 @@ const B2bHotelController = require("@controllers/b2b/b2bHotel.controller");
 const B2bFlightDetailsController = require("@controllers/b2b/b2bFlightDetails.controller");
 const AssignPackageController = require("@controllers/admin/assignPackage.controller");
 const transportDetailsController = require("@controllers/admin/transportDetails.controller");
+const LedgerController = require("@controllers/admin/ledger.controller");
 
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
@@ -217,6 +218,15 @@ adminRouter.post("/assignPackage/delete", passport.authenticate("jwt", { session
 
 // ========== transportDetailsController Routes==========
 adminRouter.post("/transportDetails/fetch-upcomin-and-expiry", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, transportDetailsController.fetchUpcomingAndExpiry);
+
+// ========== LedgerController Routes==========
+adminRouter.post("/ledger/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.fetch);
+adminRouter.post("/ledger/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.create);
+adminRouter.post("/ledger/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.fetchSingle);
+adminRouter.post("/ledger/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.update);
+adminRouter.post("/ledger/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.deleted);
+
+
 
 // ========== Error Handler ==========
 adminRouter.use(errorHandler);

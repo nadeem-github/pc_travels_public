@@ -5,6 +5,7 @@ const { sequelize } = require("@models");
 const ExcelJS = require("exceljs");
 const fs = require("fs");
 const path = require("path");
+const { Sequelize, Op } = require("sequelize");
 // ===================== LOGIN =====================
 const fetch = async (req, res) => {
   try {
@@ -295,6 +296,20 @@ const fetchAssignPackage = async function (req, res) {
           group_name_number: body.group_name_number,
         },
       }),
+       MutamersList.findAll({
+              attributes: [
+                'main_external_agent_code',
+                'email',
+                'group_name_number'
+              ],
+              where: {
+                email: body.email,
+                group_name_number: body.group_name_number,
+                 main_external_agent_code: { [Op.ne]: null }
+              },
+              group: ['main_external_agent_code', 'email', 'group_name_number'],
+              order: [[Sequelize.fn('MIN', Sequelize.col('id')), 'ASC']],
+            }),
     ]);
     if (!data) {
       return ReE(res, { message: "No Data Found" }, 200);
