@@ -20,14 +20,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     },
-     opening_balance: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    }, 
-     opening_balance_remark: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    }, 
     pax: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -52,6 +44,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    particulars: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    particular_remark: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+   
+   
    
     deleted_at: {
       allowNull: true,

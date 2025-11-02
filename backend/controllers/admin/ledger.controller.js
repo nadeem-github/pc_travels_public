@@ -1,4 +1,4 @@
-const { Ledger  } = require("@models");
+const { Ledger } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -9,7 +9,7 @@ const fetch = async function (req, res) {
     const data = await Ledger.findAll({
       order: [['id', 'DESC']],
       where: {
-        email: body.email,       
+        email: body.email,
       }
     });
     if (!data) {
@@ -24,22 +24,21 @@ const fetch = async function (req, res) {
 const create = async (req, res) => {
   try {
     const body = req.body;
-
     // Step 1: Create drivers and collect created records
     const createdLedgers = [];
     for (const item of body.ledgerDetails) {
       const driver = await Ledger.create({
-       email: item.email, 
-       service: item.service,
-       ledger_date:item.ledger_date,
-       opening_balance:item.opening_balance,
-       opening_balance_remark:item.opening_balance_remark,
-       pax:item.pax,
-       rate:item.rate,
-       debit:item.debit,
-       credit:item.credit,
-       balance:item.balance,
-       remark:item.remark,
+        email: item.email,
+        service: item.service,
+        ledger_date: item.ledger_date,
+        particulars: item.particulars,
+        particular_remark: item.particular_remark,
+        pax: item.pax,
+        rate: item.rate,
+        debit: item.debit,
+        credit: item.credit,
+        balance: item.balance,
+        remark: item.remark,
       });
       createdLedgers.push(driver);
     }
@@ -56,7 +55,7 @@ const fetchSingle = async function (req, res) {
     const ledgerDetails = await Ledger.findAll({
       where: { email: body.email }
     });
-    
+
     return ReS(res, { data: ledgerDetails, message: "success" });
 
   } catch (error) {
@@ -81,15 +80,15 @@ const update = async function (req, res) {
         const updatedData = {
           email: item.email ?? existing.email,
           service: item.service ?? existing.service,
-          ledger_date:item.ledger_date ?? existing.ledger_date,
-          opening_balance:item.opening_balance ?? existing.opening_balance,
-          opening_balance_remark:item.opening_balance_remark ?? existing.opening_balance_remark,
-          pax:item.pax ?? existing.pax,
-          rate:item.rate ?? existing.rate,
-          debit:item.debit ?? existing.debit,
-          credit:item.credit ?? existing.credit,
-          balance:item.balance ?? existing.balance,
-          remark:item.remark ?? existing.remark,
+          ledger_date: item.ledger_date ?? existing.ledger_date,
+          particulars: item.particulars ?? existing.particulars,
+          particular_remark: item.particular_remark ?? existing.particular_remark,
+          pax: item.pax ?? existing.pax,
+          rate: item.rate ?? existing.rate,
+          debit: item.debit ?? existing.debit,
+          credit: item.credit ?? existing.credit,
+          balance: item.balance ?? existing.balance,
+          remark: item.remark ?? existing.remark,
         };
         const updated = await existing.update(updatedData);
         updatedLedgers.push(updated);
