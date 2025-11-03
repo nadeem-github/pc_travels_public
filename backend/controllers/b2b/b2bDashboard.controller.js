@@ -272,7 +272,7 @@ const fetchAssignPackage = async function (req, res) {
   try {
     let body = req.body;
 
-    const [data, data1, data2] = await Promise.all([
+    const [data, data1, data2,data3] = await Promise.all([
       AssignPackage.findAll({
         order: [['id', 'ASC']],
         where: {
@@ -318,7 +318,8 @@ const fetchAssignPackage = async function (req, res) {
       result: {
         packageDetails: data,
         transportDetails: data1,
-        hotelDetails: data2
+        hotelDetails: data2,
+        groupNumber: data3
       }, message: "success"
     });
   } catch (error) {
