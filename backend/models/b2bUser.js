@@ -43,11 +43,35 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    profile: {
+    full_address: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    status: {
+    gstnumber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    pan_number: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    city: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    upload_logo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    additional_email: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    additional_phone: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+     status: {
       type: DataTypes.ENUM("complete", "pending", "hold"),
       allowNull: true,
       defaultValue: "pending",

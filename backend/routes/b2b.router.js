@@ -19,6 +19,8 @@ b2bRouter.post("/otp-verification", AuthController.otpVerification);
 b2bRouter.post("/verify-otp", AuthController.verifyOtp);
 b2bRouter.post("/change-password",  AuthController.changePassword);
 b2bRouter.post("/update-password", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, AuthController.UpdatePassword);
+b2bRouter.post("/fetch-single-user", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, AuthController.fetchSingle);
+b2bRouter.post("/update-profile", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, AuthController.updateProfile);
 
 // b2bRouter.get("/download-dump", AuthController.downloadSql);
 

@@ -215,12 +215,70 @@ const verifyOtp = async function (req, res) {
 };
 
 const changePassword = async (req, res) => {
-  const { email,password } = req.body;
+  const { email, password } = req.body;
   const existData = await B2bUser.findOne({ where: { email } });
   if (existData) {
     existData.password = password;
     await existData.save();
     return ReS(res, { message: "B2b user password has been updated successfully." }, 200);
+  }
+};
+const fetchSingle = async function (req, res) {
+  try {
+    const data = await B2bUser.findOne({
+      where: { email: req.user.email },
+    });
+    if (!data) {
+      return ReE(res, { message: "No Data Found" }, 200);
+    }
+    return ReS(res, { data: data, message: "success" });
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
+const updateProfile = async function (req, res) {
+  try {
+    let body = req.body;
+    const files = req.files;
+    const existData = await B2bUser.findOne({
+      where: { email: req.user.email }
+    });
+    const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/b2bUser`;
+    let UploadLogo = "";
+    if (files) {
+      if (files.upload_logo) {
+        const homeTopSliderName = Date.now() + '-' + files.upload_logo.name;
+        UploadLogo = "b2bUser/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.upload_logo, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      }
+    }
+    await B2bUser.update({
+      company_name: body.company_name ? body.company_name : existData.company_name,
+      b2b_unique_id: body.b2b_unique_id ? body.b2b_unique_id : existData.b2b_unique_id,
+      person_name: body.person_name ? body.person_name : existData.person_name,
+      password: body.password ? body.password : existData.password,
+      whatsapp_number: body.whatsapp_number ? body.whatsapp_number : existData.whatsapp_number,
+      whatsapp_number_verify: body.whatsapp_number_verify ? body.whatsapp_number_verify : existData.whatsapp_number_verify,
+      email_verify: body.email_verify ? body.email_verify : existData.email_verify,
+      full_address: body.full_address ? body.full_address : existData.full_address,
+      gstnumber: body.gstnumber ? body.gstnumber : existData.gstnumber,
+      pan_number: body.pan_number ? body.pan_number : existData.pan_number,
+      city: body.city ? body.city : existData.city,
+      additional_email: body.additional_email ? body.additional_email : existData.additional_email,
+      additional_phone: body.additional_phone ? body.additional_phone : existData.additional_phone,
+      status: body.status ? body.status : existData.status,
+      upload_logo: UploadLogo ? UploadLogo : existData.upload_logo,
+    },
+      {
+        where: { email: req.user.email }
+      });
+
+    return ReS(res, { message: "B2b User has been updated successfully." }, 200);
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
 
@@ -233,5 +291,7 @@ module.exports = {
   UpdatePassword,
   otpVerification,
   verifyOtp,
-  changePassword
+  changePassword,
+  fetchSingle,
+  updateProfile
 };
