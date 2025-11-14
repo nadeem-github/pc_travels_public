@@ -36,6 +36,8 @@ const AssignPackageController = require("@controllers/admin/assignPackage.contro
 const transportDetailsController = require("@controllers/admin/transportDetails.controller");
 const LedgerController = require("@controllers/admin/ledger.controller");
 const LedgerOpeningBalanceController = require("@controllers/b2b/ledgerOpeningBalance.controller");
+const TermsAndConditionController = require("@controllers/admin/termsAndConditioncontrollerr");
+const AccountDetailsController = require("@controllers/admin/accountDetails.controller");
 
 // ========== Auth Routes ==========
 adminRouter.post("/login", AuthController.login);
@@ -233,6 +235,20 @@ adminRouter.post("/ledgerOpeningBalance/create", passport.authenticate("jwt", { 
 adminRouter.post("/ledgerOpeningBalance/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerOpeningBalanceController.fetchSingle);
 adminRouter.post("/ledgerOpeningBalance/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerOpeningBalanceController.update);
 adminRouter.post("/ledgerOpeningBalance/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerOpeningBalanceController.deleted);
+
+// ========== TermsAndConditionController Routes==========
+adminRouter.post("/termsAndCondition/fetch", TermsAndConditionController.fetch);
+adminRouter.post("/termsAndCondition/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, TermsAndConditionController.create);
+adminRouter.post("/termsAndCondition/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, TermsAndConditionController.fetchSingle);
+adminRouter.post("/termsAndCondition/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, TermsAndConditionController.update);
+adminRouter.post("/termsAndCondition/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, TermsAndConditionController.deleted);
+
+// ========== AccountDetailsController Routes==========
+adminRouter.post("/accountDetails/fetch", AccountDetailsController.fetch);
+adminRouter.post("/accountDetails/create", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AccountDetailsController.create);
+adminRouter.post("/accountDetails/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AccountDetailsController.fetchSingle);
+adminRouter.post("/accountDetails/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AccountDetailsController.update);
+adminRouter.post("/accountDetails/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AccountDetailsController.deleted);
 
 
 

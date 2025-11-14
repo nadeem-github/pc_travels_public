@@ -1,4 +1,4 @@
-const { MutamersList, FlightDetail, B2bHotel, Driver,AssignPackage, AssignPackageTransportDetails, AssignPackageHousing } = require("@models");
+const { MutamersList, FlightDetail, B2bHotel, Driver,AssignPackage,AccountDetails, AssignPackageTransportDetails, AssignPackageHousing } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const { QueryTypes } = require("sequelize");
 const { sequelize } = require("@models");
@@ -326,6 +326,20 @@ const fetchAssignPackage = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+const fetchAccountDetails = async function (req, res) {
+  try {
+    const data = await AccountDetails.findAll({
+      order: [['id', 'DESC']],
+      // limit: 1|
+    });
+    if (!data) {
+      return ReE(res, { message: "No Data Found" }, 200);
+    }
+    return ReS(res, { data: data, message: "success" });
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
 
 
 
@@ -337,5 +351,6 @@ module.exports = {
   fetchHotelDetail,
   fetchDriverDetail,
   fetchAssignPackage,
-  fetchDriverDetailWithTransport
+  fetchDriverDetailWithTransport,
+  fetchAccountDetails
 };

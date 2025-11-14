@@ -33,6 +33,7 @@ b2bRouter.post("/dashboard/fetch-hotel-detail", passport.authenticate("jwt", { s
 b2bRouter.post("/dashboard/fetch-driver-detail", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetchDriverDetail);
 b2bRouter.post("/dashboard/fetch-assign-package", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetchAssignPackage);
 b2bRouter.post("/dashboard/fetch-driver-with-transport", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetchDriverDetailWithTransport);
+b2bRouter.post("/dashboard/fetch-account-details", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetchAccountDetails);
 
 
 
