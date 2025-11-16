@@ -10,7 +10,7 @@ const fetch = async function (req, res) {
   try {
     const data = await TermsAndCondition.findAll({
       order: [['id', 'DESC']],
-      limit: 1
+      // limit: 1
     });
     if (!data) {
       return ReE(res, { message: "No Data Found" }, 200);

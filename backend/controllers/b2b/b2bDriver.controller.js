@@ -135,10 +135,31 @@ const fetchB2b = async function (req, res) {
 const create = async (req, res) => {
   try {
     const body = req.body;
+    const files = req.files; // images
 
     // Step 1: Create drivers and collect created records
     const createdDrivers = [];
+    const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/drivers`;
     for (const item of body.driverDetails) {
+      let uploadedDriverImage = "";
+      // ---------- IMAGE UPLOAD LOGIC (NEW) ----------
+      if (files && files[item.upload_pdf]) {
+        const imgFile = files[item.upload_pdf];
+
+        const imageName = Date.now() + "-" + imgFile.name;
+        uploadedDriverImage = "drivers/" + imageName;
+
+        const uploaded = await helper.fileUpload(
+          imageName,
+          imgFile,
+          baseFileUploadPath
+        );
+
+        if (!uploaded) {
+          return ReE(res, { message: "Driver image upload failed" }, 200);
+        }
+      }
+      // ------------------------------------------------
       const driver = await Driver.create({
         email: item.email,
         group_name_number: item.group_name_number,
@@ -151,6 +172,7 @@ const create = async (req, res) => {
         to_location: item.to_location,
         time: item.time,
         remarks: item.remarks,
+        upload_pdf: uploadedDriverImage,
       });
       createdDrivers.push(driver);
     }
@@ -388,16 +410,36 @@ const fetchSingle = async function (req, res) {
 const update = async function (req, res) {
   try {
     const { driverDetails } = req.body;
+     const files = req.files; // for pdf/image files
 
     if (!driverDetails || !Array.isArray(driverDetails)) {
       return ReE(res, { message: "driverDetails array is required" }, 400);
     }
 
     const updatedDrivers = [];
+    const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/drivers`;
 
     // Step 1️⃣ Update records
     for (const item of driverDetails) {
       const existing = await Driver.findOne({ where: { id: item.id } });
+      if (!existing) continue;
+      let uploadedDriverPdf = existing.upload_pdf; // keep previous pdf if no new file is uploaded
+
+      // ----------------------- FILE UPLOAD LOGIC -----------------------
+      // item.upload_pdf => field name sent from frontend (e.g., "driver_pdf_1")
+      if (files && files[item.upload_pdf]) {
+        const pdfFile = files[item.upload_pdf];
+
+        const pdfName = Date.now() + "-" + pdfFile.name;
+        uploadedDriverPdf = "drivers/" + pdfName;
+
+        const uploaded = await helper.fileUpload(pdfName, pdfFile, baseFileUploadPath);
+
+        if (!uploaded) {
+          return ReE(res, { message: "PDF upload failed" }, 200);
+        }
+      }
+      // ----------------------------------------------------------------
       if (existing) {
         const updatedData = {
           driver_name: item.driver_name ?? existing.driver_name,
@@ -409,6 +451,7 @@ const update = async function (req, res) {
           to_location: item.to_location ?? existing.to_location,
           time: item.time ?? existing.time,
           remarks: item.remarks ?? existing.remarks,
+           upload_pdf: uploadedDriverPdf, // updated or old
         };
         const updated = await existing.update(updatedData);
         updatedDrivers.push(updated);
@@ -463,9 +506,8 @@ const update = async function (req, res) {
               <tr>
                 <td>${d.driver_name || "-"}</td>
                 <td>
-                  ${
-                    d.driver_mobile? `<a href="tel:${d.driver_mobile}" style="color:#174a7f;text-decoration:none;font-weight:600;">${d.driver_mobile}</a>` : "-"
-                  }
+                  ${d.driver_mobile ? `<a href="tel:${d.driver_mobile}" style="color:#174a7f;text-decoration:none;font-weight:600;">${d.driver_mobile}</a>` : "-"
+            }
                 </td>
                 <td>${d.bus_no || "-"}</td>
               </tr>

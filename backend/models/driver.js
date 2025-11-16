@@ -36,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    upload_pdf: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     
     d_date: {
       allowNull: true,
