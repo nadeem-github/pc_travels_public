@@ -8,6 +8,7 @@ const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
 const nodemailer = require("nodemailer");
 const { body } = require("express-validator");
+const helper = require("@helpers/fileupload.helper");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
