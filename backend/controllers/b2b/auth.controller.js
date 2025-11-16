@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const CONFIG = require("@config/config.json");
 const appService = require("@services/app.service");
 const { ReE, ReS, to } = require("@services/util.service");
+const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
 const nodemailer = require("nodemailer");
 const { body } = require("express-validator");
