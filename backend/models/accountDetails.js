@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+     remark: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     upload_qr_image: {
       type: DataTypes.STRING,
       allowNull: true,

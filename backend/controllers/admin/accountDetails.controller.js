@@ -42,6 +42,7 @@ const create = async (req, res) => {
       account_number: body.account_number,
       ifsc_code: body.ifsc_code,
       branch: body.branch,
+      remark: body.remark,
       upload_qr_image: accountDetails,
       
     })
@@ -95,6 +96,7 @@ const update = async function (req, res) {
       account_name: body.account_name ? body.account_name : existData.account_name,
       account_number: body.account_number ? body.account_number : existData.account_number,
       ifsc_code: body.ifsc_code ? body.ifsc_code : existData.ifsc_code,
+      remark: body.remark ? body.remark : existData.remark,
       branch: body.branch ? body.branch : existData.branch,
     },
       {
