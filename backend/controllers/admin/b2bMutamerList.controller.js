@@ -665,5 +665,6 @@ module.exports = {
   deleted,
   updateExcel,
   deletedGroup,
-  deletedGroupNumber
+  deletedGroupNumber,
+  updateVisaPdf
 };
