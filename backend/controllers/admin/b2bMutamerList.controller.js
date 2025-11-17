@@ -1,6 +1,44 @@
 const { MutamersList,AssignPackageTransportDetails,Driver,B2bHotel,FlightDetail } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const xlsx = require('xlsx');
+const app = require('@services/app.service');
+const config = require('@config/app.json')[app['env']];
+const helper = require("@helpers/fileupload.helper");
+const updateVisaPdf = async (req, res) => {
+  try {
+    let body = req.body;
+    const files = req.files;
+    const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/mutamer`;
+    let mutamer = "";
+    if (files) {
+      if (files.upload_visa_pdf) {
+        const homeTopSliderName = Date.now() + '-' + files.upload_visa_pdf.name;
+        mutamer = "mutamer/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.upload_visa_pdf, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      }
+    }
+    const data = await MutamersList.update(
+        { upload_visa_pdf: mutamer },  // 👈 new value
+        {
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number
+          }
+        }
+      );
+   
+
+    if (data) {
+      return ReS(res, { message: "Upload visa pdf updated successfully." }, 200);
+    }
+
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
 
 const uploadExcelToDatabase = async function (req, res) {
   try {
@@ -91,7 +129,8 @@ const fetchAll = async (req, res) => {
         "view_dirver_details",
         "main_external_agent_code",
         "leader_name",
-        "mobile_number"
+        "mobile_number",
+        "upload_visa_pdf"
 
       ],
       where: { email },
@@ -129,6 +168,7 @@ const fetchAll = async (req, res) => {
           view_dirver_details: curr.view_dirver_details,
           leader_name: curr.leader_name,
           mobile_number: curr.mobile_number,
+          upload_visa_pdf: curr.upload_visa_pdf,
           id: curr.id,
           groupnumber: []
         };

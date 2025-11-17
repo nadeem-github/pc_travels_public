@@ -106,6 +106,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    upload_visa_pdf: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
      return_date: {
       type: DataTypes.DATE,
       allowNull: true,

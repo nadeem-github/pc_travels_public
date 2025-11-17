@@ -27,7 +27,8 @@ const fetch = async (req, res) => {
         "transport_route",
         "remark",
         "view_dirver_details",
-        "main_external_agent_code"
+        "main_external_agent_code",
+        "upload_visa_pdf"
       ],
       raw: true
     });
@@ -53,6 +54,7 @@ const fetch = async (req, res) => {
           remark: [],
           group_size: curr.group_size,
           view_dirver_details: curr.view_dirver_details,
+          upload_visa_pdf: curr.upload_visa_pdf,
           groupnumber: []
         };
         acc.push(existing);
