@@ -39,6 +39,30 @@ const updateVisaPdf = async (req, res) => {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+const deleteVisaPdf = async (req, res) => {
+  try {
+    let body = req.body;
+    
+    const data = await MutamersList.update(
+        { upload_visa_pdf: null },  // 👈 new value
+        {
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number,
+            upload_visa_pdf: body.upload_visa_pdf
+          }
+        }
+      );
+   
+
+    if (data) {
+      return ReS(res, { message: "Upload visa pdf deleted successfully." }, 200);
+    }
+
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
 
 const uploadExcelToDatabase = async function (req, res) {
   try {
@@ -666,5 +690,6 @@ module.exports = {
   updateExcel,
   deletedGroup,
   deletedGroupNumber,
-  updateVisaPdf
+  updateVisaPdf,
+  deleteVisaPdf
 };

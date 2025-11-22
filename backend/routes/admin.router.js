@@ -179,6 +179,7 @@ adminRouter.post("/b2bAdmin/delete", passport.authenticate("jwt", { session: fal
 // ========== B2bMutamerListController Routes==========
 adminRouter.post("/b2bMutamerList/upload-excel", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.uploadExcelToDatabase);
 adminRouter.post("/b2bMutamerList/upload-visa-pdf", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.updateVisaPdf);
+adminRouter.post("/b2bMutamerList/delete-visa-pdf", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.deleteVisaPdf);
 adminRouter.post("/b2bMutamerList/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetch);
 adminRouter.post("/b2bMutamerList/fetch-all", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetchAll);
 adminRouter.post("/b2bMutamerList/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, B2bMutamerListController.fetchSingle);
