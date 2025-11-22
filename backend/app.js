@@ -13,7 +13,11 @@ const app = express();
 
 // ========== Middlewares ==========
 // File Upload
-app.use(fileUpload());
+app.use( fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+    createParentPath: true,
+  }));
 
 // View Engine (EJS for HTML rendering)
 app.engine('html', require('ejs').renderFile);

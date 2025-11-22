@@ -134,32 +134,117 @@ const fetchB2b = async function (req, res) {
 
 const create = async (req, res) => {
   try {
-    const body = req.body;
-    const files = req.files; // images
+//     const body = req.body;
+//     const files = req.files; // images
+//     let driverDetailsArray = [];
 
-    // Step 1: Create drivers and collect created records
+// // If driverDetails is JSON string (From Postman Form-Data)
+// if (typeof body.driverDetails === "string") {
+//   try {
+//     driverDetailsArray = JSON.parse(body.driverDetails);
+//   } catch (err) {
+//     return ReE(res, { message: "Invalid driverDetails JSON format" }, 400);
+//   }
+// } else {
+//   driverDetailsArray = body.driverDetails;
+// }
+    
+
+//     // Step 1: Create drivers and collect created records
+//     const createdDrivers = [];
+//     const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/drivers`;
+//     for (const item of driverDetailsArray) {
+//       let uploadedDriverImage = "";
+//       // ---------- IMAGE UPLOAD LOGIC (NEW) ----------
+//     if (files && item.upload_pdf) {
+//     // Example: item.upload_pdf = "file1" or "file2"
+//     const fileArray = files[item.upload_pdf];
+
+//     if (fileArray && fileArray.length > 0) {
+//       const imgFile = fileArray[0];
+//       const imageName = Date.now() + "-" + imgFile.originalname;
+
+//       uploadedDriverImage = "drivers/" + imageName;
+
+//       const uploaded = await helper.fileUpload(
+//         imageName,
+//         imgFile,
+//         baseFileUploadPath
+//       );
+
+//       if (!uploaded) {
+//         return ReE(res, { message: "Driver image upload failed" }, 500);
+//       }
+//     }
+//   }
+//       // ------------------------------------------------
+//       const driver = await Driver.create({
+//         email: item.email,
+//         group_name_number: item.group_name_number,
+//         transport_id: item.transport_id,
+//         driver_name: item.driver_name,
+//         driver_mobile: item.driver_mobile,
+//         bus_no: item.bus_no,
+//         status: item.status,
+//         location: item.location,
+//         to_location: item.to_location,
+//         time: item.time,
+//         remarks: item.remarks,
+//         upload_pdf: uploadedDriverImage,
+//       });
+//       createdDrivers.push(driver);
+//     }
+
+
+
+
+     const body = req.body;
+    const files = req.files; // express-fileupload files
+
+    let driverDetailsArray = [];
+
+    // Parse driverDetails JSON
+    if (typeof body.driverDetails === "string") {
+      try {
+        driverDetailsArray = JSON.parse(body.driverDetails);
+      } catch (err) {
+        return res.status(400).json({ message: "Invalid driverDetails JSON" });
+      }
+    } else {
+      driverDetailsArray = body.driverDetails;
+    }
+
     const createdDrivers = [];
     const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/drivers`;
-    for (const item of body.driverDetails) {
+
+    for (const item of driverDetailsArray) {
+      
       let uploadedDriverImage = "";
-      // ---------- IMAGE UPLOAD LOGIC (NEW) ----------
-      if (files && files[item.upload_pdf]) {
+
+      // 🔥 DYNAMIC FILE UPLOAD LOGIC (file1/file2/fileX)
+      if (files && item.upload_pdf) {
+        // upload_pdf: "file1"
         const imgFile = files[item.upload_pdf];
 
-        const imageName = Date.now() + "-" + imgFile.name;
-        uploadedDriverImage = "drivers/" + imageName;
+        if (imgFile) {
+          const imageName = Date.now() + "-" + imgFile.name;
+          uploadedDriverImage = "drivers/" + imageName;
 
-        const uploaded = await helper.fileUpload(
-          imageName,
-          imgFile,
-          baseFileUploadPath
-        );
+          const uploaded = await helper.fileUpload(
+            imageName,
+            imgFile,
+            baseFileUploadPath
+          );
 
-        if (!uploaded) {
-          return ReE(res, { message: "Driver image upload failed" }, 200);
+          if (!uploaded) {
+            return res
+              .status(500)
+              .json({ message: "Driver image upload failed" });
+          }
         }
       }
-      // ------------------------------------------------
+
+      // 🔥 Create driver record
       const driver = await Driver.create({
         email: item.email,
         group_name_number: item.group_name_number,
@@ -174,6 +259,7 @@ const create = async (req, res) => {
         remarks: item.remarks,
         upload_pdf: uploadedDriverImage,
       });
+
       createdDrivers.push(driver);
     }
 
