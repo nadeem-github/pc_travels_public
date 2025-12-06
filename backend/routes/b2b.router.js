@@ -8,6 +8,7 @@ const errorHandler = require('@middleware/errorHandler').errorHandler;
 const adminMidd = require('@middleware/admin.middleware');
 const AuthController = require("@controllers/b2b/auth.controller");
 const B2bDashboardController = require("@controllers/b2b/b2bDashboard.controller");
+const TermsAndConditionController = require("@controllers/admin/termsAndConditioncontrollerr");
 
 
 // ========== Auth Routes ==========
@@ -34,6 +35,9 @@ b2bRouter.post("/dashboard/fetch-driver-detail", passport.authenticate("jwt", { 
 b2bRouter.post("/dashboard/fetch-assign-package", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetchAssignPackage);
 b2bRouter.post("/dashboard/fetch-driver-with-transport", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetchDriverDetailWithTransport);
 b2bRouter.post("/dashboard/fetch-account-details", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, B2bDashboardController.fetchAccountDetails);
+
+// ========== TermsAndConditionController Routes ==========
+b2bRouter.post("/terms-and-condition/fetch", passport.authenticate("jwt", { session: false }), adminMidd.b2bUser, TermsAndConditionController.fetch);
 
 
 

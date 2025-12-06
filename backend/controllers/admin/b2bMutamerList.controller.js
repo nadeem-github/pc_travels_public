@@ -4,6 +4,7 @@ const xlsx = require('xlsx');
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
 const helper = require("@helpers/fileupload.helper");
+const { Sequelize, Op } = require("sequelize");
 const updateVisaPdf = async (req, res) => {
   try {
     let body = req.body;
@@ -360,9 +361,27 @@ const create = async (req, res) => {
     const formatted = getDayAndMonth(body.return_date);
     const formatted1 = getDayAndMonth(body.arrival_date);
     const gname = `PC${initials}${formatted1}R${formatted}`;
+     let baseName = `PC${initials}${formatted1}R${formatted}`;
+    let finalGroupName = baseName;
+     // 🟢 Check if baseName already exists
+    let count = await MutamersList.count({
+      where: {
+        group_name_number: finalGroupName
+      }
+    });
+
+    // 🟡 If exists, keep adding -1, -2, -3...
+    let suffix = 1;
+    while (count > 0) {
+      finalGroupName = `${baseName}-${suffix}`;
+      count = await MutamersList.count({
+        where: { group_name_number: finalGroupName }
+      });
+      suffix++;
+    }
     const data = await MutamersList.create({
       email: body.email,
-      group_name_number: gname,
+      group_name_number: finalGroupName,
       group_size: body?.group_size,
       arrival_date: body?.arrival_date,
       return_date: body?.return_date,
@@ -449,8 +468,41 @@ const update = async function (req, res) {
     const formatted1 = getDayAndMonth(body.arrival_date);
     const gname = `PC${initials}${formatted1}R${formatted}`;
 
+    // Base group name ban gaya
+    let baseName = `PC${initials}${formatted1}R${formatted}`;
+    let finalGroupName = baseName;
+
+    // Agar group_name_number change hi nahi ho raha to unique logic skip kar do
+    const isGroupNameChanged = finalGroupName !== existData.group_name_number;
+
+    if (isGroupNameChanged) {
+      // Check duplicates except self id
+      let existing = await MutamersList.findOne({
+        where: {
+          group_name_number: finalGroupName,
+          id: { [Op.ne]: body.id }
+        }
+      });
+
+      let suffix = 1;
+
+      while (existing) {
+        finalGroupName = `${baseName}-${suffix}`;
+        existing = await MutamersList.findOne({
+          where: {
+            group_name_number: finalGroupName,
+            id: { [Op.ne]: body.id }
+          }
+        });
+        suffix++;
+      }
+    } else {
+      finalGroupName = existData.group_name_number;
+    }
+
     await MutamersList.update({
-      group_name_number: gname ? gname : existData.group_name_number,
+      // group_name_number: gname ? gname : existData.group_name_number,
+       group_name_number: finalGroupName,
       mutamer_name: body.mutamer_name ? body.mutamer_name : existData.mutamer_name,
       mutamer_age: body.mutamer_age ? body.mutamer_age : existData.mutamer_age,
       passport_number: body.passport_number ? body.passport_number : existData.passport_number,

@@ -1,4 +1,4 @@
-const { AssignPackageTransportDetails, Driver, B2bUser } = require("@models");
+const { AssignPackageTransportDetails, Driver, B2bUser,Ledger } = require("@models");
 const hotel = require("@root/models/hotel");
 const { ReE, ReS, to } = require("@services/util.service");
 const { check } = require("express-validator");
@@ -202,6 +202,9 @@ const fetchUpcomingAndExpiry = async (req, res) => {
     const B2bUserData = await B2bUser.findAll({
       order: [["id", "DESC"]],
     });
+    const ledgerData = await Ledger.findAll({
+      order: [["id", "DESC"]],
+    });
 
     if (!data || data.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
@@ -246,12 +249,17 @@ const fetchUpcomingAndExpiry = async (req, res) => {
         (b) => b.email === item.email
       );
 
+      const ledger = ledgerData.find(
+        (l) => l.email === item.email
+      );
+
       if (statusFlag) {
         processedData.push({
           ...item.dataValues,
           statusFlag,
           driverDetails: driver ? driver.dataValues : null,
           companyName: company ? company.company_name : null,
+          balanceAmount: ledger ? ledger.balance : null,
         });
       }
     }
