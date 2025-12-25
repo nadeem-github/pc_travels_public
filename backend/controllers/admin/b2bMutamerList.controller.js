@@ -1,10 +1,11 @@
-const { MutamersList,AssignPackageTransportDetails,Driver,B2bHotel,FlightDetail } = require("@models");
+const { MutamersList, AssignPackageTransportDetails, Driver, B2bHotel, FlightDetail } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const xlsx = require('xlsx');
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
 const helper = require("@helpers/fileupload.helper");
 const { Sequelize, Op } = require("sequelize");
+const fs = require('fs'); // Ensure this is at the top of your controller
 const updateVisaPdf = async (req, res) => {
   try {
     let body = req.body;
@@ -22,15 +23,15 @@ const updateVisaPdf = async (req, res) => {
       }
     }
     const data = await MutamersList.update(
-        { upload_visa_pdf: mutamer },  // 👈 new value
-        {
-          where: {
-            email: body.email,
-            group_name_number: body.group_name_number
-          }
+      { upload_visa_pdf: mutamer },  // 👈 new value
+      {
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number
         }
-      );
-   
+      }
+    );
+
 
     if (data) {
       return ReS(res, { message: "Upload visa pdf updated successfully." }, 200);
@@ -43,18 +44,18 @@ const updateVisaPdf = async (req, res) => {
 const deleteVisaPdf = async (req, res) => {
   try {
     let body = req.body;
-    
+
     const data = await MutamersList.update(
-        { upload_visa_pdf: null },  // 👈 new value
-        {
-          where: {
-            email: body.email,
-            group_name_number: body.group_name_number,
-            upload_visa_pdf: body.upload_visa_pdf
-          }
+      { upload_visa_pdf: null },  // 👈 new value
+      {
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+          upload_visa_pdf: body.upload_visa_pdf
         }
-      );
-   
+      }
+    );
+
 
     if (data) {
       return ReS(res, { message: "Upload visa pdf deleted successfully." }, 200);
@@ -65,37 +66,118 @@ const deleteVisaPdf = async (req, res) => {
   }
 };
 
+// const uploadExcelToDatabase = async function (req, res) {
+//   try {
+//     let body = req.body;
+//     const file = req.files.upload_excel;
+//     const groupNumber = Date.now();
+//     const workbook = xlsx.read(file.data, { type: "buffer" });
+//     const sheet = workbook.Sheets[workbook.SheetNames[0]];
+//     const data = xlsx.utils.sheet_to_json(sheet);
+//     const BATCH_SIZE = 1000;
+//     const total = data.length;
+
+//     const count = await MutamersList.count({
+//       where: {
+//         email: body.email,
+//         group_name_number: body.group_name_number
+//       }
+//     });
+//     const finalTotal = total + count;
+
+//     for (let i = 0; i < total; i += BATCH_SIZE) {
+//       const batch = data.slice(i, i + BATCH_SIZE);
+
+//       const formattedBatch = batch.map(row => ({
+//         mutamer_name: row["Mutamer name"],
+//         email: body.email,
+//         group_name_number: body.group_name_number,
+//         group_number: groupNumber,
+//         hotel_details: body.hotel_details,
+//         flight_details: body.flight_details,
+//         arrival_date: body.arrival_date,
+//         // group_size: body.group_size,
+//         transport_route: body.transport_route,
+//         remark: body.remark,
+//         view_dirver_details: body.view_dirver_details,
+//         mutamer_age: row["Mutamer Age"],
+//         passport_number: row["Passport Number"],
+//         nationality: row["Nationality"],
+//         main_external_agent_code: row["Main External Agent Code"],
+//         main_external_agent_name: row["Main External Agent Name"],
+//         sub_ea_code: row["Sub EA Code"],
+//         sub_ea_name: row["Sub EA Name"],
+//         visa_status: row["Visa Status"],
+//         biometric_status: row["Biometric status"],
+//         visa_number: row["Visa Number"],
+//         mofa_number: row["Mofa Number"]
+//       }));
+
+//       await MutamersList.bulkCreate(formattedBatch);
+//       await MutamersList.update(
+//         { group_size: finalTotal },  // 👈 new value
+//         {
+//           where: {
+//             email: body.email,
+//             group_name_number: body.group_name_number
+//           }
+//         }
+//       );
+//     }
+
+//     return ReS(res, { message: "Data inserted successfully." }, 200);
+//   } catch (error) {
+//     console.error("Error inserting data:", error);
+//     return ReE(res, { message: "Error while inserting data.", error }, 500);
+//   }
+// }
+
 const uploadExcelToDatabase = async function (req, res) {
   try {
     let body = req.body;
+    if (!req.files || !req.files.upload_excel) {
+      return ReE(res, { message: "Excel file nahi mili." }, 400);
+    }
+
     const file = req.files.upload_excel;
-    const groupNumber = Date.now();
-    const workbook = xlsx.read(file.data, { type: "buffer" });
-    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const data = xlsx.utils.sheet_to_json(sheet);
-    const BATCH_SIZE = 1000;
+    const workbook = xlsx.readFile(file.tempFilePath, {
+      cellDates: true,
+      cellNF: false,
+      cellText: false
+    });
+
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const data = xlsx.utils.sheet_to_json(sheet, { defval: "" });
     const total = data.length;
 
+    console.log("Total Rows Found:", total);
+
+    if (total === 0) {
+      return ReE(res, { message: "Excel file khali hai ya format galat hai." }, 400);
+    }
+    const groupNumber = Date.now();
     const count = await MutamersList.count({
       where: {
         email: body.email,
         group_name_number: body.group_name_number
       }
     });
-    const finalTotal = total + count;
 
+    const finalTotal = total + count;
+    const BATCH_SIZE = 1000;
     for (let i = 0; i < total; i += BATCH_SIZE) {
       const batch = data.slice(i, i + BATCH_SIZE);
 
       const formattedBatch = batch.map(row => ({
-        mutamer_name: row["Mutamer name"],
+        mutamer_name: row["Mutamer name"] || row["Mutamer Name"],
         email: body.email,
         group_name_number: body.group_name_number,
         group_number: groupNumber,
         hotel_details: body.hotel_details,
         flight_details: body.flight_details,
         arrival_date: body.arrival_date,
-        // group_size: body.group_size,
+        group_size: finalTotal, // Naye records me direct set karein
         transport_route: body.transport_route,
         remark: body.remark,
         view_dirver_details: body.view_dirver_details,
@@ -113,8 +195,10 @@ const uploadExcelToDatabase = async function (req, res) {
       }));
 
       await MutamersList.bulkCreate(formattedBatch);
+    }
+    if (count > 0) {
       await MutamersList.update(
-        { group_size: finalTotal },  // 👈 new value
+        { group_size: finalTotal },
         {
           where: {
             email: body.email,
@@ -123,11 +207,15 @@ const uploadExcelToDatabase = async function (req, res) {
         }
       );
     }
+    if (fs.existsSync(file.tempFilePath)) {
+      fs.unlinkSync(file.tempFilePath);
+    }
 
-    return ReS(res, { message: "Data inserted successfully." }, 200);
+    return ReS(res, { message: "Data inserted successfully.", count: total }, 200);
+
   } catch (error) {
     console.error("Error inserting data:", error);
-    return ReE(res, { message: "Error while inserting data.", error }, 500);
+    return ReE(res, { message: "Error while inserting data.", error: error.message }, 500);
   }
 }
 
@@ -361,9 +449,9 @@ const create = async (req, res) => {
     const formatted = getDayAndMonth(body.return_date);
     const formatted1 = getDayAndMonth(body.arrival_date);
     const gname = `PC${initials}${formatted1}R${formatted}`;
-     let baseName = `PC${initials}${formatted1}R${formatted}`;
+    let baseName = `PC${initials}${formatted1}R${formatted}`;
     let finalGroupName = baseName;
-     // 🟢 Check if baseName already exists
+    // 🟢 Check if baseName already exists
     let count = await MutamersList.count({
       where: {
         group_name_number: finalGroupName
@@ -502,7 +590,7 @@ const update = async function (req, res) {
 
     await MutamersList.update({
       // group_name_number: gname ? gname : existData.group_name_number,
-       group_name_number: finalGroupName,
+      group_name_number: finalGroupName,
       mutamer_name: body.mutamer_name ? body.mutamer_name : existData.mutamer_name,
       mutamer_age: body.mutamer_age ? body.mutamer_age : existData.mutamer_age,
       passport_number: body.passport_number ? body.passport_number : existData.passport_number,
@@ -690,7 +778,7 @@ const deletedGroupNumber = async function (req, res) {
         }
       );
     }
-    else{
+    else {
       await MutamersList.update(
         { group_size: count },
         {
@@ -701,15 +789,15 @@ const deletedGroupNumber = async function (req, res) {
         }
       );
     }
-      // await MutamersList.update(
-      //   { group_size: count },
-      //   {
-      //     where: {
-      //       email: body.email,
-      //       group_name_number: body.group_name_number,
-      //     },
-      //   }
-      // );
+    // await MutamersList.update(
+    //   { group_size: count },
+    //   {
+    //     where: {
+    //       email: body.email,
+    //       group_name_number: body.group_name_number,
+    //     },
+    //   }
+    // );
 
     // ✅ Step 3: Update group_size with new count
 
