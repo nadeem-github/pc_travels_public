@@ -64,10 +64,66 @@ const fetch = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
+// const create = async (req, res) => {
+//   try {
+//     let body = req.body;
+
+//     const data = await AssignPackage.create({
+//       email: body.email,
+//       group_name_number: body.group_name_number,
+//       arrival_airport: body.arrival_airport,
+//       arrival_time: body.arrival_time,
+//       arrival_date: body.arrival_date,
+//       flight_no: body.flight_no,
+//       airline_name: body.airline_name,
+//       departure_airport: body.departure_airport,
+//       departure_time: body.departure_time,
+//       departure_date: body.departure_date,
+//       flight_no_1: body.flight_no_1,
+//       airline_name_1: body.airline_name_1,
+
+//     });
+
+//     body.transportDetails.forEach(async (item) => {
+//       await AssignPackageTransportDetails.create({
+//         email: body.email,
+//         group_name_number: body.group_name_number,
+//         notes: item.notes,
+//         assign_time: item.assign_time,
+//         assign_date: item.assign_date,
+//         assign_to: item.assign_to,
+//         assign_from: item.assign_from,
+//       });
+//     });
+//     body.hotelDetails.forEach(async (item) => {
+//       await AssignPackageHousing.create({
+//         email: body.email,
+//         group_name_number: body.group_name_number,
+//         notes: item.notes,
+//         check_out: item.check_out,
+//         check_in: item.check_in,
+//         nights: item.nights,
+//         rooms: item.rooms,
+//         hotel_name: item.hotel_name,
+//         city: item.city,
+//       });
+//     });
+
+
+//     if (data) {
+//       return ReS(res, { message: "AssignPackage created successfully." }, 200);
+//     }
+
+//   } catch (error) {
+//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+//   }
+// };
+
 const create = async (req, res) => {
   try {
     let body = req.body;
 
+    // 1. AssignPackage Create karein
     const data = await AssignPackage.create({
       email: body.email,
       group_name_number: body.group_name_number,
@@ -81,127 +137,74 @@ const create = async (req, res) => {
       departure_date: body.departure_date,
       flight_no_1: body.flight_no_1,
       airline_name_1: body.airline_name_1,
-
     });
 
-    body.transportDetails.forEach(async (item) => {
-      await AssignPackageTransportDetails.create({
-        email: body.email,
-        group_name_number: body.group_name_number,
-        notes: item.notes,
-        assign_time: item.assign_time,
-        assign_date: item.assign_date,
-        assign_to: item.assign_to,
-        assign_from: item.assign_from,
-      });
-    });
-    body.hotelDetails.forEach(async (item) => {
-      await AssignPackageHousing.create({
-        email: body.email,
-        group_name_number: body.group_name_number,
-        notes: item.notes,
-        check_out: item.check_out,
-        check_in: item.check_in,
-        nights: item.nights,
-        rooms: item.rooms,
-        hotel_name: item.hotel_name,
-        city: item.city,
-      });
-    });
+    // 2. Transport Details Save karein (Duplicate Check + for...of Loop)
+    if (body.transportDetails && body.transportDetails.length > 0) {
+      // Step A: Unique entries filter karein (taaki same request me duplicates na ho)
+      const uniqueTransport = body.transportDetails.filter((item, index, self) =>
+        index === self.findIndex((t) => (
+          t.assign_date === item.assign_date &&
+          t.assign_time === item.assign_time &&
+          t.assign_from === item.assign_from &&
+          t.assign_to === item.assign_to
+        ))
+      );
 
+      // Step B: for...of loop use karein (Wait karne ke liye)
+      for (const item of uniqueTransport) {
+        // Optional: DB check ki pehle se exist karta hai kya (Double safety ke liye)
+        const existingRecord = await AssignPackageTransportDetails.findOne({
+          where: {
+            group_name_number: body.group_name_number,
+            assign_date: item.assign_date,
+            assign_time: item.assign_time,
+            assign_from: item.assign_from,
+            assign_to: item.assign_to
+          }
+        });
+
+        // Agar record nahi hai, tabhi create karein
+        if (!existingRecord) {
+          await AssignPackageTransportDetails.create({
+            email: body.email,
+            group_name_number: body.group_name_number,
+            notes: item.notes,
+            assign_time: item.assign_time,
+            assign_date: item.assign_date,
+            assign_to: item.assign_to,
+            assign_from: item.assign_from,
+          });
+        }
+      }
+    }
+
+    // 3. Hotel Details Save karein (for...of Loop use karein)
+    if (body.hotelDetails && body.hotelDetails.length > 0) {
+      for (const item of body.hotelDetails) {
+        await AssignPackageHousing.create({
+          email: body.email,
+          group_name_number: body.group_name_number,
+          notes: item.notes,
+          check_out: item.check_out,
+          check_in: item.check_in,
+          nights: item.nights,
+          rooms: item.rooms,
+          hotel_name: item.hotel_name,
+          city: item.city,
+        });
+      }
+    }
 
     if (data) {
       return ReS(res, { message: "AssignPackage created successfully." }, 200);
     }
 
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    console.log(error); // Error console pe print karein debugging ke liye
+    return ReE(res, { message: "Something Went Wrong", err: error }, 200);
   }
 };
-
-// const create = async (req, res) => {
-//   const t = await Sequelize.transaction();
-//   try {
-//     const body = req.body;
-
-//     // 1️⃣ Create main package
-//     const packageData = await AssignPackage.create({
-//       email: body.email,
-//       group_name_number: body.group_name_number,
-//       arrival_airport: body.arrival_airport,
-//       arrival_time: body.arrival_time,
-//       arrival_date: body.arrival_date,
-//       flight_no: body.flight_no,
-//       airline_name: body.airline_name,
-//       departure_airport: body.departure_airport,
-//       departure_time: body.departure_time,
-//       departure_date: body.departure_date,
-//       flight_no_1: body.flight_no_1,
-//       airline_name_1: body.airline_name_1,
-//     }, { transaction: t });
-
-//     // 2️⃣ Transport Details (bulk insert)
-//     if (Array.isArray(body.transportDetails) && body.transportDetails.length) {
-
-//       const transportPayload = body.transportDetails.map(item => ({
-//         email: body.email,
-//         group_name_number: body.group_name_number,
-//         notes: item.notes || null,
-//         assign_time: item.assign_time,
-//         assign_date: item.assign_date,
-//         assign_to: item.assign_to,
-//         assign_from: item.assign_from,
-//       }));
-
-//       await AssignPackageTransportDetails.bulkCreate(
-//         transportPayload,
-//         {
-//           transaction: t,
-//           ignoreDuplicates: true, // 👈 extra safety
-//         }
-//       );
-//     }
-
-//     // 3️⃣ Hotel Details (bulk insert)
-//     if (Array.isArray(body.hotelDetails) && body.hotelDetails.length) {
-
-//       const hotelPayload = body.hotelDetails.map(item => ({
-//         email: body.email,
-//         group_name_number: body.group_name_number,
-//         notes: item.notes || null,
-//         check_out: item.check_out,
-//         check_in: item.check_in,
-//         nights: item.nights,
-//         rooms: item.rooms,
-//         hotel_name: item.hotel_name,
-//         city: item.city,
-//       }));
-
-//       await AssignPackageHousing.bulkCreate(
-//         hotelPayload,
-//         {
-//           transaction: t,
-//           ignoreDuplicates: true,
-//         }
-//       );
-//     }
-
-//     // 4️⃣ Commit transaction
-//     await t.commit();
-
-//     return ReS(res, {
-//       message: "Assign Package created successfully"
-//     }, 200);
-
-//   } catch (error) {
-//     await t.rollback();
-//     return ReE(res, {
-//       message: "Something went wrong",
-//       error: error.message
-//     }, 500);
-//   }
-// };
-
 
 const fetchSingle = async function (req, res) {
   try {
@@ -248,9 +251,128 @@ const fetchSingle = async function (req, res) {
   }
 };
 
+// const update = async function (req, res) {
+//   try {
+//     let body = req.body;
+//     const existData = await AssignPackage.findOne({
+//       where: {
+//         email: body.email,
+//         group_name_number: body.group_name_number,
+//       }
+//     });
+
+
+//     await AssignPackage.update({
+//       arrival_airport: body.arrival_airport ? body.arrival_airport : existData.arrival_airport,
+//       arrival_time: body.arrival_time ? body.arrival_time : existData.arrival_time,
+//       arrival_date: body.arrival_date ? body.arrival_date : existData.arrival_date,
+//       flight_no: body.flight_no ? body.flight_no : existData.flight_no,
+//       airline_name: body.airline_name ? body.airline_name : existData.airline_name,
+//       departure_airport: body.departure_airport ? body.departure_airport : existData.departure_airport,
+//       departure_time: body.departure_time ? body.departure_time : existData.departure_time,
+//       departure_date: body.departure_date ? body.departure_date : existData.departure_date,
+//       flight_no_1: body.flight_no_1 ? body.flight_no_1 : existData.flight_no_1,
+//       airline_name_1: body.airline_name_1 ? body.airline_name_1 : existData.airline_name_1,
+//     },
+//       {
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//         }
+//       });
+//     if (body.transportDetails && Array.isArray(body.transportDetails)) {
+//       for (const item of body.transportDetails) {
+//         // Existing record lo
+//         if (item.id) {
+//           const existing = await AssignPackageTransportDetails.findOne({
+//             where: {
+//               id: item.id,
+//               email: body.email,
+//               group_name_number: body.group_name_number,
+//             },
+//           });
+
+//           if (existing) {
+//             // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
+//             const updatedData = {
+//               notes: item.notes ?? existing.notes,
+//               assign_time: item.assign_time ?? existing.assign_time,
+//               assign_date: item.assign_date ?? existing.assign_date,
+//               assign_to: item.assign_to ?? existing.assign_to,
+//               assign_from: item.assign_from ?? existing.assign_from,
+//             };
+
+//             await existing.update(updatedData);
+//           }
+//         } else {
+//           // 🆕 Create new
+//           await AssignPackageTransportDetails.create({
+//             email: body.email,
+//             group_name_number: body.group_name_number,
+//             notes: item.notes ?? "",
+//             assign_time: item.assign_time ?? null,
+//             assign_date: item.assign_date ?? null,
+//             assign_to: item.assign_to ?? "",
+//             assign_from: item.assign_from ?? "",
+//           });
+//         }
+//       }
+//     }
+//     if (body.hotelDetails && Array.isArray(body.hotelDetails)) {
+//       for (const item of body.hotelDetails) {
+//         // Existing record lo
+//         // console.log
+//         if (item.id) {
+//           const existing = await AssignPackageHousing.findOne({
+//             where: {
+//               id: item.id,
+//               email: body.email,
+//               group_name_number: body.group_name_number,
+//             },
+//           });
+
+//           if (existing) {
+//             // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
+//             const updatedData = {
+//               notes: item.notes ?? existing.notes,
+//               check_out: item.check_out ?? existing.check_out,
+//               check_in: item.check_in ?? existing.check_in,
+//               nights: item.nights ?? existing.nights,
+//               rooms: item.rooms ?? existing.rooms,
+//               hotel_name: item.hotel_name ?? existing.hotel_name,
+//               city: item.city ?? existing.city,
+//             };
+
+//             await existing.update(updatedData);
+//           }
+//         } else {
+//           // 🆕 Create new
+//           await AssignPackageHousing.create({
+//             email: body.email,
+//             group_name_number: body.group_name_number,
+//             notes: item.notes ?? "",
+//             check_out: item.check_out ?? null,
+//             check_in: item.check_in ?? null,
+//             nights: item.nights ?? 0,
+//             rooms: item.rooms ?? 0,
+//             hotel_name: item.hotel_name ?? "",
+//             city: item.city ?? "",
+//           });
+//         }
+//       }
+//     }
+
+//     return ReS(res, { message: "AssignPackage has been updated successfully." }, 200);
+//   } catch (error) {
+//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+//   }
+// };
+
 const update = async function (req, res) {
   try {
     let body = req.body;
+
+    // 1. Main Package Check
     const existData = await AssignPackage.findOne({
       where: {
         email: body.email,
@@ -258,28 +380,34 @@ const update = async function (req, res) {
       }
     });
 
+    if (!existData) {
+      return ReE(res, { message: "Package not found." }, 404);
+    }
 
+    // 2. Main Package Update
     await AssignPackage.update({
-      arrival_airport: body.arrival_airport ? body.arrival_airport : existData.arrival_airport,
-      arrival_time: body.arrival_time ? body.arrival_time : existData.arrival_time,
-      arrival_date: body.arrival_date ? body.arrival_date : existData.arrival_date,
-      flight_no: body.flight_no ? body.flight_no : existData.flight_no,
-      airline_name: body.airline_name ? body.airline_name : existData.airline_name,
-      departure_airport: body.departure_airport ? body.departure_airport : existData.departure_airport,
-      departure_time: body.departure_time ? body.departure_time : existData.departure_time,
-      departure_date: body.departure_date ? body.departure_date : existData.departure_date,
-      flight_no_1: body.flight_no_1 ? body.flight_no_1 : existData.flight_no_1,
-      airline_name_1: body.airline_name_1 ? body.airline_name_1 : existData.airline_name_1,
-    },
-      {
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        }
-      });
+      arrival_airport: body.arrival_airport ?? existData.arrival_airport,
+      arrival_time: body.arrival_time ?? existData.arrival_time,
+      arrival_date: body.arrival_date ?? existData.arrival_date,
+      flight_no: body.flight_no ?? existData.flight_no,
+      airline_name: body.airline_name ?? existData.airline_name,
+      departure_airport: body.departure_airport ?? existData.departure_airport,
+      departure_time: body.departure_time ?? existData.departure_time,
+      departure_date: body.departure_date ?? existData.departure_date,
+      flight_no_1: body.flight_no_1 ?? existData.flight_no_1,
+      airline_name_1: body.airline_name_1 ?? existData.airline_name_1,
+    }, {
+      where: {
+        email: body.email,
+        group_name_number: body.group_name_number,
+      }
+    });
+
+    // 3. Transport Details Update/Create
     if (body.transportDetails && Array.isArray(body.transportDetails)) {
       for (const item of body.transportDetails) {
-        // Existing record lo
+
+        // CASE A: Agar ID hai, to UPDATE karo
         if (item.id) {
           const existing = await AssignPackageTransportDetails.findOne({
             where: {
@@ -290,35 +418,49 @@ const update = async function (req, res) {
           });
 
           if (existing) {
-            // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
-            const updatedData = {
+            await existing.update({
               notes: item.notes ?? existing.notes,
               assign_time: item.assign_time ?? existing.assign_time,
               assign_date: item.assign_date ?? existing.assign_date,
               assign_to: item.assign_to ?? existing.assign_to,
               assign_from: item.assign_from ?? existing.assign_from,
-            };
-
-            await existing.update(updatedData);
+            });
           }
-        } else {
-          // 🆕 Create new
-          await AssignPackageTransportDetails.create({
-            email: body.email,
-            group_name_number: body.group_name_number,
-            notes: item.notes ?? "",
-            assign_time: item.assign_time ?? null,
-            assign_date: item.assign_date ?? null,
-            assign_to: item.assign_to ?? "",
-            assign_from: item.assign_from ?? "",
+        }
+        // CASE B: Agar ID nahi hai (New Record), to DUPLICATE CHECK karke CREATE karo
+        else {
+          // Check: Kya ye record pehle se exist karta hai?
+          const duplicateCheck = await AssignPackageTransportDetails.findOne({
+            where: {
+              group_name_number: body.group_name_number,
+              assign_date: item.assign_date,
+              assign_time: item.assign_time,
+              assign_from: item.assign_from,
+              assign_to: item.assign_to
+            }
           });
+
+          // Agar duplicate nahi hai, tabhi create karo
+          if (!duplicateCheck) {
+            await AssignPackageTransportDetails.create({
+              email: body.email,
+              group_name_number: body.group_name_number,
+              notes: item.notes ?? "",
+              assign_time: item.assign_time ?? null,
+              assign_date: item.assign_date ?? null,
+              assign_to: item.assign_to ?? "",
+              assign_from: item.assign_from ?? "",
+            });
+          }
         }
       }
     }
+
+    // 4. Hotel Details Update/Create
     if (body.hotelDetails && Array.isArray(body.hotelDetails)) {
       for (const item of body.hotelDetails) {
-        // Existing record lo
-        // console.log
+
+        // CASE A: Update Existing
         if (item.id) {
           const existing = await AssignPackageHousing.findOne({
             where: {
@@ -329,8 +471,7 @@ const update = async function (req, res) {
           });
 
           if (existing) {
-            // Naye data agar aaye hain to unhe lo, nahi to purane value hi rakho
-            const updatedData = {
+            await existing.update({
               notes: item.notes ?? existing.notes,
               check_out: item.check_out ?? existing.check_out,
               check_in: item.check_in ?? existing.check_in,
@@ -338,127 +479,45 @@ const update = async function (req, res) {
               rooms: item.rooms ?? existing.rooms,
               hotel_name: item.hotel_name ?? existing.hotel_name,
               city: item.city ?? existing.city,
-            };
-
-            await existing.update(updatedData);
+            });
           }
-        } else {
-          // 🆕 Create new
-          await AssignPackageHousing.create({
-            email: body.email,
-            group_name_number: body.group_name_number,
-            notes: item.notes ?? "",
-            check_out: item.check_out ?? null,
-            check_in: item.check_in ?? null,
-            nights: item.nights ?? 0,
-            rooms: item.rooms ?? 0,
-            hotel_name: item.hotel_name ?? "",
-            city: item.city ?? "",
+        }
+        // CASE B: Create New (with Duplicate Check)
+        else {
+          // Check for duplicates based on logical fields (City, Hotel Name, Check-in)
+          const duplicateCheck = await AssignPackageHousing.findOne({
+            where: {
+              group_name_number: body.group_name_number,
+              hotel_name: item.hotel_name,
+              city: item.city,
+              check_in: item.check_in,
+              check_out: item.check_out
+            }
           });
+
+          if (!duplicateCheck) {
+            await AssignPackageHousing.create({
+              email: body.email,
+              group_name_number: body.group_name_number,
+              notes: item.notes ?? "",
+              check_out: item.check_out ?? null,
+              check_in: item.check_in ?? null,
+              nights: item.nights ?? 0,
+              rooms: item.rooms ?? 0,
+              hotel_name: item.hotel_name ?? "",
+              city: item.city ?? "",
+            });
+          }
         }
       }
     }
 
     return ReS(res, { message: "AssignPackage has been updated successfully." }, 200);
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    console.log(error);
+    return ReE(res, { message: "Something Went Wrong", err: error }, 200);
   }
 };
-
-
-// const update = async function (req, res) {
-//   try {
-//     const body = req.body;
-
-//     const existData = await AssignPackage.findOne({
-//       where: {
-//         email: body.email,
-//         group_name_number: body.group_name_number,
-//       }
-//     });
-
-//     if (!existData) {
-//       return ReE(res, { message: "Package not found" }, 404);
-//     }
-
-//     // 1️⃣ Update main package
-//     await AssignPackage.update({
-//       arrival_airport: body.arrival_airport ?? existData.arrival_airport,
-//       arrival_time: body.arrival_time ?? existData.arrival_time,
-//       arrival_date: body.arrival_date ?? existData.arrival_date,
-//       flight_no: body.flight_no ?? existData.flight_no,
-//       airline_name: body.airline_name ?? existData.airline_name,
-//       departure_airport: body.departure_airport ?? existData.departure_airport,
-//       departure_time: body.departure_time ?? existData.departure_time,
-//       departure_date: body.departure_date ?? existData.departure_date,
-//       flight_no_1: body.flight_no_1 ?? existData.flight_no_1,
-//       airline_name_1: body.airline_name_1 ?? existData.airline_name_1,
-//     }, {
-//       where: {
-//         email: body.email,
-//         group_name_number: body.group_name_number,
-//       }
-//     });
-
-//     // 2️⃣ REMOVE old transport & hotel rows
-//     await AssignPackageTransportDetails.destroy({
-//       where: {
-//         email: body.email,
-//         group_name_number: body.group_name_number,
-//       }
-//     });
-
-//     await AssignPackageHousing.destroy({
-//       where: {
-//         email: body.email,
-//         group_name_number: body.group_name_number,
-//       }
-//     });
-
-//     // 3️⃣ Insert fresh Transport rows
-//     if (Array.isArray(body.transportDetails) && body.transportDetails.length) {
-//       await AssignPackageTransportDetails.bulkCreate(
-//         body.transportDetails.map(item => ({
-//           email: body.email,
-//           group_name_number: body.group_name_number,
-//           notes: item.notes || null,
-//           assign_time: item.assign_time,
-//           assign_date: item.assign_date,
-//           assign_to: item.assign_to,
-//           assign_from: item.assign_from,
-//         }))
-//       );
-//     }
-
-//     // 4️⃣ Insert fresh Hotel rows
-//     if (Array.isArray(body.hotelDetails) && body.hotelDetails.length) {
-//       await AssignPackageHousing.bulkCreate(
-//         body.hotelDetails.map(item => ({
-//           email: body.email,
-//           group_name_number: body.group_name_number,
-//           notes: item.notes || null,
-//           check_out: item.check_out,
-//           check_in: item.check_in,
-//           nights: item.nights,
-//           rooms: item.rooms,
-//           hotel_name: item.hotel_name,
-//           city: item.city,
-//         }))
-//       );
-//     }
-
-//     return ReS(res, {
-//       message: "AssignPackage updated successfully"
-//     }, 200);
-
-//   } catch (error) {
-//     return ReE(res, {
-//       message: "Something went wrong",
-//       err: error.message
-//     }, 500);
-//   }
-// };
-
 
 const deleted = async function (req, res) {
   try {
