@@ -1,4 +1,4 @@
-const { AssignPackageTransportDetails, Driver, B2bUser,Ledger } = require("@models");
+const { AssignPackageTransportDetails, Driver, B2bUser, Ledger } = require("@models");
 const hotel = require("@root/models/hotel");
 const { ReE, ReS, to } = require("@services/util.service");
 const { check } = require("express-validator");
@@ -191,6 +191,173 @@ const { assign } = require("nodemailer/lib/shared");
 //     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
 //   }
 // };
+// const fetchUpcomingAndExpiry = async (req, res) => {
+//   try {
+//     const data = await AssignPackageTransportDetails.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const driverData = await Driver.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const B2bUserData = await B2bUser.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const ledgerData = await Ledger.findAll({
+//       order: [["id", "DESC"]],
+//     });
+
+//     if (!data || data.length === 0) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+
+//     const now = new Date();
+//     const todayDateOnly = new Date(now.toDateString()); // remove time part
+
+//     const processedData = [];
+//     const toSoftDelete = [];
+
+//     for (const item of data) {
+//       const assignDate = new Date(item.assign_date);
+//       const assignDateOnly = new Date(assignDate.toDateString());
+//       const diffDays =
+//         (todayDateOnly - assignDateOnly) / (1000 * 60 * 60 * 24);
+
+//       let statusFlag = null;
+
+//       // ✅ Updated expiry logic: even 1 second before current time => expiry
+//       if (assignDate < now) {
+//         const diffHours = (now - assignDate) / (1000 * 60 * 60);
+//         if (diffHours >= 48) {
+//           // 2 days or more -> soft delete
+//           toSoftDelete.push(item.id);
+//           continue;
+//         } else {
+//           statusFlag = "expiry";
+//         }
+//       } else if (diffDays <= 0 && diffDays >= -1) {
+//         // upcoming if today or tomorrow (same as before)
+//         statusFlag = "upcoming";
+//       }
+
+//       // 🔹 Merge driver details by transport_id
+//       const driver = driverData.find(
+//         (d) => d.transport_id === item.id
+//       );
+
+//       // 🔹 Merge company details by email
+//       const company = B2bUserData.find(
+//         (b) => b.email === item.email
+//       );
+
+//       const ledger = ledgerData.find(
+//         (l) => l.email === item.email
+//       );
+
+//       if (statusFlag) {
+//         processedData.push({
+//           ...item.dataValues,
+//           statusFlag,
+//           driverDetails: driver ? driver.dataValues : null,
+//           companyName: company ? company.company_name : null,
+//           balanceAmount: ledger ? ledger.balance : null,
+//         });
+//       }
+//     }
+
+//     // ✅ Soft delete (update deleted_at for remove condition)
+//     if (toSoftDelete.length > 0) {
+//       await AssignPackageTransportDetails.update(
+//         { deleted_at: new Date() },
+//         { where: { id: toSoftDelete } }
+//       );
+//     }
+
+//     return ReS(res, {
+//       result: { data: processedData },
+//       message: "success",
+//     });
+//   } catch (error) {
+//     console.error("Error fetching upcoming/expiry:", error);
+//     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
+//   }
+// };
+
+
+// const fetchUpcomingAndExpiry = async (req, res) => {
+//   try {
+//     // ⚠️ Note: This fetches ALL data. As your DB grows, consider using pagination or specific 'where' clauses.
+//     const data = await AssignPackageTransportDetails.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const driverData = await Driver.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const B2bUserData = await B2bUser.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const ledgerData = await Ledger.findAll({
+//       order: [["id", "DESC"]],
+//     });
+
+//     if (!data || data.length === 0) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+
+//     const now = new Date();
+//     const todayDateOnly = new Date(now.toDateString()); // remove time part
+
+//     const processedData = [];
+//     // ❌ Removed: const toSoftDelete = [];
+
+//     for (const item of data) {
+//       const assignDate = new Date(item.assign_date);
+//       const assignDateOnly = new Date(assignDate.toDateString());
+
+//       // Calculate diff in days (ignoring time)
+//       const diffDays = (todayDateOnly - assignDateOnly) / (1000 * 60 * 60 * 24);
+
+//       let statusFlag = null;
+
+//       // ✅ Updated Logic: No Soft Delete
+//       if (assignDate < now) {
+//         // अगर date निकल चुकी है, तो सीधे expiry mark करें (चाहे कितना भी पुराना हो)
+//         statusFlag = "expiry";
+//       } else if (diffDays <= 0 && diffDays >= -1) {
+//         // Upcoming if today or tomorrow
+//         statusFlag = "upcoming";
+//       }
+
+//       // 🔹 Merge driver details by transport_id
+//       const driver = driverData.find((d) => d.transport_id === item.id);
+
+//       // 🔹 Merge company details by email
+//       const company = B2bUserData.find((b) => b.email === item.email);
+
+//       const ledger = ledgerData.find((l) => l.email === item.email);
+
+//       if (statusFlag) {
+//         processedData.push({
+//           ...item.dataValues,
+//           statusFlag,
+//           driverDetails: driver ? driver.dataValues : null,
+//           companyName: company ? company.company_name : null,
+//           balanceAmount: ledger ? ledger.balance : null,
+//         });
+//       }
+//     }
+
+//     // ❌ Removed: Soft delete database update block
+
+//     return ReS(res, {
+//       result: { data: processedData },
+//       message: "success",
+//     });
+//   } catch (error) {
+//     console.error("Error fetching upcoming/expiry:", error);
+//     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
+//   }
+// };
+
 const fetchUpcomingAndExpiry = async (req, res) => {
   try {
     const data = await AssignPackageTransportDetails.findAll({
@@ -211,47 +378,49 @@ const fetchUpcomingAndExpiry = async (req, res) => {
     }
 
     const now = new Date();
-    const todayDateOnly = new Date(now.toDateString()); // remove time part
+    const todayDateOnly = new Date(now.toDateString());
 
     const processedData = [];
-    const toSoftDelete = [];
 
     for (const item of data) {
+      // 🕒 Time Calculation
+      const createdAt = new Date(item.created_at);
       const assignDate = new Date(item.assign_date);
+
+      // Calculate differences in hours
+      const diffCreatedHours = (now - createdAt) / (1000 * 60 * 60);
+      const diffAssignHours = (now - assignDate) / (1000 * 60 * 60);
+
+      // 🛑 FILTER LOGIC:
+
+      // 1. अगर Assign Date (Trip Date) 48 घंटे से ज्यादा पुरानी है -> Skip
+      // (भले ही record अभी create हुआ हो, अगर trip 3 दिन पुरानी है तो नहीं दिखेगा)
+      if (assignDate < now && diffAssignHours > 48) {
+        continue;
+      }
+
+      // 2. अगर Created At 48 घंटे से पुराना है -> Skip
+      if (diffCreatedHours > 48) {
+        continue;
+      }
+
+      // --- बाकी Logic Same रहेगा ---
       const assignDateOnly = new Date(assignDate.toDateString());
-      const diffDays =
-        (todayDateOnly - assignDateOnly) / (1000 * 60 * 60 * 24);
+      const diffDays = (todayDateOnly - assignDateOnly) / (1000 * 60 * 60 * 24);
 
       let statusFlag = null;
 
-      // ✅ Updated expiry logic: even 1 second before current time => expiry
       if (assignDate < now) {
-        const diffHours = (now - assignDate) / (1000 * 60 * 60);
-        if (diffHours >= 48) {
-          // 2 days or more -> soft delete
-          toSoftDelete.push(item.id);
-          continue;
-        } else {
-          statusFlag = "expiry";
-        }
+        // Expiry (जो 48 घंटे के अंदर है, सिर्फ वही यहाँ आएगा)
+        statusFlag = "expiry";
       } else if (diffDays <= 0 && diffDays >= -1) {
-        // upcoming if today or tomorrow (same as before)
+        // Upcoming
         statusFlag = "upcoming";
       }
 
-      // 🔹 Merge driver details by transport_id
-      const driver = driverData.find(
-        (d) => d.transport_id === item.id
-      );
-
-      // 🔹 Merge company details by email
-      const company = B2bUserData.find(
-        (b) => b.email === item.email
-      );
-
-      const ledger = ledgerData.find(
-        (l) => l.email === item.email
-      );
+      const driver = driverData.find((d) => d.transport_id === item.id);
+      const company = B2bUserData.find((b) => b.email === item.email);
+      const ledger = ledgerData.find((l) => l.email === item.email);
 
       if (statusFlag) {
         processedData.push({
@@ -264,28 +433,16 @@ const fetchUpcomingAndExpiry = async (req, res) => {
       }
     }
 
-    // ✅ Soft delete (update deleted_at for remove condition)
-    if (toSoftDelete.length > 0) {
-      await AssignPackageTransportDetails.update(
-        { deleted_at: new Date() },
-        { where: { id: toSoftDelete } }
-      );
-    }
-
     return ReS(res, {
       result: { data: processedData },
       message: "success",
     });
+
   } catch (error) {
     console.error("Error fetching upcoming/expiry:", error);
     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
   }
 };
-
-
-
-
-
 
 
 module.exports = {
