@@ -1,4 +1,6 @@
-const { B2bUser } = require("@models");
+// const { B2bUser } = require("@models");
+const { Op } = require('sequelize');
+const { B2bUser, Ledger, sequelize } = require('@models'); // correct path se import karo
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
@@ -13,17 +15,65 @@ const transporter = nodemailer.createTransport({
 });
 
 
+// const fetch = async function (req, res) {
+//   try {
+//     const data = await B2bUser.findAll({
+//       order: [['id', 'DESC']],
+//     });
+//     if (!data) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+//     return ReS(res, { data: data, message: "success" });
+//   } catch (error) {
+//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+//   }
+// };
+
 const fetch = async function (req, res) {
   try {
-    const data = await B2bUser.findAll({
+    // Step 1: Fetch all B2B users
+    const b2bUsers = await B2bUser.findAll({
       order: [['id', 'DESC']],
+      raw: true
     });
-    if (!data) {
+
+    if (!b2bUsers || b2bUsers.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
-    return ReS(res, { data: data, message: "success" });
+
+    // Step 2: Fetch latest ledger per email using ledger_date
+    const ledgers = await Ledger.findAll({
+      attributes: ['email', 'balance'],
+      where: {
+        ledger_date: {
+          [Op.in]: sequelize.literal(`(
+            SELECT MAX(ledger_date)
+            FROM ledgers
+            GROUP BY email
+          )`)
+        }
+      },
+      raw: true
+    });
+
+    // Step 3: Map ledger balances by email
+    const ledgerMap = {};
+    ledgers.forEach(l => {
+      ledgerMap[l.email] = l.balance;
+    });
+
+    // Step 4: Merge ledger_balance into B2B users
+    const finalData = b2bUsers.map(user => ({
+      ...user,
+      ledger_balance: ledgerMap[user.email] || "0"
+    }));
+
+    // Step 5: Send response
+    return ReS(res, { data: finalData, message: "success" });
+
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    console.error("Fetch B2B Users Error:", error);
+    return ReE(res, { message: "Something Went Wrong", err: error }, 500);
   }
 };
 

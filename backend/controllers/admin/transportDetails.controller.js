@@ -358,79 +358,150 @@ const { assign } = require("nodemailer/lib/shared");
 //   }
 // };
 
+// const fetchUpcomingAndExpiry = async (req, res) => {
+//   try {
+//     const data = await AssignPackageTransportDetails.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const driverData = await Driver.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const B2bUserData = await B2bUser.findAll({
+//       order: [["id", "DESC"]],
+//     });
+//     const ledgerData = await Ledger.findAll({
+//       order: [["id", "DESC"]],
+//     });
+
+//     if (!data || data.length === 0) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+
+//     const now = new Date();
+//     const todayDateOnly = new Date(now.toDateString());
+
+//     const processedData = [];
+
+//     for (const item of data) {
+//       // 🕒 Time Calculation
+//       const createdAt = new Date(item.created_at);
+//       const assignDate = new Date(item.assign_date);
+
+//       // Calculate differences in hours
+//       const diffCreatedHours = (now - createdAt) / (1000 * 60 * 60);
+//       const diffAssignHours = (now - assignDate) / (1000 * 60 * 60);
+
+//       // 🛑 FILTER LOGIC:
+
+//       // 1. अगर Assign Date (Trip Date) 48 घंटे से ज्यादा पुरानी है -> Skip
+//       // (भले ही record अभी create हुआ हो, अगर trip 3 दिन पुरानी है तो नहीं दिखेगा)
+//       if (assignDate < now && diffAssignHours > 48) {
+//         continue;
+//       }
+
+//       // 2. अगर Created At 48 घंटे से पुराना है -> Skip
+//       if (diffCreatedHours > 48) {
+//         continue;
+//       }
+
+//       // --- बाकी Logic Same रहेगा ---
+//       const assignDateOnly = new Date(assignDate.toDateString());
+//       const diffDays = (todayDateOnly - assignDateOnly) / (1000 * 60 * 60 * 24);
+
+//       let statusFlag = null;
+
+//       if (assignDate < now) {
+//         // Expiry (जो 48 घंटे के अंदर है, सिर्फ वही यहाँ आएगा)
+//         statusFlag = "expiry";
+//       } else if (diffDays <= 0 && diffDays >= -1) {
+//         // Upcoming
+//         statusFlag = "upcoming";
+//       }
+
+//       const driver = driverData.find((d) => d.transport_id === item.id);
+//       const company = B2bUserData.find((b) => b.email === item.email);
+//       const ledger = ledgerData.find((l) => l.email === item.email);
+
+//       if (statusFlag) {
+//         processedData.push({
+//           ...item.dataValues,
+//           statusFlag,
+//           driverDetails: driver ? driver.dataValues : null,
+//           companyName: company ? company.company_name : null,
+//           balanceAmount: ledger ? ledger.balance : null,
+//         });
+//       }
+//     }
+
+//     return ReS(res, {
+//       result: { data: processedData },
+//       message: "success",
+//     });
+
+//   } catch (error) {
+//     console.error("Error fetching upcoming/expiry:", error);
+//     return ReE(res, { message: "Something Went Wrong", err: error }, 500);
+//   }
+// };
+
 const fetchUpcomingAndExpiry = async (req, res) => {
   try {
     const data = await AssignPackageTransportDetails.findAll({
       order: [["id", "DESC"]],
     });
-    const driverData = await Driver.findAll({
-      order: [["id", "DESC"]],
-    });
-    const B2bUserData = await B2bUser.findAll({
-      order: [["id", "DESC"]],
-    });
-    const ledgerData = await Ledger.findAll({
-      order: [["id", "DESC"]],
-    });
+
+    const driverData = await Driver.findAll({ order: [["id", "DESC"]] });
+    const B2bUserData = await B2bUser.findAll({ order: [["id", "DESC"]] });
+    const ledgerData = await Ledger.findAll({ order: [["id", "DESC"]] });
 
     if (!data || data.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
 
     const now = new Date();
-    const todayDateOnly = new Date(now.toDateString());
+
+    // Today 12:00 AM
+    const todayStart = new Date(now);
+    todayStart.setHours(0, 0, 0, 0);
+
+    // Next 24 hours
+    const next24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+    // 48 hours before now
+    const expiryLimit = new Date(now.getTime() - 48 * 60 * 60 * 1000);
 
     const processedData = [];
 
     for (const item of data) {
-      // 🕒 Time Calculation
-      const createdAt = new Date(item.created_at);
       const assignDate = new Date(item.assign_date);
-
-      // Calculate differences in hours
-      const diffCreatedHours = (now - createdAt) / (1000 * 60 * 60);
-      const diffAssignHours = (now - assignDate) / (1000 * 60 * 60);
-
-      // 🛑 FILTER LOGIC:
-
-      // 1. अगर Assign Date (Trip Date) 48 घंटे से ज्यादा पुरानी है -> Skip
-      // (भले ही record अभी create हुआ हो, अगर trip 3 दिन पुरानी है तो नहीं दिखेगा)
-      if (assignDate < now && diffAssignHours > 48) {
-        continue;
-      }
-
-      // 2. अगर Created At 48 घंटे से पुराना है -> Skip
-      if (diffCreatedHours > 48) {
-        continue;
-      }
-
-      // --- बाकी Logic Same रहेगा ---
-      const assignDateOnly = new Date(assignDate.toDateString());
-      const diffDays = (todayDateOnly - assignDateOnly) / (1000 * 60 * 60 * 24);
-
       let statusFlag = null;
 
-      if (assignDate < now) {
-        // Expiry (जो 48 घंटे के अंदर है, सिर्फ वही यहाँ आएगा)
-        statusFlag = "expiry";
-      } else if (diffDays <= 0 && diffDays >= -1) {
-        // Upcoming
+      /* ------------------- UPCOMING ------------------- */
+      // Today + next 24 hours
+      if (assignDate >= todayStart && assignDate <= next24Hours) {
         statusFlag = "upcoming";
       }
 
-      const driver = driverData.find((d) => d.transport_id === item.id);
-      const company = B2bUserData.find((b) => b.email === item.email);
-      const ledger = ledgerData.find((l) => l.email === item.email);
-
-      if (statusFlag) {
-        processedData.push({
-          ...item.dataValues,
-          statusFlag,
-          driverDetails: driver ? driver.dataValues : null,
-          companyName: company ? company.company_name : null,
-          balanceAmount: ledger ? ledger.balance : null,
-        });
+      /* ------------------- EXPIRY ------------------- */
+      // Past but ONLY last 48 hours
+      else if (assignDate < todayStart && assignDate >= expiryLimit) {
+        statusFlag = "expiry";
       }
+
+      // Ignore data older than 48 hours
+      if (!statusFlag) continue;
+
+      const driver = driverData.find(d => d.transport_id === item.id);
+      const company = B2bUserData.find(b => b.email === item.email);
+      const ledger = ledgerData.find(l => l.email === item.email);
+
+      processedData.push({
+        ...item.dataValues,
+        statusFlag,
+        driverDetails: driver ? driver.dataValues : null,
+        companyName: company ? company.company_name : null,
+        balanceAmount: ledger ? ledger.balance : null,
+      });
     }
 
     return ReS(res, {
@@ -445,7 +516,8 @@ const fetchUpcomingAndExpiry = async (req, res) => {
 };
 
 
+
+
 module.exports = {
   fetchUpcomingAndExpiry,
-
 };

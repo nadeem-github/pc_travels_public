@@ -220,6 +220,8 @@ adminRouter.post("/assignPackage/create", passport.authenticate("jwt", { session
 adminRouter.post("/assignPackage/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.fetchSingle);
 adminRouter.post("/assignPackage/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.update);
 adminRouter.post("/assignPackage/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.deleted);
+adminRouter.post("/assignPackage/updateDelete_at", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.updateDelete_at);
+adminRouter.post("/assignPackage/tranport_Deleted", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, AssignPackageController.tranport_Deleted);
 
 // ========== transportDetailsController Routes==========
 adminRouter.post("/transportDetails/fetch-upcomin-and-expiry", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, transportDetailsController.fetchUpcomingAndExpiry);

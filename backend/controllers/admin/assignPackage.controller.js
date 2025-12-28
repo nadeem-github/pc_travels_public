@@ -554,11 +554,62 @@ const deleted = async function (req, res) {
 
 }
 
+const tranport_Deleted = async function (req, res) {
+  try {
+    const { id } = req.body;
+    const [transportDel] = await Promise.all([
+      AssignPackageTransportDetails.destroy({
+        where: { id },
+      }),
+    ]);
+    return ReS(
+      res,
+      { message: "All related data deleted successfully." },
+      200
+    );
+  } catch (err) {
+    return ReE(
+      res,
+      { message: "Something went wrong.", error: err.message },
+      500
+    );
+  }
+
+}
+
+const updateDelete_at = async function (req, res) {
+  try {
+    await AssignPackageTransportDetails.update(
+      {
+        deleted_at: null,
+      },
+      {
+        where: {},        // explicitly empty where (recommended)
+        paranoid: false   // IMPORTANT if model has paranoid: true
+      }
+    );
+
+    return ReS(
+      res,
+      { message: "All records restored successfully." },
+      200
+    );
+  } catch (err) {
+    return ReE(
+      res,
+      { message: "Something went wrong.", error: err.message },
+      500
+    );
+  }
+};
+
 
 module.exports = {
   fetch,
   create,
   fetchSingle,
   update,
-  deleted
+  deleted,
+  updateDelete_at,
+  tranport_Deleted
 };
