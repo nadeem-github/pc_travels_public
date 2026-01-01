@@ -77,6 +77,61 @@ const fetch = async function (req, res) {
   }
 };
 
+// const fetch = async function (req, res) {
+//   try {
+//     // Step 1: Fetch all B2B users
+//     const b2bUsers = await B2bUser.findAll({
+//       order: [['id', 'DESC']],
+//       raw: true
+//     });
+
+//     if (!b2bUsers || b2bUsers.length === 0) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+
+//     /** * Step 2: Fetch latest ledger balance. 
+//      * Yahan hum Row Numbering use kar rahe hain:
+//      * 1. Pehle ledger_date ke hisaab se sort karega.
+//      * 2. Agar date same hai, toh latest ID uthayega.
+//      */
+//     const latestLedgers = await Ledger.findAll({
+//       attributes: ['email', 'balance'],
+//       where: {
+//         id: {
+//           // 'sequelize' (lowercase) wahi use karein jo aapki models file me defined hai
+//           [Op.in]: sequelize.literal(`(
+//             SELECT id FROM (
+//               SELECT id, email, 
+//               ROW_NUMBER() OVER (PARTITION BY email ORDER BY ledger_date DESC, id DESC) as rn
+//               FROM ledgers
+//             ) as ranked_ledgers
+//             WHERE rn = 1
+//           )`)
+//         }
+//       },
+//       raw: true
+//     });
+
+//     // Step 3: Map ledger balances by email
+//     const ledgerMap = {};
+//     latestLedgers.forEach(l => {
+//       ledgerMap[l.email] = l.balance;
+//     });
+
+//     // Step 4: Merge results
+//     const finalData = b2bUsers.map(user => ({
+//       ...user,
+//       ledger_balance: ledgerMap[user.email] || "0"
+//     }));
+
+//     return ReS(res, { data: finalData, message: "success" });
+
+//   } catch (error) {
+//     console.error("Fetch B2B Users Error:", error);
+//     return ReE(res, { message: "Something Went Wrong", err: error.message }, 500);
+//   }
+// };
+
 
 const update = async function (req, res) {
   try {

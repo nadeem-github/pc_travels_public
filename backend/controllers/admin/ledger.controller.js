@@ -21,16 +21,61 @@ const fetch = async function (req, res) {
   }
 };
 
+// const create = async (req, res) => {
+//   try {
+//     const body = req.body;
+//     // Step 1: Create drivers and collect created records
+//     const createdLedgers = [];
+//     for (const item of body.ledgerDetails) {
+//       const driver = await Ledger.create({
+//         email: item.email,
+//         service: item.service,
+//         ledger_date: item.ledger_date,
+//         particulars: item.particulars,
+//         particular_remark: item.particular_remark,
+//         pax: item.pax,
+//         rate: item.rate,
+//         debit: item.debit,
+//         credit: item.credit,
+//         balance: item.balance,
+//         remark: item.remark,
+//       });
+//       createdLedgers.push(driver);
+//     }
+//     return ReS(res, { message: "Ledger(s) created  successfully." }, 200);
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return ReE(res, { message: "Something went wrong", err: error.message }, 500);
+//   }
+// };
+
 const create = async (req, res) => {
   try {
-    const body = req.body;
-    // Step 1: Create drivers and collect created records
-    const createdLedgers = [];
-    for (const item of body.ledgerDetails) {
-      const driver = await Ledger.create({
+    const { ledgerDetails } = req.body;
+
+    if (!ledgerDetails || !Array.isArray(ledgerDetails)) {
+      return ReE(res, { message: "Invalid ledger details provided" }, 400);
+    }
+
+    // Saare records ko prepare aur create karne ke liye map function
+    const creationPromises = ledgerDetails.map(async (item) => {
+
+      // 1. Frontend ki date se object banayein
+      let fullDate = new Date(item.ledger_date);
+
+      // 2. Current system time (H:M:S) nikalein
+      const now = new Date();
+
+      // 3. Frontend ki date mein current time set karein
+      fullDate.setHours(now.getHours());
+      fullDate.setMinutes(now.getMinutes());
+      fullDate.setSeconds(now.getSeconds());
+
+      // Database mein entry create karein
+      return await Ledger.create({
         email: item.email,
         service: item.service,
-        ledger_date: item.ledger_date,
+        ledger_date: fullDate, // Ab ye "2026-01-01 22:15:30" jaisa jayega
         particulars: item.particulars,
         particular_remark: item.particular_remark,
         pax: item.pax,
@@ -40,12 +85,22 @@ const create = async (req, res) => {
         balance: item.balance,
         remark: item.remark,
       });
-      createdLedgers.push(driver);
-    }
-    return ReS(res, { message: "Ledger(s) created  successfully." }, 200);
+    });
+
+    // Saari entries ko ek saath execute karein
+    const createdLedgers = await Promise.all(creationPromises);
+
+    return ReS(res, {
+      message: "Ledger(s) created successfully.",
+      count: createdLedgers.length
+    }, 200);
+
   } catch (error) {
-    console.error("Error:", error);
-    return ReE(res, { message: "Something went wrong", err: error.message }, 500);
+    console.error("Error creating ledger:", error);
+    return ReE(res, {
+      message: "Something went wrong",
+      err: error.message
+    }, 500);
   }
 };
 
