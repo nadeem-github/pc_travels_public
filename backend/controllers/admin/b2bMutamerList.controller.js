@@ -6,83 +6,24 @@ const config = require('@config/app.json')[app['env']];
 const helper = require("@helpers/fileupload.helper");
 const { Sequelize, Op } = require("sequelize");
 const fs = require('fs'); // Ensure this is at the top of your controller
-// const updateVisaPdf = async (req, res) => {
-//   try {
-//     let body = req.body;
-//     const files = req.files;
-//     const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/mutamer`;
-//     let mutamer = "";
-//     if (files) {
-//       if (files.upload_visa_pdf) {
-//         const homeTopSliderName = Date.now() + '-' + files.upload_visa_pdf.name;
-//         mutamer = "mutamer/" + homeTopSliderName;
-//         const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.upload_visa_pdf, baseFileUploadPath);
-//         if (!homeTopSlidername) {
-//           return ReE(res, { message: "Something went wrong" }, 200);
-//         }
-//       }
-//     }
-//     const data = await MutamersList.update(
-//       { upload_visa_pdf: mutamer },  // 👈 new value
-//       {
-//         where: {
-//           email: body.email,
-//           group_name_number: body.group_name_number
-//         }
-//       }
-//     );
-
-
-//     if (data) {
-//       return ReS(res, { message: "Upload visa pdf updated successfully." }, 200);
-//     }
-
-//   } catch (error) {
-//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
-//   }
-// };
-
 const updateVisaPdf = async (req, res) => {
   try {
-    const body = req.body;
+    let body = req.body;
     const files = req.files;
-
-    if (!files || !files.upload_visa_pdf) {
-      return res.status(400).json({
-        message: "PDF file is required"
-      });
-    }
-
-    const pdfFile = files.upload_visa_pdf;
-
-    // ✅ PDF VALIDATION
-    if (pdfFile.mimetype !== "application/pdf") {
-      return res.status(400).json({
-        message: "Only PDF files are allowed"
-      });
-    }
-
     const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/mutamer`;
-
-    const fileName =
-      Date.now() + "-" + pdfFile.name.replace(/\s+/g, "");
-
-    const filePath = "mutamer/" + fileName;
-
-    const uploadResult = await helper.fileUpload(
-      fileName,
-      pdfFile,
-      baseFileUploadPath
-    );
-
-    if (!uploadResult) {
-      return res.status(500).json({
-        message: "File upload failed"
-      });
+    let mutamer = "";
+    if (files) {
+      if (files.upload_visa_pdf) {
+        const homeTopSliderName = Date.now() + '-' + files.upload_visa_pdf.name;
+        mutamer = "mutamer/" + homeTopSliderName;
+        const homeTopSlidername = await helper.fileUpload(homeTopSliderName, files.upload_visa_pdf, baseFileUploadPath);
+        if (!homeTopSlidername) {
+          return ReE(res, { message: "Something went wrong" }, 200);
+        }
+      }
     }
-
-    await MutamersList.update(
-      { upload_visa_pdf: filePath },
+    const data = await MutamersList.update(
+      { upload_visa_pdf: mutamer },  // 👈 new value
       {
         where: {
           email: body.email,
@@ -91,20 +32,15 @@ const updateVisaPdf = async (req, res) => {
       }
     );
 
-    return res.status(200).json({
-      message: "Visa PDF uploaded successfully",
-      file: filePath
-    });
+
+    if (data) {
+      return ReS(res, { message: "Upload visa pdf updated successfully." }, 200);
+    }
 
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      message: "Something went wrong",
-      error
-    });
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
-
 const deleteVisaPdf = async (req, res) => {
   try {
     let body = req.body;
