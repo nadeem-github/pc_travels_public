@@ -1,4 +1,4 @@
-const { MutamersList, FlightDetail, B2bHotel, Driver,AssignPackage,AccountDetails, AssignPackageTransportDetails, AssignPackageHousing } = require("@models");
+const { MutamersList, FlightDetail, B2bHotel, Driver, AssignPackage, AccountDetails, AssignPackageTransportDetails, AssignPackageHousing, Ledger } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const { QueryTypes } = require("sequelize");
 const { sequelize } = require("@models");
@@ -274,7 +274,7 @@ const fetchAssignPackage = async function (req, res) {
   try {
     let body = req.body;
 
-    const [data, data1, data2,data3] = await Promise.all([
+    const [data, data1, data2, data3] = await Promise.all([
       AssignPackage.findAll({
         order: [['id', 'ASC']],
         where: {
@@ -292,26 +292,26 @@ const fetchAssignPackage = async function (req, res) {
       }),
       AssignPackageHousing.findAll({
         order: [['check_in', 'ASC']],
-        attributes: ['id','notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
+        attributes: ['id', 'notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
         },
       }),
-       MutamersList.findAll({
-              attributes: [
-                'main_external_agent_code',
-                'email',
-                'group_name_number'
-              ],
-              where: {
-                email: body.email,
-                group_name_number: body.group_name_number,
-                 main_external_agent_code: { [Op.ne]: null }
-              },
-              group: ['main_external_agent_code', 'email', 'group_name_number'],
-              order: [[Sequelize.fn('MIN', Sequelize.col('id')), 'ASC']],
-            }),
+      MutamersList.findAll({
+        attributes: [
+          'main_external_agent_code',
+          'email',
+          'group_name_number'
+        ],
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+          main_external_agent_code: { [Op.ne]: null }
+        },
+        group: ['main_external_agent_code', 'email', 'group_name_number'],
+        order: [[Sequelize.fn('MIN', Sequelize.col('id')), 'ASC']],
+      }),
     ]);
     if (!data) {
       return ReE(res, { message: "No Data Found" }, 200);
@@ -343,6 +343,21 @@ const fetchAccountDetails = async function (req, res) {
   }
 };
 
+const fetchLeaser = async function (req, res) {
+  try {
+    let body = req.body;
+    const data = await Ledger.findAll({
+      order: [['id', 'DESC']],
+      where: { email: req.user.email },
+    });
+    if (!data) {
+      return ReE(res, { message: "No Data Found" }, 200);
+    }
+    return ReS(res, { data: data, message: "success" });
+  } catch (error) {
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+  }
+};
 
 
 module.exports = {
@@ -354,5 +369,6 @@ module.exports = {
   fetchDriverDetail,
   fetchAssignPackage,
   fetchDriverDetailWithTransport,
-  fetchAccountDetails
+  fetchAccountDetails,
+  fetchLeaser
 };
