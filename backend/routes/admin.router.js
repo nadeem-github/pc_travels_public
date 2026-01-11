@@ -232,6 +232,7 @@ adminRouter.post("/ledger/create", passport.authenticate("jwt", { session: false
 adminRouter.post("/ledger/fetch-single", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.fetchSingle);
 adminRouter.post("/ledger/update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.update);
 adminRouter.post("/ledger/delete", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.deleted);
+adminRouter.post("/ledger/bulk-balance-update", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerController.bulkBalanceUpdate);
 
 // ========== LedgerOpeningBalanceController Routes==========
 adminRouter.post("/ledgerOpeningBalance/fetch", passport.authenticate("jwt", { session: false }), adminMidd.adminUser, LedgerOpeningBalanceController.fetch);

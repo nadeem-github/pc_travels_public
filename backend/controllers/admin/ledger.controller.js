@@ -175,6 +175,32 @@ const deleted = async function (req, res) {
     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 }
+const bulkBalanceUpdate = async (req, res) => {
+  try {
+    const { updates } = req.body;
+     /**
+     updates = [
+       { id: 1, balance: 500 },
+       { id: 3, balance: 1200 }
+     ]
+    */
+
+    await Promise.all(
+      updates.map(item =>
+        Ledger.update(
+          { balance: item.balance },
+          { where: { id: item.id } }
+        )
+      )
+    );
+
+    return ReS(res, { message: "Bulk balance updated" });
+
+  } catch (error) {
+    return ReE(res, { message: "Something went wrong", err: error }, 500);
+  }
+};
+
 
 
 module.exports = {
@@ -182,5 +208,6 @@ module.exports = {
   create,
   fetchSingle,
   update,
-  deleted
+  deleted,
+  bulkBalanceUpdate
 };
