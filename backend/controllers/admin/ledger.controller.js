@@ -23,31 +23,35 @@ const { Op, fn, col } = require("sequelize");
 // };
 const fetch = async function (req, res) {
   try {
-    const { email } = req.body;
+    const { email, financialYear } = req.body;
 
-    // Email ke saare records nikalo
     const allData = await Ledger.findAll({
       where: { email },
-      order: [["created_at", "ASC"]],
+      order: [["created_at", "DESC"]],
     });
 
-    if (!allData || allData.length === 0) {
-      return ReE(res, { message: "No Data Found" }, 200);
-    }
-
-    // Financial Year generate karne ka function
+    // Financial Year Function
     const getFinancialYear = (date) => {
       const d = new Date(date);
       const year = d.getFullYear();
-      const month = d.getMonth() + 1; // Jan=1
+      const month = d.getMonth() + 1;
 
-      if (month >= 4) {
-        return `${year} to ${year + 1}`;
-      }
-      return `${year - 1} to ${year}`;
+      return month >= 4
+        ? `${year} to ${year + 1}`
+        : `${year - 1} to ${year}`;
     };
 
-    // Available FY list nikalna
+    // Current Financial Year
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+
+    const currentFinancialYear =
+      currentMonth >= 4
+        ? `${currentYear} to ${currentYear + 1}`
+        : `${currentYear - 1} to ${currentYear}`;
+
+    // Group Records FY Wise
     const fyMap = {};
 
     allData.forEach((item) => {
@@ -60,26 +64,25 @@ const fetch = async function (req, res) {
       fyMap[fy].push(item);
     });
 
-    // Financial years array
+    // Dropdown List
     const financialYears = Object.keys(fyMap).sort((a, b) => {
-      const aYear = parseInt(a.split(" ")[0]);
-      const bYear = parseInt(b.split(" ")[0]);
-      return aYear - bYear;
+      return parseInt(a) - parseInt(b);
     });
 
-    // Latest Financial Year
-    const latestFinancialYear =
-      financialYears[financialYears.length - 1];
+    // Selected FY ya Current FY
+    const selectedFinancialYear =
+      financialYear || currentFinancialYear;
 
-    const latestFinancialYearData =
-      fyMap[latestFinancialYear] || [];
+    const filteredData =
+      fyMap[selectedFinancialYear] || [];
 
     return ReS(res, {
-      data: latestFinancialYearData,
-      latestFinancialYear,
+      data: filteredData,
+      latestFinancialYear: selectedFinancialYear,
       financialYears,
       message: "success",
     });
+
   } catch (error) {
     return ReE(
       res,
