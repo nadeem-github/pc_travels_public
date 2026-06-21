@@ -2,22 +2,93 @@ const { Ledger } = require("@models");
 const { ReE, ReS, to } = require("@services/util.service");
 const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
+const { Op, fn, col } = require("sequelize");
 
+// const fetch = async function (req, res) {
+//   try {
+//     let body = req.body;
+//     const data = await Ledger.findAll({
+//       order: [['id', 'DESC']],
+//       where: {
+//         email: body.email,
+//       }
+//     });
+//     if (!data) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+//     return ReS(res, { data: data, message: "success" });
+//   } catch (error) {
+//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+//   }
+// };
 const fetch = async function (req, res) {
   try {
-    let body = req.body;
-    const data = await Ledger.findAll({
-      order: [['id', 'DESC']],
-      where: {
-        email: body.email,
-      }
+    const { email } = req.body;
+
+    // Email ke saare records nikalo
+    const allData = await Ledger.findAll({
+      where: { email },
+      order: [["created_at", "ASC"]],
     });
-    if (!data) {
+
+    if (!allData || allData.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
-    return ReS(res, { data: data, message: "success" });
+
+    // Financial Year generate karne ka function
+    const getFinancialYear = (date) => {
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = d.getMonth() + 1; // Jan=1
+
+      if (month >= 4) {
+        return `${year} to ${year + 1}`;
+      }
+      return `${year - 1} to ${year}`;
+    };
+
+    // Available FY list nikalna
+    const fyMap = {};
+
+    allData.forEach((item) => {
+      const fy = getFinancialYear(item.created_at);
+
+      if (!fyMap[fy]) {
+        fyMap[fy] = [];
+      }
+
+      fyMap[fy].push(item);
+    });
+
+    // Financial years array
+    const financialYears = Object.keys(fyMap).sort((a, b) => {
+      const aYear = parseInt(a.split(" ")[0]);
+      const bYear = parseInt(b.split(" ")[0]);
+      return aYear - bYear;
+    });
+
+    // Latest Financial Year
+    const latestFinancialYear =
+      financialYears[financialYears.length - 1];
+
+    const latestFinancialYearData =
+      fyMap[latestFinancialYear] || [];
+
+    return ReS(res, {
+      data: latestFinancialYearData,
+      latestFinancialYear,
+      financialYears,
+      message: "success",
+    });
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    return ReE(
+      res,
+      {
+        message: "Something Went Wrong",
+        err: error.message,
+      },
+      200
+    );
   }
 };
 
