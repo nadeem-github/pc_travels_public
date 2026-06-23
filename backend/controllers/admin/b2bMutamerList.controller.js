@@ -6,6 +6,29 @@ const config = require('@config/app.json')[app['env']];
 const helper = require("@helpers/fileupload.helper");
 const { Sequelize, Op } = require("sequelize");
 const fs = require('fs'); // Ensure this is at the top of your controller
+const getCurrentFinancialYear = () => {
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+
+  if (month >= 4) {
+    return `${year}-${String(year + 1).slice(-2)}`;
+  }
+
+  return `${year - 1}-${String(year).slice(-2)}`;
+};
+
+const getFinancialYearDates = (financialYear) => {
+  const [startYear] = financialYear.split("-");
+
+  const startDate = new Date(`${startYear}-04-01 00:00:00`);
+  const endDate = new Date(
+    `${Number(startYear) + 1}-03-31 23:59:59`
+  );
+
+  return { startDate, endDate };
+};
 const updateVisaPdf = async (req, res) => {
   try {
     let body = req.body;
@@ -219,13 +242,190 @@ const uploadExcelToDatabase = async function (req, res) {
   }
 }
 
+// const fetchAll = async (req, res) => {
+//   try {
+//     const { email } = req.body;
+//     if (!email) {
+//       return ReS(res, { message: "Email is required" }, 200);
+//     }
+//     // 1. Sab data ek sath lao
+//     const records = await MutamersList.findAll({
+//       attributes: [
+//         "id",
+//         "email",
+//         "group_name_number",
+//         "group_number",
+//         "hotel_details",
+//         "flight_details",
+//         "arrival_date",
+//         "return_date",
+//         "group_size",
+//         "transport_route",
+//         "remark",
+//         "view_dirver_details",
+//         "main_external_agent_code",
+//         "leader_name",
+//         "mobile_number",
+//         "upload_visa_pdf"
+
+//       ],
+//       where: { email },
+//       raw: true
+//     });
+
+//     if (!records.length) {
+//       return ReS(res, { message: "No records found" }, 200);
+//     }
+
+//     // Group by email + group_name_number
+//     let groupedByEmail = records.reduce((acc, curr) => {
+//       let emailGroup = acc.find(item => item.email === curr.email);
+//       if (!emailGroup) {
+//         emailGroup = {
+//           email: curr.email,
+//           groups: []
+//         };
+//         acc.push(emailGroup);
+//       }
+
+//       let existing = emailGroup.groups.find(
+//         g => g.group_name_number === curr.group_name_number
+//       );
+//       if (!existing) {
+//         existing = {
+//           group_name_number: curr.group_name_number,
+//           hotel_details: curr.hotel_details,
+//           flight_details: curr.flight_details,
+//           arrival_date: curr.arrival_date,
+//           return_date: curr.return_date,
+//           transport_route: curr.transport_route,
+//           remark: [],
+//           group_size: curr.group_size,
+//           view_dirver_details: curr.view_dirver_details,
+//           leader_name: curr.leader_name,
+//           mobile_number: curr.mobile_number,
+//           upload_visa_pdf: curr.upload_visa_pdf,
+//           id: curr.id,
+//           groupnumber: []
+//         };
+//         emailGroup.groups.push(existing);
+//       }
+
+//       // 👈 यहाँ change: null/empty को ignore करने के लिए check add किया
+//       if (curr.main_external_agent_code && !existing.groupnumber.includes(curr.main_external_agent_code)) {
+//         existing.groupnumber.push(curr.main_external_agent_code);
+//         existing.remark.push(curr.remark);
+//       }
+
+//       return acc;
+//     }, []);
+
+//     groupedByEmail.forEach(emailGroup => {
+//       emailGroup.groups.sort((a, b) => b.id - a.id);
+//     });
+
+//     // 👉 id add karo (1,2,3...)
+//     groupedByEmail = groupedByEmail.map((item, index) => ({
+//       id: index + 1,
+//       ...item
+//     }));
+
+//     // let groupedByEmail = records.reduce((acc, curr) => {
+//     //       let emailGroup = acc.find(item => item.email === curr.email);
+//     //       if (!emailGroup) {
+//     //         emailGroup = {
+//     //           email: curr.email,
+//     //           groups: []
+//     //         };
+//     //         acc.push(emailGroup);
+//     //       }
+
+//     //       let existing = emailGroup.groups.find(
+//     //         g => g.group_name_number === curr.group_name_number
+//     //       );
+//     //       if (!existing) {
+//     //         existing = {
+//     //           group_name_number: curr.group_name_number,
+//     //           hotel_details: curr.hotel_details,
+//     //           flight_details: curr.flight_details,
+//     //           arrival_date: curr.arrival_date,
+//     //           return_date: curr.return_date,
+//     //           transport_route: curr.transport_route,
+//     //           remark: [],
+//     //           group_size: curr.group_size,
+//     //           view_dirver_details: curr.view_dirver_details,
+//     //           leader_name: curr.leader_name,
+//     //           mobile_number: curr.mobile_number,
+//     //           id: curr.id,
+//     //           groupnumber: []
+//     //         };
+//     //         emailGroup.groups.push(existing);
+//     //       }
+
+//     //       if (!existing.groupnumber.includes(curr.main_external_agent_code)) {
+//     //         existing.groupnumber.push(curr.main_external_agent_code);
+//     //         existing.remark.push(curr.remark);
+//     //       }
+
+//     //       return acc;
+//     //     }, []);
+//     //     groupedByEmail.forEach(emailGroup => {
+//     //       emailGroup.groups.sort((a, b) => b.id - a.id);
+//     //     });
+
+//     //     // 👉 id add karo (1,2,3...)
+//     //     groupedByEmail = groupedByEmail.map((item, index) => ({
+//     //       id: index + 1,
+//     //       ...item
+//     //     }));
+
+
+//     return ReS(res, { data: groupedByEmail, message: "success" });
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
+
 const fetchAll = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, financialYear } = req.body;
+
     if (!email) {
       return ReS(res, { message: "Email is required" }, 200);
     }
-    // 1. Sab data ek sath lao
+
+    const selectedFY = financialYear || getCurrentFinancialYear();
+
+    const { startDate, endDate } =
+      getFinancialYearDates(selectedFY);
+
+    // Financial Years Dropdown Data
+    const allRecords = await MutamersList.findAll({
+      attributes: ["created_at"],
+      where: { email },
+      raw: true,
+    });
+
+    const financialYears = [
+      ...new Set(
+        allRecords
+          .filter((item) => item.created_at)
+          .map((item) => {
+            const date = new Date(item.created_at);
+
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+
+            if (month >= 4) {
+              return `${year}-${String(year + 1).slice(-2)}`;
+            }
+
+            return `${year - 1}-${String(year).slice(-2)}`;
+          })
+      ),
+    ].sort();
+
+    // Selected Financial Year Records
     const records = await MutamersList.findAll({
       attributes: [
         "id",
@@ -243,31 +443,50 @@ const fetchAll = async (req, res) => {
         "main_external_agent_code",
         "leader_name",
         "mobile_number",
-        "upload_visa_pdf"
-
+        "upload_visa_pdf",
+        "created_at",
       ],
-      where: { email },
-      raw: true
+      where: {
+        email,
+        created_at: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+      order: [["created_at", "DESC"]],
+      raw: true,
     });
 
     if (!records.length) {
-      return ReS(res, { message: "No records found" }, 200);
+      return ReS(
+        res,
+        {
+          data: [],
+          financialYears,
+          selectedFinancialYear: selectedFY,
+          message: "No records found",
+        },
+        200
+      );
     }
 
-    // Group by email + group_name_number
     let groupedByEmail = records.reduce((acc, curr) => {
-      let emailGroup = acc.find(item => item.email === curr.email);
+      let emailGroup = acc.find(
+        (item) => item.email === curr.email
+      );
+
       if (!emailGroup) {
         emailGroup = {
           email: curr.email,
-          groups: []
+          groups: [],
         };
+
         acc.push(emailGroup);
       }
 
       let existing = emailGroup.groups.find(
-        g => g.group_name_number === curr.group_name_number
+        (g) => g.group_name_number === curr.group_name_number
       );
+
       if (!existing) {
         existing = {
           group_name_number: curr.group_name_number,
@@ -283,85 +502,54 @@ const fetchAll = async (req, res) => {
           mobile_number: curr.mobile_number,
           upload_visa_pdf: curr.upload_visa_pdf,
           id: curr.id,
-          groupnumber: []
+          groupnumber: [],
         };
+
         emailGroup.groups.push(existing);
       }
 
-      // 👈 यहाँ change: null/empty को ignore करने के लिए check add किया
-      if (curr.main_external_agent_code && !existing.groupnumber.includes(curr.main_external_agent_code)) {
-        existing.groupnumber.push(curr.main_external_agent_code);
-        existing.remark.push(curr.remark);
+      if (
+        curr.main_external_agent_code &&
+        !existing.groupnumber.includes(
+          curr.main_external_agent_code
+        )
+      ) {
+        existing.groupnumber.push(
+          curr.main_external_agent_code
+        );
+
+        if (curr.remark) {
+          existing.remark.push(curr.remark);
+        }
       }
 
       return acc;
     }, []);
 
-    groupedByEmail.forEach(emailGroup => {
+    groupedByEmail.forEach((emailGroup) => {
       emailGroup.groups.sort((a, b) => b.id - a.id);
     });
 
-    // 👉 id add karo (1,2,3...)
-    groupedByEmail = groupedByEmail.map((item, index) => ({
-      id: index + 1,
-      ...item
-    }));
+    groupedByEmail = groupedByEmail.map(
+      (item, index) => ({
+        id: index + 1,
+        ...item,
+      })
+    );
 
-    // let groupedByEmail = records.reduce((acc, curr) => {
-    //       let emailGroup = acc.find(item => item.email === curr.email);
-    //       if (!emailGroup) {
-    //         emailGroup = {
-    //           email: curr.email,
-    //           groups: []
-    //         };
-    //         acc.push(emailGroup);
-    //       }
-
-    //       let existing = emailGroup.groups.find(
-    //         g => g.group_name_number === curr.group_name_number
-    //       );
-    //       if (!existing) {
-    //         existing = {
-    //           group_name_number: curr.group_name_number,
-    //           hotel_details: curr.hotel_details,
-    //           flight_details: curr.flight_details,
-    //           arrival_date: curr.arrival_date,
-    //           return_date: curr.return_date,
-    //           transport_route: curr.transport_route,
-    //           remark: [],
-    //           group_size: curr.group_size,
-    //           view_dirver_details: curr.view_dirver_details,
-    //           leader_name: curr.leader_name,
-    //           mobile_number: curr.mobile_number,
-    //           id: curr.id,
-    //           groupnumber: []
-    //         };
-    //         emailGroup.groups.push(existing);
-    //       }
-
-    //       if (!existing.groupnumber.includes(curr.main_external_agent_code)) {
-    //         existing.groupnumber.push(curr.main_external_agent_code);
-    //         existing.remark.push(curr.remark);
-    //       }
-
-    //       return acc;
-    //     }, []);
-    //     groupedByEmail.forEach(emailGroup => {
-    //       emailGroup.groups.sort((a, b) => b.id - a.id);
-    //     });
-
-    //     // 👉 id add karo (1,2,3...)
-    //     groupedByEmail = groupedByEmail.map((item, index) => ({
-    //       id: index + 1,
-    //       ...item
-    //     }));
-
-
-    return ReS(res, { data: groupedByEmail, message: "success" });
+    return ReS(res, {
+      data: groupedByEmail,
+      financialYears,
+      selectedFinancialYear: selectedFY,
+      message: "success",
+    });
   } catch (error) {
-    console.error(error);
+    console.error("fetchAll Error:", error);
+    return ReE(res, error, 500);
   }
 };
+
+
 const fetch = async function (req, res) {
   try {
     let body = req.body;
