@@ -386,6 +386,170 @@ const uploadExcelToDatabase = async function (req, res) {
 //   }
 // };
 
+// const fetchAll = async (req, res) => {
+//   try {
+//     const { email, financialYear } = req.body;
+
+//     if (!email) {
+//       return ReS(res, { message: "Email is required" }, 200);
+//     }
+
+//     const selectedFY = financialYear || getCurrentFinancialYear();
+
+//     const { startDate, endDate } =
+//       getFinancialYearDates(selectedFY);
+
+//     // Financial Years Dropdown Data
+//     const allRecords = await MutamersList.findAll({
+//       attributes: ["created_at"],
+//       where: { email },
+//       raw: true,
+//     });
+
+//     const financialYears = [
+//       ...new Set(
+//         allRecords
+//           .filter((item) => item.created_at)
+//           .map((item) => {
+//             const date = new Date(item.created_at);
+
+//             const year = date.getFullYear();
+//             const month = date.getMonth() + 1;
+
+//             if (month >= 4) {
+//               return `${year}-${String(year + 1).slice(-2)}`;
+//             }
+
+//             return `${year - 1}-${String(year).slice(-2)}`;
+//           })
+//       ),
+//     ].sort();
+
+//     // Selected Financial Year Records
+//     const records = await MutamersList.findAll({
+//       attributes: [
+//         "id",
+//         "email",
+//         "group_name_number",
+//         "group_number",
+//         "hotel_details",
+//         "flight_details",
+//         "arrival_date",
+//         "return_date",
+//         "group_size",
+//         "transport_route",
+//         "remark",
+//         "view_dirver_details",
+//         "main_external_agent_code",
+//         "leader_name",
+//         "mobile_number",
+//         "upload_visa_pdf",
+//         "created_at",
+//       ],
+//       where: {
+//         email,
+//         created_at: {
+//           [Op.between]: [startDate, endDate],
+//         },
+//       },
+//       order: [["created_at", "DESC"]],
+//       raw: true,
+//     });
+
+//     if (!records.length) {
+//       return ReS(
+//         res,
+//         {
+//           data: [],
+//           financialYears,
+//           selectedFinancialYear: selectedFY,
+//           message: "No records found",
+//         },
+//         200
+//       );
+//     }
+
+//     let groupedByEmail = records.reduce((acc, curr) => {
+//       let emailGroup = acc.find(
+//         (item) => item.email === curr.email
+//       );
+
+//       if (!emailGroup) {
+//         emailGroup = {
+//           email: curr.email,
+//           groups: [],
+//         };
+
+//         acc.push(emailGroup);
+//       }
+
+//       let existing = emailGroup.groups.find(
+//         (g) => g.group_name_number === curr.group_name_number
+//       );
+
+//       if (!existing) {
+//         existing = {
+//           group_name_number: curr.group_name_number,
+//           hotel_details: curr.hotel_details,
+//           flight_details: curr.flight_details,
+//           arrival_date: curr.arrival_date,
+//           return_date: curr.return_date,
+//           transport_route: curr.transport_route,
+//           remark: [],
+//           group_size: curr.group_size,
+//           view_dirver_details: curr.view_dirver_details,
+//           leader_name: curr.leader_name,
+//           mobile_number: curr.mobile_number,
+//           upload_visa_pdf: curr.upload_visa_pdf,
+//           id: curr.id,
+//           groupnumber: [],
+//         };
+
+//         emailGroup.groups.push(existing);
+//       }
+
+//       if (
+//         curr.main_external_agent_code &&
+//         !existing.groupnumber.includes(
+//           curr.main_external_agent_code
+//         )
+//       ) {
+//         existing.groupnumber.push(
+//           curr.main_external_agent_code
+//         );
+
+//         if (curr.remark) {
+//           existing.remark.push(curr.remark);
+//         }
+//       }
+
+//       return acc;
+//     }, []);
+
+//     groupedByEmail.forEach((emailGroup) => {
+//       emailGroup.groups.sort((a, b) => b.id - a.id);
+//     });
+
+//     groupedByEmail = groupedByEmail.map(
+//       (item, index) => ({
+//         id: index + 1,
+//         ...item,
+//       })
+//     );
+
+//     return ReS(res, {
+//       data: groupedByEmail,
+//       financialYears,
+//       selectedFinancialYear: selectedFY,
+//       message: "success",
+//     });
+//   } catch (error) {
+//     console.error("fetchAll Error:", error);
+//     return ReE(res, error, 500);
+//   }
+// };
+
+
 const fetchAll = async (req, res) => {
   try {
     const { email, financialYear } = req.body;
@@ -423,7 +587,7 @@ const fetchAll = async (req, res) => {
             return `${year - 1}-${String(year).slice(-2)}`;
           })
       ),
-    ].sort();
+    ].sort((a, b) => b.localeCompare(a));
 
     // Selected Financial Year Records
     const records = await MutamersList.findAll({
@@ -484,7 +648,8 @@ const fetchAll = async (req, res) => {
       }
 
       let existing = emailGroup.groups.find(
-        (g) => g.group_name_number === curr.group_name_number
+        (g) =>
+          g.group_name_number === curr.group_name_number
       );
 
       if (!existing) {
@@ -502,6 +667,7 @@ const fetchAll = async (req, res) => {
           mobile_number: curr.mobile_number,
           upload_visa_pdf: curr.upload_visa_pdf,
           id: curr.id,
+          created_at: curr.created_at,
           groupnumber: [],
         };
 
@@ -526,8 +692,22 @@ const fetchAll = async (req, res) => {
       return acc;
     }, []);
 
+    // Groups descending by latest id
     groupedByEmail.forEach((emailGroup) => {
       emailGroup.groups.sort((a, b) => b.id - a.id);
+    });
+
+    // Email groups descending by latest group id
+    groupedByEmail.sort((a, b) => {
+      const aLatestId = Math.max(
+        ...a.groups.map((g) => g.id)
+      );
+
+      const bLatestId = Math.max(
+        ...b.groups.map((g) => g.id)
+      );
+
+      return bLatestId - aLatestId;
     });
 
     groupedByEmail = groupedByEmail.map(
@@ -548,6 +728,8 @@ const fetchAll = async (req, res) => {
     return ReE(res, error, 500);
   }
 };
+
+
 
 
 const fetch = async function (req, res) {
