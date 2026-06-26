@@ -48,6 +48,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    package_notes: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
      flight_no_1: {
       type: DataTypes.STRING,
       allowNull: true,

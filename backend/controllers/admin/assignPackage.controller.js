@@ -5,6 +5,65 @@ const { check } = require("express-validator");
 const { assign } = require("nodemailer/lib/shared");
 const { Sequelize, Op } = require("sequelize");
 
+// const fetch = async function (req, res) {
+//   try {
+//     let body = req.body;
+
+//     const [data, data1, data2, data3] = await Promise.all([
+//       AssignPackage.findAll({
+//         order: [['id', 'ASC']],
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//         },
+//       }),
+//       AssignPackageTransportDetails.findAll({
+//         order: [['assign_date', 'ASC']],
+//         attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//         },
+//       }),
+//       AssignPackageHousing.findAll({
+//         order: [['check_in', 'ASC']],
+//         attributes: ['id', 'notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//         },
+//       }),
+//       MutamersList.findAll({
+//         attributes: [
+//           'main_external_agent_code',
+//           'email',
+//           'group_name_number'
+//         ],
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//           main_external_agent_code: { [Op.ne]: null }
+//         },
+//         group: ['main_external_agent_code', 'email', 'group_name_number'],
+//         order: [[Sequelize.fn('MIN', Sequelize.col('id')), 'ASC']],
+//       }),
+//     ]);
+//     if (!data) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+//     return ReS(res, {
+//       result: {
+//         packageDetails: data,
+//         transportDetails: data1,
+//         hotelDetails: data2,
+//         groupNumber: data3
+
+//       }, message: "success"
+//     });
+//   } catch (error) {
+//     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+//   }
+// };
 const fetch = async function (req, res) {
   try {
     let body = req.body;
@@ -17,51 +76,90 @@ const fetch = async function (req, res) {
           group_name_number: body.group_name_number,
         },
       }),
+
       AssignPackageTransportDetails.findAll({
         order: [['assign_date', 'ASC']],
-        attributes: ['id', 'notes', 'assign_time', 'assign_date', 'assign_to', 'assign_from'],
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        },
-      }),
-      AssignPackageHousing.findAll({
-        order: [['check_in', 'ASC']],
-        attributes: ['id', 'notes', 'check_out', 'check_in', 'nights', 'rooms', 'hotel_name', 'city'],
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        },
-      }),
-      MutamersList.findAll({
         attributes: [
-          'main_external_agent_code',
-          'email',
-          'group_name_number'
+          'id',
+          'notes',
+          'assign_time',
+          'assign_date',
+          'assign_to',
+          'assign_from',
         ],
         where: {
           email: body.email,
           group_name_number: body.group_name_number,
-          main_external_agent_code: { [Op.ne]: null }
         },
-        group: ['main_external_agent_code', 'email', 'group_name_number'],
-        order: [[Sequelize.fn('MIN', Sequelize.col('id')), 'ASC']],
+      }),
+
+      AssignPackageHousing.findAll({
+        order: [['check_in', 'ASC']],
+        attributes: [
+          'id',
+          'notes',
+          'check_out',
+          'check_in',
+          'nights',
+          'rooms',
+          'hotel_name',
+          'city',
+        ],
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+        },
+      }),
+
+      // Group wise member count
+      MutamersList.findAll({
+        attributes: [
+          'main_external_agent_code',
+          'email',
+          'group_name_number',
+          [Sequelize.fn('COUNT', Sequelize.col('id')), 'member_count'],
+        ],
+        where: {
+          email: body.email,
+          main_external_agent_code: {
+            [Op.ne]: null,
+          },
+        },
+        group: [
+          'main_external_agent_code',
+          'email',
+          'group_name_number',
+        ],
+        order: [['group_name_number', 'ASC']],
       }),
     ]);
-    if (!data) {
+
+    if (!data || data.length === 0) {
       return ReE(res, { message: "No Data Found" }, 200);
     }
-    return ReS(res, {
-      result: {
-        packageDetails: data,
-        transportDetails: data1,
-        hotelDetails: data2,
-        groupNumber: data3
 
-      }, message: "success"
-    });
+    return ReS(
+      res,
+      {
+        result: {
+          packageDetails: data,
+          transportDetails: data1,
+          hotelDetails: data2,
+          groupNumber: data3,
+        },
+        message: "success",
+      },
+      200
+    );
   } catch (error) {
-    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
+    return ReE(
+      res,
+      {
+        message: "Something Went Wrong",
+        err: error,
+      },
+      200
+    );
   }
 };
 // const create = async (req, res) => {
@@ -130,6 +228,7 @@ const create = async (req, res) => {
       arrival_airport: body.arrival_airport,
       arrival_time: body.arrival_time,
       arrival_date: body.arrival_date,
+      package_notes: body.package_notes,
       flight_no: body.flight_no,
       airline_name: body.airline_name,
       departure_airport: body.departure_airport,
@@ -396,6 +495,7 @@ const update = async function (req, res) {
       departure_date: body.departure_date ?? existData.departure_date,
       flight_no_1: body.flight_no_1 ?? existData.flight_no_1,
       airline_name_1: body.airline_name_1 ?? existData.airline_name_1,
+      package_notes: body.package_notes ?? existData.package_notes,
     }, {
       where: {
         email: body.email,
