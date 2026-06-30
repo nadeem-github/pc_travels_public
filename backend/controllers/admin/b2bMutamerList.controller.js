@@ -550,6 +550,185 @@ const uploadExcelToDatabase = async function (req, res) {
 // };
 
 
+// const fetchAll = async (req, res) => {
+//   try {
+//     const { email, financialYear } = req.body;
+
+//     if (!email) {
+//       return ReS(res, { message: "Email is required" }, 200);
+//     }
+
+//     const selectedFY = financialYear || getCurrentFinancialYear();
+
+//     const { startDate, endDate } =
+//       getFinancialYearDates(selectedFY);
+
+//     // Financial Years Dropdown Data
+//     const allRecords = await MutamersList.findAll({
+//       attributes: ["created_at"],
+//       where: { email },
+//       raw: true,
+//     });
+
+//     const financialYears = [
+//       ...new Set(
+//         allRecords
+//           .filter((item) => item.created_at)
+//           .map((item) => {
+//             const date = new Date(item.created_at);
+
+//             const year = date.getFullYear();
+//             const month = date.getMonth() + 1;
+
+//             if (month >= 4) {
+//               return `${year}-${String(year + 1).slice(-2)}`;
+//             }
+
+//             return `${year - 1}-${String(year).slice(-2)}`;
+//           })
+//       ),
+//     ].sort((a, b) => b.localeCompare(a));
+
+//     // Selected Financial Year Records
+//     const records = await MutamersList.findAll({
+//       attributes: [
+//         "id",
+//         "email",
+//         "group_name_number",
+//         "group_number",
+//         "hotel_details",
+//         "flight_details",
+//         "arrival_date",
+//         "return_date",
+//         "group_size",
+//         "transport_route",
+//         "remark",
+//         "view_dirver_details",
+//         "main_external_agent_code",
+//         "leader_name",
+//         "mobile_number",
+//         "upload_visa_pdf",
+//         "created_at",
+//       ],
+//       where: {
+//         email,
+//         created_at: {
+//           [Op.between]: [startDate, endDate],
+//         },
+//       },
+//       order: [["created_at", "DESC"]],
+//       raw: true,
+//     });
+
+//     if (!records.length) {
+//       return ReS(
+//         res,
+//         {
+//           data: [],
+//           financialYears,
+//           selectedFinancialYear: selectedFY,
+//           message: "No records found",
+//         },
+//         200
+//       );
+//     }
+
+//     let groupedByEmail = records.reduce((acc, curr) => {
+//       let emailGroup = acc.find(
+//         (item) => item.email === curr.email
+//       );
+
+//       if (!emailGroup) {
+//         emailGroup = {
+//           email: curr.email,
+//           groups: [],
+//         };
+
+//         acc.push(emailGroup);
+//       }
+
+//       let existing = emailGroup.groups.find(
+//         (g) =>
+//           g.group_name_number === curr.group_name_number
+//       );
+
+//       if (!existing) {
+//         existing = {
+//           group_name_number: curr.group_name_number,
+//           hotel_details: curr.hotel_details,
+//           flight_details: curr.flight_details,
+//           arrival_date: curr.arrival_date,
+//           return_date: curr.return_date,
+//           transport_route: curr.transport_route,
+//           remark: [],
+//           group_size: curr.group_size,
+//           view_dirver_details: curr.view_dirver_details,
+//           leader_name: curr.leader_name,
+//           mobile_number: curr.mobile_number,
+//           upload_visa_pdf: curr.upload_visa_pdf,
+//           id: curr.id,
+//           created_at: curr.created_at,
+//           groupnumber: [],
+//         };
+
+//         emailGroup.groups.push(existing);
+//       }
+
+//       if (
+//         curr.main_external_agent_code &&
+//         !existing.groupnumber.includes(
+//           curr.main_external_agent_code
+//         )
+//       ) {
+//         existing.groupnumber.push(
+//           curr.main_external_agent_code
+//         );
+
+//         if (curr.remark) {
+//           existing.remark.push(curr.remark);
+//         }
+//       }
+
+//       return acc;
+//     }, []);
+
+//     // Groups descending by latest id
+//     groupedByEmail.forEach((emailGroup) => {
+//       emailGroup.groups.sort((a, b) => b.id - a.id);
+//     });
+
+//     // Email groups descending by latest group id
+//     groupedByEmail.sort((a, b) => {
+//       const aLatestId = Math.max(
+//         ...a.groups.map((g) => g.id)
+//       );
+
+//       const bLatestId = Math.max(
+//         ...b.groups.map((g) => g.id)
+//       );
+
+//       return bLatestId - aLatestId;
+//     });
+
+//     groupedByEmail = groupedByEmail.map(
+//       (item, index) => ({
+//         id: index + 1,
+//         ...item,
+//       })
+//     );
+
+//     return ReS(res, {
+//       data: groupedByEmail,
+//       financialYears,
+//       selectedFinancialYear: selectedFY,
+//       message: "success",
+//     });
+//   } catch (error) {
+//     console.error("fetchAll Error:", error);
+//     return ReE(res, error, 500);
+//   }
+// };
+
 const fetchAll = async (req, res) => {
   try {
     const { email, financialYear } = req.body;
@@ -563,7 +742,10 @@ const fetchAll = async (req, res) => {
     const { startDate, endDate } =
       getFinancialYearDates(selectedFY);
 
-    // Financial Years Dropdown Data
+    // ===========================
+    // Financial Year Dropdown
+    // ===========================
+
     const allRecords = await MutamersList.findAll({
       attributes: ["created_at"],
       where: { email },
@@ -573,23 +755,24 @@ const fetchAll = async (req, res) => {
     const financialYears = [
       ...new Set(
         allRecords
-          .filter((item) => item.created_at)
-          .map((item) => {
-            const date = new Date(item.created_at);
+          .filter((x) => x.created_at)
+          .map((x) => {
+            const d = new Date(x.created_at);
 
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
+            const year = d.getFullYear();
+            const month = d.getMonth() + 1;
 
-            if (month >= 4) {
-              return `${year}-${String(year + 1).slice(-2)}`;
-            }
-
-            return `${year - 1}-${String(year).slice(-2)}`;
+            return month >= 4
+              ? `${year}-${String(year + 1).slice(-2)}`
+              : `${year - 1}-${String(year).slice(-2)}`;
           })
       ),
     ].sort((a, b) => b.localeCompare(a));
 
-    // Selected Financial Year Records
+    // ===========================
+    // Records
+    // ===========================
+
     const records = await MutamersList.findAll({
       attributes: [
         "id",
@@ -616,7 +799,10 @@ const fetchAll = async (req, res) => {
           [Op.between]: [startDate, endDate],
         },
       },
-      order: [["created_at", "DESC"]],
+      order: [
+        ["group_name_number", "ASC"],
+        ["id", "ASC"],
+      ],
       raw: true,
     });
 
@@ -633,46 +819,124 @@ const fetchAll = async (req, res) => {
       );
     }
 
-    let groupedByEmail = records.reduce((acc, curr) => {
-      let emailGroup = acc.find(
-        (item) => item.email === curr.email
-      );
+    // =====================================
+    // O(n) Grouping
+    // =====================================
 
-      if (!emailGroup) {
-        emailGroup = {
+    const emailMap = new Map();
+
+    for (const curr of records) {
+      if (!emailMap.has(curr.email)) {
+        emailMap.set(curr.email, {
           email: curr.email,
-          groups: [],
-        };
-
-        acc.push(emailGroup);
+          groupMap: new Map(),
+        });
       }
 
-      let existing = emailGroup.groups.find(
-        (g) =>
-          g.group_name_number === curr.group_name_number
-      );
+      const emailGroup = emailMap.get(curr.email);
 
-      if (!existing) {
-        existing = {
+      if (!emailGroup.groupMap.has(curr.group_name_number)) {
+        emailGroup.groupMap.set(curr.group_name_number, {
           group_name_number: curr.group_name_number,
+
           hotel_details: curr.hotel_details,
           flight_details: curr.flight_details,
-          arrival_date: curr.arrival_date,
-          return_date: curr.return_date,
-          transport_route: curr.transport_route,
-          remark: [],
-          group_size: curr.group_size,
-          view_dirver_details: curr.view_dirver_details,
-          leader_name: curr.leader_name,
-          mobile_number: curr.mobile_number,
-          upload_visa_pdf: curr.upload_visa_pdf,
-          id: curr.id,
-          created_at: curr.created_at,
-          groupnumber: [],
-        };
 
-        emailGroup.groups.push(existing);
+          arrival_date: curr.arrival_date || null,
+          return_date: curr.return_date || null,
+
+          transport_route: curr.transport_route,
+          group_size: curr.group_size,
+
+          view_dirver_details:
+            curr.view_dirver_details,
+
+          leader_name: curr.leader_name,
+
+          mobile_number: curr.mobile_number,
+
+          upload_visa_pdf: curr.upload_visa_pdf,
+
+          created_at: curr.created_at,
+          id: curr.id,
+
+          remark: [],
+
+          groupnumber: [],
+        });
       }
+
+      const existing = emailGroup.groupMap.get(
+        curr.group_name_number
+      );
+
+      // =========================
+      // Earliest Arrival
+      // =========================
+
+      if (
+        curr.arrival_date &&
+        (!existing.arrival_date ||
+          new Date(curr.arrival_date) <
+            new Date(existing.arrival_date))
+      ) {
+        existing.arrival_date =
+          curr.arrival_date;
+      }
+
+      // =========================
+      // Latest Return
+      // =========================
+
+      if (
+        curr.return_date &&
+        (!existing.return_date ||
+          new Date(curr.return_date) >
+            new Date(existing.return_date))
+      ) {
+        existing.return_date =
+          curr.return_date;
+      }
+
+      // Latest Record Data
+      if (curr.id > existing.id) {
+        existing.id = curr.id;
+        existing.created_at = curr.created_at;
+
+        existing.hotel_details =
+          curr.hotel_details ||
+          existing.hotel_details;
+
+        existing.flight_details =
+          curr.flight_details ||
+          existing.flight_details;
+
+        existing.transport_route =
+          curr.transport_route ||
+          existing.transport_route;
+
+        existing.group_size =
+          curr.group_size ||
+          existing.group_size;
+
+        existing.view_dirver_details =
+          curr.view_dirver_details ||
+          existing.view_dirver_details;
+
+        existing.leader_name =
+          curr.leader_name ||
+          existing.leader_name;
+
+        existing.mobile_number =
+          curr.mobile_number ||
+          existing.mobile_number;
+
+        existing.upload_visa_pdf =
+          curr.upload_visa_pdf ||
+          existing.upload_visa_pdf;
+      }
+
+      // Agent Code
 
       if (
         curr.main_external_agent_code &&
@@ -683,31 +947,47 @@ const fetchAll = async (req, res) => {
         existing.groupnumber.push(
           curr.main_external_agent_code
         );
-
-        if (curr.remark) {
-          existing.remark.push(curr.remark);
-        }
       }
 
-      return acc;
-    }, []);
+      // Remark
 
-    // Groups descending by latest id
-    groupedByEmail.forEach((emailGroup) => {
-      emailGroup.groups.sort((a, b) => b.id - a.id);
-    });
+      if (
+        curr.remark &&
+        !existing.remark.includes(curr.remark)
+      ) {
+        existing.remark.push(curr.remark);
+      }
+    }
 
-    // Email groups descending by latest group id
+    // ===========================
+    // Convert Maps
+    // ===========================
+
+    let groupedByEmail = [];
+
+    for (const emailGroup of emailMap.values()) {
+      const groups = Array.from(
+        emailGroup.groupMap.values()
+      );
+
+      groups.sort((a, b) => b.id - a.id);
+
+      groupedByEmail.push({
+        email: emailGroup.email,
+        groups,
+      });
+    }
+
     groupedByEmail.sort((a, b) => {
-      const aLatestId = Math.max(
+      const aLatest = Math.max(
         ...a.groups.map((g) => g.id)
       );
 
-      const bLatestId = Math.max(
+      const bLatest = Math.max(
         ...b.groups.map((g) => g.id)
       );
 
-      return bLatestId - aLatestId;
+      return bLatest - aLatest;
     });
 
     groupedByEmail = groupedByEmail.map(

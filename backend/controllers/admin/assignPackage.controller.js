@@ -64,99 +64,214 @@ const { Sequelize, Op } = require("sequelize");
 //     return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
 //   }
 // };
+// const fetch = async function (req, res) {
+//   try {
+//     let body = req.body;
+
+//     const [data, data1, data2, data3] = await Promise.all([
+//       AssignPackage.findAll({
+//         order: [['id', 'ASC']],
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//         },
+//       }),
+
+//       AssignPackageTransportDetails.findAll({
+//         order: [['assign_date', 'ASC']],
+//         attributes: [
+//           'id',
+//           'notes',
+//           'assign_time',
+//           'assign_date',
+//           'assign_to',
+//           'assign_from',
+//         ],
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//         },
+//       }),
+
+//       AssignPackageHousing.findAll({
+//         order: [['check_in', 'ASC']],
+//         attributes: [
+//           'id',
+//           'notes',
+//           'check_out',
+//           'check_in',
+//           'nights',
+//           'rooms',
+//           'hotel_name',
+//           'city',
+//         ],
+//         where: {
+//           email: body.email,
+//           group_name_number: body.group_name_number,
+//         },
+//       }),
+
+//       // Group wise member count
+//       MutamersList.findAll({
+//         attributes: [
+//           'main_external_agent_code',
+//           'email',
+//           'group_name_number',
+//           [Sequelize.fn('COUNT', Sequelize.col('id')), 'member_count'],
+//         ],
+//         where: {
+//           email: body.email,
+//           main_external_agent_code: {
+//             [Op.ne]: null,
+//           },
+//         },
+//         group: [
+//           'main_external_agent_code',
+//           'email',
+//           'group_name_number',
+//         ],
+//         order: [['group_name_number', 'ASC']],
+//       }),
+//     ]);
+
+//     if (!data || data.length === 0) {
+//       return ReE(res, { message: "No Data Found" }, 200);
+//     }
+
+//     return ReS(
+//       res,
+//       {
+//         result: {
+//           packageDetails: data,
+//           transportDetails: data1,
+//           hotelDetails: data2,
+//           groupNumber: data3,
+//         },
+//         message: "success",
+//       },
+//       200
+//     );
+//   } catch (error) {
+//     return ReE(
+//       res,
+//       {
+//         message: "Something Went Wrong",
+//         err: error,
+//       },
+//       200
+//     );
+//   }
+// };
+
 const fetch = async function (req, res) {
   try {
-    let body = req.body;
+    const body = req.body;
 
-    const [data, data1, data2, data3] = await Promise.all([
-      AssignPackage.findAll({
-        order: [['id', 'ASC']],
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        },
-      }),
-
-      AssignPackageTransportDetails.findAll({
-        order: [['assign_date', 'ASC']],
-        attributes: [
-          'id',
-          'notes',
-          'assign_time',
-          'assign_date',
-          'assign_to',
-          'assign_from',
-        ],
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        },
-      }),
-
-      AssignPackageHousing.findAll({
-        order: [['check_in', 'ASC']],
-        attributes: [
-          'id',
-          'notes',
-          'check_out',
-          'check_in',
-          'nights',
-          'rooms',
-          'hotel_name',
-          'city',
-        ],
-        where: {
-          email: body.email,
-          group_name_number: body.group_name_number,
-        },
-      }),
-
-      // Group wise member count
-      MutamersList.findAll({
-        attributes: [
-          'main_external_agent_code',
-          'email',
-          'group_name_number',
-          [Sequelize.fn('COUNT', Sequelize.col('id')), 'member_count'],
-        ],
-        where: {
-          email: body.email,
-          main_external_agent_code: {
-            [Op.ne]: null,
+    const [packageDetails, transportDetails, hotelDetails, groupNumber] =
+      await Promise.all([
+        // Package Details
+        AssignPackage.findAll({
+          order: [["id", "ASC"]],
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number,
           },
-        },
-        group: [
-          'main_external_agent_code',
-          'email',
-          'group_name_number',
-        ],
-        order: [['group_name_number', 'ASC']],
-      }),
-    ]);
+        }),
 
-    if (!data || data.length === 0) {
-      return ReE(res, { message: "No Data Found" }, 200);
+        // Transport Details
+        AssignPackageTransportDetails.findAll({
+          order: [["assign_date", "ASC"]],
+          attributes: [
+            "id",
+            "notes",
+            "assign_time",
+            "assign_date",
+            "assign_to",
+            "assign_from",
+          ],
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number,
+          },
+        }),
+
+        // Hotel Details
+        AssignPackageHousing.findAll({
+          order: [["check_in", "ASC"]],
+          attributes: [
+            "id",
+            "notes",
+            "check_out",
+            "check_in",
+            "nights",
+            "rooms",
+            "hotel_name",
+            "city",
+          ],
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number,
+          },
+        }),
+
+        // Group Wise Member Count (Only Requested Group)
+        MutamersList.findAll({
+          attributes: [
+            "main_external_agent_code",
+            "email",
+            "group_name_number",
+            [
+              Sequelize.fn("COUNT", Sequelize.col("id")),
+              "member_count",
+            ],
+          ],
+          where: {
+            email: body.email,
+            group_name_number: body.group_name_number, // <-- Fixed
+            main_external_agent_code: {
+              [Op.ne]: null,
+            },
+          },
+          group: [
+            "main_external_agent_code",
+            "email",
+            "group_name_number",
+          ],
+          order: [["main_external_agent_code", "ASC"]],
+        }),
+      ]);
+
+    if (!packageDetails || packageDetails.length === 0) {
+      return ReE(
+        res,
+        {
+          message: "No Data Found",
+        },
+        200
+      );
     }
 
     return ReS(
       res,
       {
         result: {
-          packageDetails: data,
-          transportDetails: data1,
-          hotelDetails: data2,
-          groupNumber: data3,
+          packageDetails,
+          transportDetails,
+          hotelDetails,
+          groupNumber,
         },
         message: "success",
       },
       200
     );
   } catch (error) {
+    console.error("Fetch Package Error :", error);
+
     return ReE(
       res,
       {
         message: "Something Went Wrong",
-        err: error,
+        err: error.message,
       },
       200
     );
