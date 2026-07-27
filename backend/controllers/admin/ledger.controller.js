@@ -27,7 +27,10 @@ const fetch = async function (req, res) {
 
     const allData = await Ledger.findAll({
       where: { email },
-      order: [["created_at", "DESC"]],
+      order: [
+        ["ledger_date", "DESC"],
+        ["id", "DESC"],
+      ],
     });
 
     // Financial Year Function
@@ -55,7 +58,7 @@ const fetch = async function (req, res) {
     const fyMap = {};
 
     allData.forEach((item) => {
-      const fy = getFinancialYear(item.created_at);
+      const fy = getFinancialYear(item.ledger_date || item.created_at);
 
       if (!fyMap[fy]) {
         fyMap[fy] = [];

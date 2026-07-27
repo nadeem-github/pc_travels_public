@@ -3,13 +3,7 @@ const { ReE, ReS, to } = require("@services/util.service");
 
 const fetch = async function (req, res) {
   try {
-    const { email } = req.body;
-    const where = {};
-    if (email) {
-      where.email = email;
-    }
     const data = await LedgerOpeningBalance.findAll({
-      where,
       order: [['id', 'DESC']],
     });
     if (!data) {
@@ -17,35 +11,24 @@ const fetch = async function (req, res) {
     }
     return ReS(res, { data: data, message: "success" });
   } catch (error) {
-    return ReE(res, { message: "Something Went Wrong", err: error.message }, 200);
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
 
 
 const create = async (req, res) => {
   try {
-    const { email, opening_balance } = req.body;
-    if (!email) {
-      return ReE(res, { message: "Email is required" }, 400);
-    }
+    let body = req.body;
+    const data = await LedgerOpeningBalance.create({
+      email: body.email,
+      opening_balance: body.opening_balance,
+      
+    })
+return ReS(res, { message: "Opening Balance created  successfully." }, 200);
+ 
 
-    const existData = await LedgerOpeningBalance.findOne({
-      where: { email }
-    });
-
-    if (existData) {
-      existData.opening_balance = opening_balance;
-      await existData.save();
-      return ReS(res, { message: "Opening Balance updated successfully." }, 200);
-    } else {
-      await LedgerOpeningBalance.create({
-        email,
-        opening_balance,
-      });
-      return ReS(res, { message: "Opening Balance created successfully." }, 200);
-    }
   } catch (error) {
-    return ReE(res, { message: "Something Went Wrong", err: error.message }, 200);
+    return ReE(res, { message: "Somthing Went Wrong", err: error }, 200);
   }
 };
 const fetchSingle = async function (req, res) {

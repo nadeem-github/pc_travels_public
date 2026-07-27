@@ -620,6 +620,20 @@ const update = async function (req, res) {
 
     // 3. Transport Details Update/Create
     if (body.transportDetails && Array.isArray(body.transportDetails)) {
+      const incomingIds = body.transportDetails
+        .map((item) => item.id)
+        .filter((id) => !!id);
+
+      await AssignPackageTransportDetails.destroy({
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+          id: {
+            [Op.notIn]: incomingIds.length > 0 ? incomingIds : [-1],
+          },
+        },
+      });
+
       for (const item of body.transportDetails) {
 
         // CASE A: Agar ID hai, to UPDATE karo
@@ -673,6 +687,20 @@ const update = async function (req, res) {
 
     // 4. Hotel Details Update/Create
     if (body.hotelDetails && Array.isArray(body.hotelDetails)) {
+      const incomingHotelIds = body.hotelDetails
+        .map((item) => item.id)
+        .filter((id) => !!id);
+
+      await AssignPackageHousing.destroy({
+        where: {
+          email: body.email,
+          group_name_number: body.group_name_number,
+          id: {
+            [Op.notIn]: incomingHotelIds.length > 0 ? incomingHotelIds : [-1],
+          },
+        },
+      });
+
       for (const item of body.hotelDetails) {
 
         // CASE A: Update Existing
