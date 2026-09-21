@@ -9,8 +9,9 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "pctravelsweb@gmail.com",   // <-- आपका Gmail
-    pass: "pdkd jfnt vupn opgq"  // <-- 16 digit App Password
+    user: "pctravelsweb@gmail.com", 
+    // pass: "pdkd jfnt vupn opgq",
+    pass: "zifo xjsl nsvz ckkc",
   }
 });
 
