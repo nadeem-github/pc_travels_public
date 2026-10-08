@@ -6,6 +6,7 @@ const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
 const helper = require("@helpers/fileupload.helper");
 const nodemailer = require("nodemailer");
+const whatsappService = require("@services/whatsapp.service");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -230,6 +231,23 @@ const update = async function (req, res) {
     </div>
   `
       });
+
+      // Send WhatsApp notification on account activation
+      try {
+        const targetWhatsapp = body.whatsapp_number || existData.whatsapp_number;
+        if (targetWhatsapp) {
+          await whatsappService.sendB2bAccountActivated({
+            to: targetWhatsapp,
+            personName: existData.person_name,
+            email: existData.email,
+            password: combinedWord,
+            b2bId: existData.b2b_unique_id || body.b2b_unique_id,
+          });
+        }
+      } catch (waErr) {
+        console.error("[WhatsApp] Error sending account activated message:", waErr);
+      }
+
       return ReS(res, { message: "B2b user has been updated successfully." }, 200);
     }
     if (existData && body.status === "hold") {
@@ -296,6 +314,21 @@ const update = async function (req, res) {
         </div>
     </div>`
       });
+
+      // Send WhatsApp notification on account hold
+      try {
+        const targetWhatsapp = body.whatsapp_number || existData.whatsapp_number;
+        if (targetWhatsapp) {
+          await whatsappService.sendB2bAccountHold({
+            to: targetWhatsapp,
+            personName: existData.person_name,
+            reason: body?.issue || "Account temporarily suspended by admin.",
+          });
+        }
+      } catch (waErr) {
+        console.error("[WhatsApp] Error sending account hold message:", waErr);
+      }
+
       return ReS(res, { message: "B2b user has been updated successfully." }, 200);
     }
     if (existData && body.status === "pending") {
@@ -364,6 +397,21 @@ const update = async function (req, res) {
     </div>
         `
       });
+
+      // Send WhatsApp notification on account pending
+      try {
+        const targetWhatsapp = body.whatsapp_number || existData.whatsapp_number;
+        if (targetWhatsapp) {
+          await whatsappService.sendB2bAccountPending({
+            to: targetWhatsapp,
+            personName: existData.person_name,
+            reason: body?.issue || "Awaiting admin approval.",
+          });
+        }
+      } catch (waErr) {
+        console.error("[WhatsApp] Error sending account pending message:", waErr);
+      }
+
       return ReS(res, { message: "B2b user has been deleted successfully." }, 200);
     }
   } catch (error) {

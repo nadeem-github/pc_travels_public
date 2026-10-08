@@ -4,6 +4,7 @@ const app = require('@services/app.service');
 const config = require('@config/app.json')[app['env']];
 const helper = require("@helpers/fileupload.helper");
 const nodemailer = require("nodemailer");
+const whatsappService = require("@services/whatsapp.service");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -416,7 +417,26 @@ const create = async (req, res) => {
       `,
     });
 
-    return ReS(res, { message: "Driver(s) created and email sent successfully." }, 200);
+    // Step 5b: Send WhatsApp Notification to Customer
+    try {
+      const recipientWhatsapp = req.body?.whatsapp_number || B2bUserEmail[0]?.whatsapp_number;
+      if (recipientWhatsapp) {
+        await whatsappService.sendDriverTransportDetails({
+          to: recipientWhatsapp,
+          companyName: companyName,
+          groupName: groupName,
+          transportDetails: transportDetails,
+          driverDetails: createdDrivers,
+          isUpdate: false,
+        });
+      } else {
+        console.warn(`[WhatsApp] No WhatsApp number found for customer with email ${email}`);
+      }
+    } catch (waErr) {
+      console.error("[WhatsApp] Error sending driver creation message:", waErr);
+    }
+
+    return ReS(res, { message: "Driver(s) created and email/WhatsApp sent successfully." }, 200);
   } catch (error) {
     console.error("Error:", error);
     return ReE(res, { message: "Something went wrong", err: error.message }, 500);
@@ -791,7 +811,26 @@ const update = async function (req, res) {
       `,
     });
 
-    return ReS(res, { message: "Driver(s) updated and email sent successfully." }, 200);
+    // Step 6b: Send WhatsApp Notification to Customer
+    try {
+      const recipientWhatsapp = req.body?.whatsapp_number || B2bUserEmail[0]?.whatsapp_number;
+      if (recipientWhatsapp) {
+        await whatsappService.sendDriverTransportDetails({
+          to: recipientWhatsapp,
+          companyName: companyName,
+          groupName: groupName,
+          transportDetails: transportDetails,
+          driverDetails: updatedDrivers,
+          isUpdate: true,
+        });
+      } else {
+        console.warn(`[WhatsApp] No WhatsApp number found for customer with email ${email}`);
+      }
+    } catch (waErr) {
+      console.error("[WhatsApp] Error sending driver update message:", waErr);
+    }
+
+    return ReS(res, { message: "Driver(s) updated and email/WhatsApp sent successfully." }, 200);
   } catch (error) {
     console.error("Error updating driver details:", error);
     return ReE(res, { message: "Something went wrong", err: error.message }, 500);
