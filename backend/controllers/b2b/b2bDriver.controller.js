@@ -5,6 +5,7 @@ const config = require('@config/app.json')[app['env']];
 const helper = require("@helpers/fileupload.helper");
 const nodemailer = require("nodemailer");
 const whatsappService = require("@services/whatsapp.service");
+const { Op } = require("sequelize");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -136,71 +137,71 @@ const fetchB2b = async function (req, res) {
 
 const create = async (req, res) => {
   try {
-//     const body = req.body;
-//     const files = req.files; // images
-//     let driverDetailsArray = [];
+    //     const body = req.body;
+    //     const files = req.files; // images
+    //     let driverDetailsArray = [];
 
-// // If driverDetails is JSON string (From Postman Form-Data)
-// if (typeof body.driverDetails === "string") {
-//   try {
-//     driverDetailsArray = JSON.parse(body.driverDetails);
-//   } catch (err) {
-//     return ReE(res, { message: "Invalid driverDetails JSON format" }, 400);
-//   }
-// } else {
-//   driverDetailsArray = body.driverDetails;
-// }
-    
-
-//     // Step 1: Create drivers and collect created records
-//     const createdDrivers = [];
-//     const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/drivers`;
-//     for (const item of driverDetailsArray) {
-//       let uploadedDriverImage = "";
-//       // ---------- IMAGE UPLOAD LOGIC (NEW) ----------
-//     if (files && item.upload_pdf) {
-//     // Example: item.upload_pdf = "file1" or "file2"
-//     const fileArray = files[item.upload_pdf];
-
-//     if (fileArray && fileArray.length > 0) {
-//       const imgFile = fileArray[0];
-//       const imageName = Date.now() + "-" + imgFile.originalname;
-
-//       uploadedDriverImage = "drivers/" + imageName;
-
-//       const uploaded = await helper.fileUpload(
-//         imageName,
-//         imgFile,
-//         baseFileUploadPath
-//       );
-
-//       if (!uploaded) {
-//         return ReE(res, { message: "Driver image upload failed" }, 500);
-//       }
-//     }
-//   }
-//       // ------------------------------------------------
-//       const driver = await Driver.create({
-//         email: item.email,
-//         group_name_number: item.group_name_number,
-//         transport_id: item.transport_id,
-//         driver_name: item.driver_name,
-//         driver_mobile: item.driver_mobile,
-//         bus_no: item.bus_no,
-//         status: item.status,
-//         location: item.location,
-//         to_location: item.to_location,
-//         time: item.time,
-//         remarks: item.remarks,
-//         upload_pdf: uploadedDriverImage,
-//       });
-//       createdDrivers.push(driver);
-//     }
+    // // If driverDetails is JSON string (From Postman Form-Data)
+    // if (typeof body.driverDetails === "string") {
+    //   try {
+    //     driverDetailsArray = JSON.parse(body.driverDetails);
+    //   } catch (err) {
+    //     return ReE(res, { message: "Invalid driverDetails JSON format" }, 400);
+    //   }
+    // } else {
+    //   driverDetailsArray = body.driverDetails;
+    // }
 
 
+    //     // Step 1: Create drivers and collect created records
+    //     const createdDrivers = [];
+    //     const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/drivers`;
+    //     for (const item of driverDetailsArray) {
+    //       let uploadedDriverImage = "";
+    //       // ---------- IMAGE UPLOAD LOGIC (NEW) ----------
+    //     if (files && item.upload_pdf) {
+    //     // Example: item.upload_pdf = "file1" or "file2"
+    //     const fileArray = files[item.upload_pdf];
+
+    //     if (fileArray && fileArray.length > 0) {
+    //       const imgFile = fileArray[0];
+    //       const imageName = Date.now() + "-" + imgFile.originalname;
+
+    //       uploadedDriverImage = "drivers/" + imageName;
+
+    //       const uploaded = await helper.fileUpload(
+    //         imageName,
+    //         imgFile,
+    //         baseFileUploadPath
+    //       );
+
+    //       if (!uploaded) {
+    //         return ReE(res, { message: "Driver image upload failed" }, 500);
+    //       }
+    //     }
+    //   }
+    //       // ------------------------------------------------
+    //       const driver = await Driver.create({
+    //         email: item.email,
+    //         group_name_number: item.group_name_number,
+    //         transport_id: item.transport_id,
+    //         driver_name: item.driver_name,
+    //         driver_mobile: item.driver_mobile,
+    //         bus_no: item.bus_no,
+    //         status: item.status,
+    //         location: item.location,
+    //         to_location: item.to_location,
+    //         time: item.time,
+    //         remarks: item.remarks,
+    //         upload_pdf: uploadedDriverImage,
+    //       });
+    //       createdDrivers.push(driver);
+    //     }
 
 
-     const body = req.body;
+
+
+    const body = req.body;
     const files = req.files; // express-fileupload files
 
     let driverDetailsArray = [];
@@ -220,7 +221,7 @@ const create = async (req, res) => {
     const baseFileUploadPath = `${config.IMAGE_RELATIVE_PATH}/drivers`;
 
     for (const item of driverDetailsArray) {
-      
+
       let uploadedDriverImage = "";
 
       // 🔥 DYNAMIC FILE UPLOAD LOGIC (file1/file2/fileX)
@@ -265,8 +266,8 @@ const create = async (req, res) => {
       createdDrivers.push(driver);
     }
 
-    const email = createdDrivers[0]?.email || "N/A";
-    const groupName = createdDrivers[0]?.group_name_number || "N/A";
+    const email = createdDrivers[0]?.email || req.body?.email || "N/A";
+    const groupName = createdDrivers[0]?.group_name_number || req.body?.group_name_number || "N/A";
     // Step 2: Find all transport details for these transport_ids
     const transportIds = createdDrivers.map((d) => d.transport_id);
     const transportDetails = await AssignPackageTransportDetails.findAll({
@@ -417,7 +418,7 @@ const create = async (req, res) => {
       `,
     });
 
-    // Step 5b: Send WhatsApp Notification to Customer
+    // Step 5b: Send WhatsApp Notification to Customer & Group Leader
     try {
       const recipientWhatsapp = req.body?.whatsapp_number || B2bUserEmail[0]?.whatsapp_number;
       if (recipientWhatsapp) {
@@ -431,6 +432,37 @@ const create = async (req, res) => {
         });
       } else {
         console.warn(`[WhatsApp] No WhatsApp number found for customer with email ${email}`);
+      }
+
+      // Group Leader WhatsApp Message (Specific group leader from MutamersList)
+      let groupLeader = await MutamersList.findOne({
+        where: {
+          group_name_number: groupName,
+          ...(email && email !== "N/A" ? { email } : {}),
+          mobile_number: { [Op.ne]: null }
+        },
+        order: [["id", "DESC"]]
+      });
+
+      if (!groupLeader) {
+        groupLeader = await MutamersList.findOne({
+          where: { group_name_number: groupName },
+          order: [["id", "DESC"]]
+        });
+      }
+
+      const leaderWhatsapp = groupLeader?.mobile_number;
+      if (leaderWhatsapp) {
+        await whatsappService.sendDriverTransportDetails({
+          to: leaderWhatsapp,
+          companyName: groupLeader?.leader_name || companyName,
+          groupName: groupName,
+          transportDetails: transportDetails,
+          driverDetails: createdDrivers,
+          isUpdate: false,
+        });
+      } else {
+        console.warn(`[WhatsApp] No Group Leader WhatsApp number found for group ${groupName}`);
       }
     } catch (waErr) {
       console.error("[WhatsApp] Error sending driver creation message:", waErr);
@@ -651,8 +683,8 @@ const update = async function (req, res) {
     }
 
     // Step 2️⃣ Email preparation (similar to create)
-    const email = updatedDrivers[0]?.email || "N/A";
-    const groupName = updatedDrivers[0]?.group_name_number || "N/A";
+    const email = updatedDrivers[0]?.email || req.body?.email || "N/A";
+    const groupName = updatedDrivers[0]?.group_name_number || req.body?.group_name_number || "N/A";
 
     const transportIds = updatedDrivers.map((d) => d.transport_id);
     const transportDetails = await AssignPackageTransportDetails.findAll({
@@ -811,7 +843,7 @@ const update = async function (req, res) {
       `,
     });
 
-    // Step 6b: Send WhatsApp Notification to Customer
+    // Step 6b: Send WhatsApp Notification to Customer & Group Leader
     try {
       const recipientWhatsapp = req.body?.whatsapp_number || B2bUserEmail[0]?.whatsapp_number;
       if (recipientWhatsapp) {
@@ -825,6 +857,37 @@ const update = async function (req, res) {
         });
       } else {
         console.warn(`[WhatsApp] No WhatsApp number found for customer with email ${email}`);
+      }
+
+      // Group Leader WhatsApp Message (Specific group leader from MutamersList)
+      let groupLeader = await MutamersList.findOne({
+        where: {
+          group_name_number: groupName,
+          ...(email && email !== "N/A" ? { email } : {}),
+          mobile_number: { [Op.ne]: null }
+        },
+        order: [["id", "DESC"]]
+      });
+
+      if (!groupLeader) {
+        groupLeader = await MutamersList.findOne({
+          where: { group_name_number: groupName },
+          order: [["id", "DESC"]]
+        });
+      }
+
+      const leaderWhatsapp = groupLeader?.mobile_number;
+      if (leaderWhatsapp) {
+        await whatsappService.sendDriverTransportDetails({
+          to: leaderWhatsapp,
+          companyName: groupLeader?.leader_name || companyName,
+          groupName: groupName,
+          transportDetails: transportDetails,
+          driverDetails: updatedDrivers,
+          isUpdate: true,
+        });
+      } else {
+        console.warn(`[WhatsApp] No Group Leader WhatsApp number found for group ${groupName}`);
       }
     } catch (waErr) {
       console.error("[WhatsApp] Error sending driver update message:", waErr);
