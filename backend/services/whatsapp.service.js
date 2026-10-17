@@ -187,6 +187,11 @@ async function sendTemplateMessage(to, templateName, languageCode = "en", compon
 /**
  * 1 & 2. Format & send Driver + Transport details on WhatsApp
  * Used by b2bDriver/create and b2bDriver/update
+ *
+ * ✅ FIX: Two-step delivery to bypass WhatsApp's 24-hour window restriction
+ * and the "new user must message first" restriction:
+ *   Step 1 → Send approved 'hello_world' template (always delivers, opens session)
+ *   Step 2 → Send actual driver/transport details as text message (after 1.5s delay)
  */
 async function sendDriverTransportDetails({
   to,
@@ -201,6 +206,37 @@ async function sendDriverTransportDetails({
       console.warn("[WhatsApp] No recipient WhatsApp number provided for driver details notification.");
       return { success: false, message: "No recipient WhatsApp number" };
     }
+
+    const formattedTo = formatPhoneNumber(to);
+    if (!formattedTo) {
+      console.warn("[WhatsApp] Invalid phone number:", to);
+      return { success: false, message: "Invalid phone number" };
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // STEP 1: Send approved template first to open the session.
+    // This works even if:
+    //   a) The user has never messaged our number before (Issue 1)
+    //   b) The 24-hour window has expired (Issue 2)
+    // ─────────────────────────────────────────────────────────────────
+    console.log(`[WhatsApp] Step 1: Sending hello_world template to ${formattedTo} to open session...`);
+    const templateResult = await sendTemplateMessage(formattedTo, "hello_world", "en_US");
+
+    if (!templateResult.success) {
+      console.error(
+        `[WhatsApp] Step 1 FAILED: Could not send hello_world template to ${formattedTo}:`,
+        JSON.stringify(templateResult.error || templateResult)
+      );
+      // Still attempt to send the details message even if template fails
+    } else {
+      console.log(`[WhatsApp] Step 1 SUCCESS: hello_world template sent to ${formattedTo}`);
+    }
+
+    // ─────────────────────────────────────────────────────────────────
+    // STEP 2: Wait 1.5 seconds, then send the actual details message.
+    // The delay gives WhatsApp time to register the session.
+    // ─────────────────────────────────────────────────────────────────
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     // Format Transport Details
     let transportSection = "";
@@ -264,7 +300,19 @@ We are honored to be of service and pray that your group's Umrah is accepted and
 
 *Team PC Travels*`;
 
-    return await sendTextMessage(to, message);
+    console.log(`[WhatsApp] Step 2: Sending driver/transport details text to ${formattedTo}...`);
+    const textResult = await sendTextMessage(formattedTo, message);
+
+    if (textResult.success) {
+      console.log(`[WhatsApp] Step 2 SUCCESS: Driver details message sent to ${formattedTo}`);
+    } else {
+      console.error(
+        `[WhatsApp] Step 2 FAILED: Could not send details message to ${formattedTo}:`,
+        JSON.stringify(textResult.error || textResult)
+      );
+    }
+
+    return textResult;
   } catch (error) {
     console.error("[WhatsApp] Error sending driver/transport details:", error);
     return { success: false, error: error.message };
@@ -274,6 +322,8 @@ We are honored to be of service and pray that your group's Umrah is accepted and
 /**
  * 3. Send B2B User Account Activated message on WhatsApp
  * Used by b2bAdmin/update when status === 'complete'
+ *
+ * ✅ FIX: Two-step delivery — template first, then details text
  */
 async function sendB2bAccountActivated({ to, personName, email, password, b2bId }) {
   try {
@@ -282,6 +332,13 @@ async function sendB2bAccountActivated({ to, personName, email, password, b2bId 
       return { success: false, message: "No WhatsApp number" };
     }
 
+    // Step 1: Open session via approved template
+    const formattedTo = formatPhoneNumber(to);
+    if (!formattedTo) return { success: false, message: "Invalid phone number" };
+    await sendTemplateMessage(formattedTo, "hello_world", "en_US");
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Step 2: Send actual account details
     const message = `🎉 *WELCOME TO PC TRAVELS - ACCOUNT ACTIVATED* 🎉
 ━━━━━━━━━━━━━━━━━━
 Dear *${personName || "Valued Partner"}*,
@@ -303,7 +360,7 @@ We look forward to a successful and blessed partnership ahead!
 
 *Team PC Travels*`;
 
-    return await sendTextMessage(to, message);
+    return await sendTextMessage(formattedTo, message);
   } catch (error) {
     console.error("[WhatsApp] Error sending account activated message:", error);
     return { success: false, error: error.message };
@@ -313,6 +370,8 @@ We look forward to a successful and blessed partnership ahead!
 /**
  * Send B2B User Account On Hold message on WhatsApp
  * Used by b2bAdmin/update when status === 'hold'
+ *
+ * ✅ FIX: Two-step delivery — template first, then details text
  */
 async function sendB2bAccountHold({ to, personName, reason }) {
   try {
@@ -321,6 +380,13 @@ async function sendB2bAccountHold({ to, personName, reason }) {
       return { success: false, message: "No WhatsApp number" };
     }
 
+    // Step 1: Open session via approved template
+    const formattedTo = formatPhoneNumber(to);
+    if (!formattedTo) return { success: false, message: "Invalid phone number" };
+    await sendTemplateMessage(formattedTo, "hello_world", "en_US");
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Step 2: Send actual hold notification
     const message = `⚠️ *PC TRAVELS - ACCOUNT NOTICE: ON HOLD* ⚠️
 ━━━━━━━━━━━━━━━━━━
 Dear *${personName || "Valued Partner"}*,
@@ -337,7 +403,7 @@ We appreciate your patience and understanding.
 
 *Team PC Travels*`;
 
-    return await sendTextMessage(to, message);
+    return await sendTextMessage(formattedTo, message);
   } catch (error) {
     console.error("[WhatsApp] Error sending account hold message:", error);
     return { success: false, error: error.message };
@@ -347,6 +413,8 @@ We appreciate your patience and understanding.
 /**
  * Send B2B User Account Pending message on WhatsApp
  * Used by b2bAdmin/update when status === 'pending'
+ *
+ * ✅ FIX: Two-step delivery — template first, then details text
  */
 async function sendB2bAccountPending({ to, personName, reason }) {
   try {
@@ -355,6 +423,13 @@ async function sendB2bAccountPending({ to, personName, reason }) {
       return { success: false, message: "No WhatsApp number" };
     }
 
+    // Step 1: Open session via approved template
+    const formattedTo = formatPhoneNumber(to);
+    if (!formattedTo) return { success: false, message: "Invalid phone number" };
+    await sendTemplateMessage(formattedTo, "hello_world", "en_US");
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    // Step 2: Send actual pending notification
     const message = `⏳ *PC TRAVELS - ACCOUNT STATUS: PENDING* ⏳
 ━━━━━━━━━━━━━━━━━━
 Dear *${personName || "Valued Partner"}*,
@@ -369,7 +444,7 @@ Once your account is approved, you will receive confirmation with your login cre
 
 *Team PC Travels*`;
 
-    return await sendTextMessage(to, message);
+    return await sendTextMessage(formattedTo, message);
   } catch (error) {
     console.error("[WhatsApp] Error sending account pending message:", error);
     return { success: false, error: error.message };
